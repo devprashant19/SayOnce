@@ -70,12 +70,13 @@ Only for what arithmetic cannot judge: whether a required fact actually reached
 the reader in some wording, whether a claim was smuggled in as phrasing, and
 tone fit.
 
-LLM graders drift between runs. `temperature` is not available on the current
-models, so repeatability comes from: a frozen prompt, a strict schema, an
-explicit pass criterion written into the rubric, and a **fixed effort level**
-(`SAYONCE_GRADER_EFFORT`, default `low`) that must not change during the build.
-Record the model and the effort with every run so no score is compared across
-configurations by accident.
+LLM graders drift between runs. Gemini accepts `temperature`, so the grader
+runs at **0** (`SAYONCE_GRADER_TEMPERATURE`) and that value must not change
+during the build. Repeatability also needs a frozen prompt, a schema that
+constrains decoding, and an explicit pass criterion written into the rubric.
+
+Record the model and the temperature with every run so no score is compared
+across configurations by accident.
 
 ### 3. Human, before the demo
 

@@ -58,8 +58,8 @@ Check it.`;
 /**
  * The grader used by the Quality Lab, kept separate from the in-app Verify
  * step. It is scored against the golden set's recorded expectations rather
- * than its own judgement of what matters, and it runs at a fixed effort level
- * so two runs a day apart are comparable.
+ * than its own judgement of what matters, and it runs at temperature 0 so two
+ * runs a day apart are comparable.
  */
 export const GRADER_SYSTEM = `You are grading one pipeline output against a recorded expectation. Apply the rubric literally. Do not be generous and do not be creative.
 

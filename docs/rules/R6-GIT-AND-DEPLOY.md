@@ -49,7 +49,7 @@ list with purposes is in [../11-DEPLOYMENT.md](../11-DEPLOYMENT.md).
 After every deploy, confirm nothing reached the client:
 
 ```bash
-grep -r "sk-ant-\|postgres://" .next/static/ || echo clean
+grep -rE "AIza[0-9A-Za-z_-]{30,}|postgres://" .next/static/ || echo clean
 ```
 
 ## Rollback

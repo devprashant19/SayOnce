@@ -16,10 +16,12 @@
     "db:seed": "node --env-file=.env.local scripts/seed-demo.mjs",
     "lab": "node --env-file=.env.local scripts/quality-lab.mjs",
     "audit:secrets": "node scripts/audit-secrets.mjs",
-    "verify:all": "npm run typecheck && npm run lint && npm run test && npm run build"
+    "verify:all": "npm run typecheck && npm run lint && npm run test && npm run build",
+    "test:live": "vitest run --config vitest.live.config.ts",
+    "smoke:ai": "node --env-file=.env.local scripts/smoke-ai.mjs"
   },
   "dependencies": {
-    "@anthropic-ai/sdk": "^1.3.0",
+    "@google/genai": "^2.32.0",
     "@neondatabase/serverless": "^1.0.1",
     "drizzle-orm": "^0.44.2",
     "next": "^15.5.0",

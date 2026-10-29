@@ -33,6 +33,7 @@ const ALLOWED = [
 ];
 
 const RULES = [
+  { name: "Google AI API key", pattern: /AIza[0-9A-Za-z_-]{30,}/g },
   { name: "Anthropic API key", pattern: /sk-ant-[A-Za-z0-9_-]{8,}/g },
   { name: "generic secret key", pattern: /\b(?:sk|pk)_(?:live|test)_[A-Za-z0-9]{10,}/g },
   { name: "Neon/Postgres URL with password", pattern: /postgres(?:ql)?:\/\/[^\s"'`]*:[^\s"'`@]+@/g },

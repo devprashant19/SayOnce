@@ -122,7 +122,7 @@ the chain is worthless.
 | `id` | text, pk | |
 | `started_at` | timestamptz | |
 | `model` | text | Recorded so a score is never compared across models by accident |
-| `grader_effort` | text | Same reason |
+| `grader_temperature` | real | Same reason |
 | `case_count` | integer | |
 | `scores` | jsonb | One number per metric |
 | `per_case` | jsonb | Pass/fail and the failure reasons per case |

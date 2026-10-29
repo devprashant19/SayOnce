@@ -7,10 +7,29 @@ Four model calls, each with a schema it cannot escape. Prompts live in
 
 Everything goes through `aiCall()`. It:
 
-- uses the one fixed model from `SAYONCE_MODEL` (default `claude-opus-5-5`)
-- passes a Zod schema as the output format, so the response is parsed, not scraped
-- retries exactly once on an unusable response, with the schema restated
+- uses the one fixed model from `SAYONCE_MODEL` (default `gemini-2.5-flash`)
+- converts the step's Zod schema to a Gemini-safe JSON Schema and sends it as
+  `responseJsonSchema`, so decoding is constrained rather than hoped for
+- validates the response with the same Zod schema on the way back
+- retries exactly once on an unusable response, stating what was wrong
 - throws a message a person can act on, rather than returning an empty result
+
+### The schema translation
+
+`lib/ai/schema.ts` does one job and it is load-bearing: Gemini accepts only a
+documented subset of JSON Schema, and Zod emits keywords outside it (`pattern`,
+`default`, `minLength`, `propertyNames`, `$schema`). Sending one is a 400 on
+the first call of a run.
+
+So the generated schema is pruned to the supported subset, and **Zod still
+validates the response afterwards** — which is where the rules that cannot be
+expressed to Gemini are actually enforced: the E.164 phone pattern, the ISO
+date shape, string lengths.
+
+> The schema constrains the shape. Zod enforces the contract.
+
+`tests/schema.test.ts` asserts that every pipeline step's schema emits only
+supported keywords, so a rejected schema is caught offline rather than live.
 
 **Why an empty result is forbidden:** an empty fact list looks like "nothing to
 say" and would silently drop half an update. A loud failure is recoverable; a
@@ -18,18 +37,21 @@ quiet one is not.
 
 ### On determinism
 
-`temperature` is not a parameter on the current models — a request that sends it
-is rejected. So repeatability comes from three other things:
+Gemini accepts `temperature`, so the grader runs at **0** and the pipeline runs
+**low** (0.2 by default). Repeatability rests on four things:
 
-1. a frozen prompt (editing one mid-run invalidates the comparison)
-2. a strict schema
-3. a fixed effort level
+1. `SAYONCE_GRADER_TEMPERATURE=0`, which must not move during the build
+2. a frozen prompt (editing one mid-run invalidates the comparison)
+3. a schema that constrains decoding
+4. one fixed model
 
-That is why `SAYONCE_GRADER_EFFORT` exists and why it must not move during the
-build. Two Quality Lab runs are only comparable if the grader was held still.
-Record the model and the effort with every run (`lab_runs.model`,
-`lab_runs.grader_effort`) so a score is never compared across configurations by
-accident.
+The pipeline is deliberately not at 0: composing a message that reads naturally
+needs a little latitude, and the facts are protected by the checker rather than
+by determinism. The *grader* has no such need, so it gets none.
+
+Record the model and the temperature with every run (`lab_runs.model`,
+`lab_runs.grader_temperature`) so a score is never compared across
+configurations by accident.
 
 ## Stage 1 — Extract
 
@@ -210,7 +232,13 @@ half today), and only meaning-level judgements go to the grader.
 ## Cost shape
 
 Per fan-out of five contacts: 1 Extract + 1 Route + 5 Compose + 5 Verify = 12
-calls. A 30-case Quality Lab run is therefore several hundred calls.
+calls. A 34-case Quality Lab run is therefore several hundred calls.
+
+`gemini-2.5-flash` is the default partly for this reason: a full lab run stays
+cheap enough to do at every gate, which is the only way the targets mean
+anything. If extraction quality is the bottleneck — particularly exact source
+spans — switch `SAYONCE_MODEL` to `gemini-2.5-pro` and re-run the full set so
+the before and after stay comparable.
 
 Three consequences, all of them already designed in:
 

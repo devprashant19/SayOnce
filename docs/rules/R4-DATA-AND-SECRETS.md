@@ -45,7 +45,7 @@ project, so they never land in the app folder in the first place.
 - **No `NEXT_PUBLIC_` anything.** There is no value a browser needs and a server
   does not.
 - Keys live in the host's dashboard, never in an uploaded file.
-- After every deploy: `grep -r "sk-ant-\|postgres://" .next/static/` must be
+- After every deploy: `grep -rE "AIza[0-9A-Za-z_-]{30,}|postgres://" .next/static/` must be
   empty.
 
 ## Demo isolation

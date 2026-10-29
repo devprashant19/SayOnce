@@ -127,11 +127,11 @@ page.
   path as the app. A lab with its own copy of the pipeline measures the wrong
   thing.
 - Deterministic checks **plus** the AI grader (`GRADER_SYSTEM`), at the fixed
-  `SAYONCE_GRADER_EFFORT`. Never skip the deterministic half.
+  `SAYONCE_GRADER_TEMPERATURE`. Never skip the deterministic half.
 - A table per metric with pass/fail per case, scored against the targets
 - Overall scores against targets, and a **history of runs** so improvement is
   visible rather than claimed
-- Records `model` and `grader_effort` with each run, so no score is compared
+- Records `model` and `grader_temperature` with each run, so no score is compared
   across configurations by accident
 
 **It must be readable by a non-technical person.** That is the point: a judge

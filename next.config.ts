@@ -3,7 +3,7 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   reactStrictMode: true,
   // The AI pipeline runs server-side only. Nothing here may widen the client bundle.
-  serverExternalPackages: ["@anthropic-ai/sdk"],
+  serverExternalPackages: ["@google/genai"],
   async headers() {
     return [
       {

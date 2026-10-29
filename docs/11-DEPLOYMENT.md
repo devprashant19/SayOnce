@@ -28,10 +28,11 @@ Every variable, its purpose, and where it is set. Nothing else should be secret.
 
 | Variable | Purpose | Secret |
 | --- | --- | --- |
-| `ANTHROPIC_API_KEY` | The one AI key | yes |
+| `GEMINI_API_KEY` | The one AI key (`GOOGLE_API_KEY` also accepted) | yes |
 | `SAYONCE_MODEL` | The fixed model id | no |
-| `SAYONCE_EFFORT` | Effort for the four pipeline steps | no |
-| `SAYONCE_GRADER_EFFORT` | Fixed grader effort; must not change mid-build | no |
+| `SAYONCE_TEMPERATURE` | Pipeline temperature, 0.2 by default | no |
+| `SAYONCE_GRADER_TEMPERATURE` | Fixed grader temperature, 0; must not change mid-build | no |
+| `SAYONCE_THINKING_BUDGET` | Reasoning budget in tokens; -1 automatic, 0 off | no |
 | `DATABASE_URL` | Neon connection string | yes |
 | `DEMO_LIVE_AI` | `on` / `off` kill switch for live AI on visitor text | no |
 | `DEMO_SESSION_AI_CAP` | Live calls per visitor per day | no |
@@ -43,7 +44,7 @@ Set them in the host's dashboard or with its secrets CLI — **never in a file
 that gets uploaded**. Then confirm none reached the client:
 
 ```bash
-grep -r "sk-ant-" .next/static/ || echo "clean"
+grep -rE "AIza[0-9A-Za-z_-]{30,}" .next/static/ || echo "clean"
 grep -r "postgres://" .next/static/ || echo "clean"
 ```
 

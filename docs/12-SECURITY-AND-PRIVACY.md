@@ -37,7 +37,7 @@ in the app's folder in the first place.
 - **No `NEXT_PUBLIC_` anything.** There is no value in this app that a browser
   needs and a server does not.
 - **Keys live in the host's dashboard**, never in a file that gets uploaded.
-- **Verify after every deploy**: `grep -r "sk-ant-" .next/static/` must come
+- **Verify after every deploy**: `grep -rE "AIza[0-9A-Za-z_-]{30,}" .next/static/` must come
   back empty. `npm run audit:secrets` does this and more, and exits non-zero on
   a finding so it can gate a deploy.
 
@@ -115,7 +115,7 @@ Run all of this, and fix every finding, before the link goes in the submission:
 npm run verify:all
 npm run lab
 npm run audit:secrets
-grep -r "sk-ant-\|postgres://" .next/static/ || echo clean
+grep -rE "AIza[0-9A-Za-z_-]{30,}|postgres://" .next/static/ || echo clean
 ```
 
 Then by hand:

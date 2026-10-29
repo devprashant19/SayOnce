@@ -44,7 +44,8 @@ START HERE, IN THIS ORDER
     make every phase fit.
  5. Run `npm run verify:all` and show me the output. If it does not pass on a
     clean checkout, that is the first bug and nothing else matters until it is
-    fixed.
+    fixed. Then run `npm run smoke:ai` to confirm my Gemini key works, and
+    `npm run test:live` to see the real pipeline produce real drafts.
  6. Then read docs/phases/PHASE-00-FOUNDATION.md and tell me your plan for it.
 
 WHAT IS ALREADY BUILT — DO NOT REBUILD ANY OF IT
@@ -59,8 +60,11 @@ WHAT IS ALREADY BUILT — DO NOT REBUILD ANY OF IT
    date resolution, Unicode script detection, the output scrub, the Voice Return
    arithmetic.
  - lib/types.ts — every schema, in one file.
- - lib/ai/call.ts — the only way to call a model: one fixed model, structured
-   output against a Zod schema, one retry, then a clear error.
+ - lib/ai/call.ts — the only way to call a model: one fixed model, output
+   constrained by a schema, Zod validation on the way back, one retry, then a
+   clear error.
+ - lib/ai/schema.ts — Zod to Gemini JSON Schema, pruned to the keywords Gemini
+   accepts. 28 tests. Never hand-write a schema; call geminiSchema().
  - lib/ai/extract.ts and lib/ai/compose.ts with their prompts, and the prompts
    for Route and Verify which are written but not yet wired.
  - app/app/page.tsx — the Speak screen, the draft cards with verified and

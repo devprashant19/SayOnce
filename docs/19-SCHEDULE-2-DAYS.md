@@ -57,7 +57,7 @@ criterion 1. `SAYONCE_BASELINE_MINUTES` is set to a measured number.
 Start by proving the base works for *you*:
 
 ```bash
-cp .env.example .env.local     # add ANTHROPIC_API_KEY
+cp .env.example .env.local     # add GEMINI_API_KEY
 npm run verify:all             # 90 tests, typecheck, lint, build
 npm run dev
 npm run lab -- --group real    # your own 10 cases through the real pipeline

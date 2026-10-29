@@ -224,7 +224,7 @@ if (graded.length === 0) {
     "\nThis is a connection or configuration problem, not an accuracy result.\n" +
       `  - Is the dev server running? \`npm run dev\`, then re-run.\n` +
       `  - Is it on ${BASE}? Override with SAYONCE_BASE_URL.\n` +
-      "  - Is ANTHROPIC_API_KEY set in .env.local?",
+      "  - Is GEMINI_API_KEY set in .env.local? Free key: https://aistudio.google.com/apikey",
   );
   process.exit(1);
 }

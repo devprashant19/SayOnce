@@ -7,12 +7,10 @@
 
 import "server-only";
 
-function required(name: string): string {
+function required(name: string, hint: string): string {
   const value = process.env[name];
   if (!value || value.trim().length === 0) {
-    throw new Error(
-      `${name} is not set. Copy .env.example to .env.local and fill it in.`,
-    );
+    throw new Error(`${name} is not set. ${hint}`);
   }
   return value;
 }
@@ -25,28 +23,48 @@ function optionalNumber(name: string, fallback: number): number {
 }
 
 export const env = {
-  get anthropicApiKey(): string {
-    return required("ANTHROPIC_API_KEY");
+  /**
+   * Gemini API key. A free one comes from Google AI Studio
+   * (aistudio.google.com/apikey); GOOGLE_API_KEY is accepted as an alias
+   * because that is what most Google examples use.
+   */
+  get apiKey(): string {
+    const value = process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY;
+    if (!value || value.trim().length === 0) {
+      throw new Error(
+        "GEMINI_API_KEY is not set. Get a free key at https://aistudio.google.com/apikey, " +
+          "then copy .env.example to .env.local and paste it in.",
+      );
+    }
+    return value;
   },
   /** One fixed model for every AI step, so accuracy scores stay comparable. */
   get model(): string {
-    return process.env.SAYONCE_MODEL ?? "claude-opus-5-5";
+    return process.env.SAYONCE_MODEL ?? "gemini-2.5-flash";
   },
-  get effort(): "low" | "medium" | "high" | "xhigh" | "max" {
-    const raw = process.env.SAYONCE_EFFORT ?? "medium";
-    return (["low", "medium", "high", "xhigh", "max"] as const).includes(raw as never)
-      ? (raw as "low" | "medium" | "high" | "xhigh" | "max")
-      : "medium";
+  /**
+   * Low rather than zero for the pipeline: extraction and composition need a
+   * little latitude to phrase a message naturally. The grader runs at 0.
+   */
+  get temperature(): number {
+    return optionalNumber("SAYONCE_TEMPERATURE", 0.2);
   },
-  /** The grader runs at a fixed low effort so Quality Lab runs are comparable. */
-  get graderEffort(): "low" | "medium" | "high" {
-    const raw = process.env.SAYONCE_GRADER_EFFORT ?? "low";
-    return (["low", "medium", "high"] as const).includes(raw as never)
-      ? (raw as "low" | "medium" | "high")
-      : "low";
+  /** The grader must be repeatable. Do not move this during the build. */
+  get graderTemperature(): number {
+    return optionalNumber("SAYONCE_GRADER_TEMPERATURE", 0);
+  },
+  /**
+   * Reasoning budget in tokens for the 2.5 series: 0 is off, -1 is automatic.
+   * Null means send no thinking config at all, which is what a model outside
+   * the 2.5/3 series needs.
+   */
+  get thinkingBudget(): number | null {
+    const raw = process.env.SAYONCE_THINKING_BUDGET;
+    if (raw === "none") return null;
+    return optionalNumber("SAYONCE_THINKING_BUDGET", -1);
   },
   get databaseUrl(): string {
-    return required("DATABASE_URL");
+    return required("DATABASE_URL", "Phase 2 onwards needs it; see .env.example.");
   },
   get hasDatabase(): boolean {
     return Boolean(process.env.DATABASE_URL);
@@ -61,7 +79,7 @@ export const env = {
     return optionalNumber("DEMO_DAILY_AI_CAP", 400);
   },
   get demoSessionSecret(): string {
-    return required("DEMO_SESSION_SECRET");
+    return required("DEMO_SESSION_SECRET", "Phase D needs it; 32+ random bytes, base64.");
   },
   /** Null until a real baseline has been measured. Never faked. */
   get baselineMinutes(): number | null {

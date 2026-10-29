@@ -19,11 +19,16 @@ retry with the schema restated, and an error a person can act on.
 ## Rules
 
 **One fixed model for the whole build.** `SAYONCE_MODEL`, default
-`claude-opus-5-5`. Changing it mid-build invalidates every accuracy score
+`gemini-2.5-flash`. Changing it mid-build invalidates every accuracy score
 measured before the change. If it must change, re-run the full lab and say so.
 
-**Structured output, always.** A Zod schema as `output_config.format`. Never
-parse a model's prose, never regex a JSON block out of a text response.
+**Structured output, always.** The step's Zod schema becomes Gemini's
+`responseJsonSchema` via `lib/ai/schema.ts`, and validates the response on the
+way back. Never parse a model's prose, never regex JSON out of text.
+
+**Never hand-write a JSON Schema.** Gemini accepts only a subset of JSON Schema
+keywords; `geminiSchema()` prunes to it and `tests/schema.test.ts` proves the
+result. A hand-written schema is a 400 waiting to happen.
 
 **One retry, then fail loudly.** Not a loop. A pipeline that retries until it
 passes is a pipeline that eventually talks itself into a wrong answer.
@@ -31,13 +36,13 @@ passes is a pipeline that eventually talks itself into a wrong answer.
 **Never return an empty result as success.** An empty fact list reads as
 "nothing to say" and would silently drop half an update.
 
-**There is no `temperature`.** It is not a parameter on the current models and a
-request that sends it is rejected. Repeatability comes from a frozen prompt, a
-strict schema, and a fixed effort level.
+**The grader runs at temperature 0.** `SAYONCE_GRADER_TEMPERATURE`. Do not
+change it during the build; two lab runs are only comparable if the grader was
+held still. Record the model and temperature with every run.
 
-**The grader's effort is frozen.** `SAYONCE_GRADER_EFFORT`, default `low`. Do
-not change it during the build; two lab runs are only comparable if the grader
-was held still. Record the model and effort with every run.
+**The pipeline runs low, not zero.** `SAYONCE_TEMPERATURE`, 0.2. Composing a
+message that reads naturally needs a little latitude, and the facts are
+protected by the checker rather than by determinism.
 
 **Prompts live in `lib/ai/prompts/`, one file per step.** Never inline a system
 prompt in a route handler. A prompt in a route is a prompt nobody reviews.

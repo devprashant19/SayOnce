@@ -248,7 +248,7 @@ BUILD:
  6. QUALITY LAB page at /lab: stores the golden set; "Run all" sends every case
     through the LIVE pipeline — the same code path as the app — and grades each
     with the deterministic checks plus the AI grader at the fixed
-    SAYONCE_GRADER_EFFORT. A table per metric with pass or fail per case,
+    SAYONCE_GRADER_TEMPERATURE. A table per metric with pass or fail per case,
     overall scores against targets, and a history of runs. Record the model and
     grader effort with each run. It must be readable by a non-technical person.
  7. Wire the four adversarial golden cases into the lab.

@@ -31,7 +31,7 @@ with zero invented facts.
 ### 1. Prove it works for you
 
 ```bash
-cp .env.example .env.local        # add ANTHROPIC_API_KEY
+cp .env.example .env.local        # add GEMINI_API_KEY
 npm install
 npm run verify:all                # 90 tests, typecheck, lint, build
 npm run dev

@@ -1,13 +1,13 @@
 import "server-only";
-import Anthropic from "@anthropic-ai/sdk";
+import { GoogleGenAI } from "@google/genai";
 import { env } from "../env";
 
-let client: Anthropic | null = null;
+let client: GoogleGenAI | null = null;
 
 /** One client for the process. Constructed lazily so a build needs no key. */
-export function anthropic(): Anthropic {
+export function gemini(): GoogleGenAI {
   if (!client) {
-    client = new Anthropic({ apiKey: env.anthropicApiKey, maxRetries: 2 });
+    client = new GoogleGenAI({ apiKey: env.apiKey });
   }
   return client;
 }

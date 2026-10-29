@@ -107,7 +107,7 @@ dictated, so those words count.
 npm run verify:all
 npm run lab
 npm run audit:secrets
-grep -r "sk-ant-\|postgres://" .next/static/ || echo clean
+grep -rE "AIza[0-9A-Za-z_-]{30,}|postgres://" .next/static/ || echo clean
 ```
 
 Then by hand:

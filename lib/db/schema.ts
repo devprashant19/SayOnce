@@ -149,7 +149,7 @@ export const labRuns = pgTable("lab_runs", {
   id: text("id").primaryKey(),
   startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
   model: text("model").notNull(),
-  graderEffort: text("grader_effort").notNull(),
+  graderTemperature: real("grader_temperature").notNull(),
   caseCount: integer("case_count").notNull(),
   scores: jsonb("scores").$type<Record<string, number>>().notNull(),
   perCase: jsonb("per_case").$type<unknown[]>().notNull().default([]),

@@ -9,7 +9,7 @@ Each of these is settled. Changing one mid-build costs more than it saves.
 | Framework | Next.js 15, App Router | Server routes are mandatory — the AI key and the Trust Trail hashing must be server-side — and one framework gives both pages and routes. Deploys from a local folder with one CLI command. |
 | Language | TypeScript, `strict` plus `noUncheckedIndexedAccess` | The pipeline is four schema boundaries in a row. Types are what stop a routing bug becoming a wrong-recipient message. |
 | Validation | Zod 4 | One schema per AI step, reused as the model's output format and as the runtime guard. Written once, enforced twice. |
-| AI | Anthropic SDK, `claude-opus-5-5`, structured outputs | One fixed model for the whole build so accuracy scores stay comparable across phases. Structured output means no JSON parsing by hand. |
+| AI | Google Gemini via `@google/genai`, `gemini-2.5-flash`, structured output | One fixed model for the whole build so accuracy scores stay comparable across phases. `responseJsonSchema` constrains decoding, so no JSON is parsed out of prose. A free key from AI Studio is enough to build the whole thing. |
 | Database | Neon serverless Postgres + Drizzle | Hosted, works from a serverless function, migrations are files. Needed from Phase 2. |
 | Styling | Tailwind CSS v4 with CSS custom properties | Tokens live in one `@theme` block; the agent can move fast in Phase 6 without inventing a system. |
 | Tests | Vitest | The deterministic core is pure functions. Fast tests on those are the whole safety net. |
@@ -103,7 +103,7 @@ sayonce/
 │  ├─ voice-return.ts          words spoken vs delivered vs minutes saved
 │  ├─ contact-sets.ts          the two demo datasets
 │  ├─ ai/
-│  │  ├─ client.ts             one lazily-constructed Anthropic client
+│  │  ├─ client.ts             one lazily-constructed Gemini client
 │  │  ├─ call.ts               the only way to call a model: schema + one retry
 │  │  ├─ extract.ts / route.ts / compose.ts / verify.ts
 │  │  └─ prompts/              the four step prompts, one file each

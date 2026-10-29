@@ -34,7 +34,7 @@ export async function composeOne(input: ComposeOneInput) {
       previouslyTold: input.previouslyTold ?? [],
     }),
     schema: ComposeOutput,
-    maxTokens: 4000,
+    maxOutputTokens: 4000,
   });
 
   const draft: Draft = {

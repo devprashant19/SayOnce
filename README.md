@@ -61,8 +61,9 @@ being told.
 Requires Node 20.9 or later.
 
 ```bash
-cp .env.example .env.local     # add your API key
+cp .env.example .env.local     # paste a free Gemini key: aistudio.google.com/apikey
 npm install
+npm run smoke:ai               # 5 seconds: is the key and model working?
 npm run dev                    # http://localhost:3000
 ```
 
@@ -71,11 +72,15 @@ The AI pipeline runs server-side only; no key is ever sent to the browser.
 core fan-out.
 
 ```bash
-npm run verify:all      # typecheck, lint, 90 tests, production build
-npm run test            # the deterministic core
+npm run verify:all      # typecheck, lint, 118 offline tests, production build
+npm run test            # the deterministic core — no network, no key, no cost
+npm run test:live       # the real pipeline against the real model (needs a key)
 npm run lab             # the recorded test set through the live pipeline
 npm run audit:secrets   # leak audit over the built output
 ```
+
+`npm run test` never calls a model, so it is always safe to run. `test:live` and
+`lab` do, and they say so.
 
 ## How accuracy is checked
 
@@ -121,8 +126,13 @@ from the second.
 
 ## Stack
 
-Next.js 15 (App Router) · TypeScript · Zod · Postgres with Drizzle ·
-Tailwind CSS v4 · Vitest
+Next.js 15 (App Router) · TypeScript · Google Gemini (`@google/genai`) · Zod ·
+Postgres with Drizzle · Tailwind CSS v4 · Vitest
+
+One fixed model for the whole build, so accuracy scores stay comparable between
+runs. Every step's Zod schema is translated into Gemini's structured-output
+schema, which constrains decoding, and then validates the response on the way
+back — the schema constrains the shape, Zod enforces the contract.
 
 ## Credits
 

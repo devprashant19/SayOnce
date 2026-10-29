@@ -116,7 +116,7 @@ uploaded file**.
 Then confirm none reached the client:
 
 ```bash
-grep -r "sk-ant-\|postgres://" .next/static/ || echo clean
+grep -rE "AIza[0-9A-Za-z_-]{30,}|postgres://" .next/static/ || echo clean
 ```
 
 ## 3. Database

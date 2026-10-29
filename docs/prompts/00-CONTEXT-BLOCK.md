@@ -43,6 +43,7 @@ Already built and tested, do not reimplement:
  - lib/dates.ts, lib/script.ts, lib/scrub.ts, lib/voice-return.ts
  - lib/types.ts — every schema
  - lib/ai/call.ts — the only way to call a model
+ - lib/ai/schema.ts — Zod to Gemini JSON Schema; never hand-write a schema
  - Extract and Compose, the Speak screen, draft cards, fact provenance hover
 
 HARD RULES:
@@ -55,9 +56,10 @@ HARD RULES:
  - Wispr Flow is the input method: it types into any text box. Do NOT integrate
    any unofficial Wispr SDK or API. Design text boxes to receive dictation:
    autofocus, large, accept pasted text, never fight the cursor.
- - One fixed AI model for every AI step. Structured JSON output validated
-   against a Zod schema. On an invalid response, retry once, then show a clear
-   error. Never return an empty result as success.
+ - One fixed AI model (Gemini) for every AI step. Output constrained by a
+   schema and validated against the same Zod schema on the way back. On an
+   invalid response, retry once, then show a clear error. Never return an empty
+   result as success. The grader runs at temperature 0 and must stay there.
  - API keys server-side only. Never in client code, never in the repo, never
    NEXT_PUBLIC_.
  - No login anywhere. A demo mode with sample data must always work.

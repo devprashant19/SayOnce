@@ -74,7 +74,8 @@ The base is Phase 1, built and verified: **90 tests pass**.
 | `lib/links.ts` | 33 | `wa.me` and `mailto:` round-trip across Devanagari, emoji, line breaks, specials |
 | `lib/dates.ts`, `lib/script.ts`, `lib/scrub.ts`, `lib/voice-return.ts` | 23 | Relative dates, script detection, the scrub, the Voice Return arithmetic |
 | `lib/types.ts` | — | Every schema in one file |
-| `lib/ai/call.ts` | — | The only way to call a model |
+| `lib/ai/call.ts` | — | The only way to call a model: one fixed model, schema-constrained output, one retry |
+| `lib/ai/schema.ts` | 28 | Zod → Gemini JSON Schema, pruned to the keywords Gemini actually accepts |
 | Extract, Compose, the Speak screen, draft cards, provenance hover | — | The working pipeline |
 
 **These three must stay pure** — no network, no model, no clock: `lib/checker.ts`,
@@ -123,12 +124,16 @@ No phase is done until all six pass. All six, every phase.
 
 ```bash
 npm run dev             # the pipeline lives behind a server route
-npm run verify:all      # typecheck, lint, tests, production build
-npm run test            # 90 tests on the deterministic core
+npm run verify:all      # typecheck, lint, 118 offline tests, production build
+npm run test            # the deterministic core; no network, no key, no cost
+npm run smoke:ai        # 5 seconds: is the key and model working?
+npm run test:live       # the real pipeline against the real model (needs a key)
 npm run lab             # the golden set through the live pipeline
 npm run lab -- --group tricky-instruction
 npm run audit:secrets   # pre-deploy leak audit; run after a build
 ```
+
+`npm run test` never calls a model. `smoke:ai`, `test:live` and `lab` do.
 
 ## 8. Skills to apply, by phase
 
