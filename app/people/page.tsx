@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { Badge } from "@/components/Badge";
 import type { Contact, Channel, Formality, ParsedContact } from "@/lib/types";
 
@@ -28,11 +28,15 @@ export default function PeoplePage() {
   const [parsing, setParsing] = useState(false);
   const [unclearFields, setUnclearFields] = useState<string[]>([]);
 
-  // Form state
-  const [showForm, setShowForm] = useState(false);
+  // Drawer & Form state
+  const [selectedContact, setSelectedContact] = useState<Contact | null>(null);
+  const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [neverTellInput, setNeverTellInput] = useState("");
   const [saving, setSaving] = useState(false);
+
+  const drawerRef = useRef<HTMLDivElement>(null);
+  const triggerRef = useRef<HTMLElement | null>(null);
 
   const fetchContacts = useCallback(async () => {
     setLoading(true);
@@ -53,6 +57,41 @@ export default function PeoplePage() {
     fetchContacts();
   }, [fetchContacts]);
 
+  // Focus trap and Escape listener for drawer
+  useEffect(() => {
+    if (!selectedContact && !isEditing) return;
+
+    function handleKeyDown(e: KeyboardEvent) {
+      if (e.key === "Escape") {
+        closeDrawer();
+      }
+      if (e.key === "Tab" && drawerRef.current) {
+        const focusable = drawerRef.current.querySelectorAll<HTMLElement>(
+          'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])',
+        );
+        if (focusable.length === 0) return;
+        const first = focusable[0]!;
+        const last = focusable[focusable.length - 1]!;
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [selectedContact, isEditing]);
+
+  function closeDrawer() {
+    setSelectedContact(null);
+    setIsEditing(false);
+    triggerRef.current?.focus();
+  }
+
   async function handleVoiceParse() {
     if (!dictatedText.trim()) return;
     setParsing(true);
@@ -71,7 +110,7 @@ export default function PeoplePage() {
         name: p.name ?? "",
         role: p.role ?? "",
         relationship: p.relationship ?? "",
-        language: p.language ?? "English",
+        language: p.language ?? "Hinglish, Roman script",
         channel: p.channel ?? "whatsapp",
         phone: p.phone ?? "",
         email: p.email ?? "",
@@ -81,7 +120,8 @@ export default function PeoplePage() {
       });
       setNeverTellInput((p.neverTell ?? []).join("; "));
       setUnclearFields(p.unclearFields ?? []);
-      setShowForm(true);
+      setIsEditing(true);
+      setSelectedContact(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to parse contact speech");
     } finally {
@@ -94,7 +134,6 @@ export default function PeoplePage() {
     setSaving(true);
     setError(null);
 
-    // Validate phone for whatsapp, email for email
     if (formData.channel === "whatsapp" && (!formData.phone || !/^\+[1-9]\d{6,14}$/.test(formData.phone))) {
       setError("A valid E.164 phone number (e.g. +919000000099) is required for WhatsApp.");
       setSaving(false);
@@ -129,7 +168,7 @@ export default function PeoplePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to save contact");
 
-      setShowForm(false);
+      closeDrawer();
       setFormData(INITIAL_FORM);
       setNeverTellInput("");
       setDictatedText("");
@@ -147,13 +186,14 @@ export default function PeoplePage() {
     try {
       const res = await fetch(`/api/contacts/${id}/archive`, { method: "POST" });
       if (!res.ok) throw new Error("Failed to archive");
+      closeDrawer();
       await fetchContacts();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to archive contact");
     }
   }
 
-  function handleEdit(contact: Contact) {
+  function handleStartEdit(contact: Contact) {
     setFormData({
       id: contact.id,
       name: contact.name,
@@ -169,26 +209,42 @@ export default function PeoplePage() {
     });
     setNeverTellInput(contact.neverTell.join("; "));
     setUnclearFields([]);
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    setIsEditing(true);
+  }
+
+  function handleRowClick(contact: Contact, el: HTMLElement) {
+    triggerRef.current = el;
+    setSelectedContact(contact);
+    setIsEditing(false);
   }
 
   return (
     <div className="space-y-8">
+      {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">People Book</h1>
+        <h1
+          className="font-serif text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
+          style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+        >
+          People Roster
+        </h1>
         <p className="mt-1 text-sm text-[var(--color-ink-soft)]">
-          Who hears what. Free-text languages, strict channel routing, and standing privacy rules.
+          Recipient profiles, custom language dialects, strict channels, and Privacy Shield boundaries.
         </p>
       </div>
 
-      {/* Voice Contact Entry */}
-      <section className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 sm:p-5">
-        <label htmlFor="voice-entry" className="block text-sm font-semibold">
-          Voice Contact Entry
-        </label>
-        <p className="mt-1 text-xs text-[var(--color-ink-soft)]">
-          Dictate a person’s details through Wispr Flow. AI fills the fields; unclear items are flagged for you.
+      {/* Voice Contact Entry: distinct dashed accent border */}
+      <section className="rounded-[var(--radius-card)] border-2 border-dashed border-[var(--color-accent)] bg-[var(--color-surface-raised)]/40 p-5 space-y-3">
+        <div className="flex items-center justify-between">
+          <label htmlFor="voice-entry" className="block text-sm font-semibold tracking-tight text-[var(--color-ink)]">
+            Dictate a whole contact
+          </label>
+          <span className="font-mono text-[11px] text-[var(--color-accent)] font-semibold uppercase tracking-wider">
+            Wispr Voice Ready
+          </span>
+        </div>
+        <p className="text-xs text-[var(--color-ink-soft)] leading-relaxed">
+          Hold your Wispr key and speak a person’s complete profile. AI extracts all fields and flags any unclear details for review.
         </p>
 
         <textarea
@@ -197,17 +253,18 @@ export default function PeoplePage() {
           onChange={(e) => setDictatedText(e.target.value)}
           placeholder='e.g. "Ramesh, our packaging vendor, speaks Hinglish, WhatsApp, plus 91 90 double zero double zero double zero nine nine, only cares about quantities and dates, never tell him about pricing."'
           rows={3}
-          className="mt-3 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-3 text-sm leading-relaxed outline-none"
+          style={{ fontFamily: "var(--font-jetbrains), var(--font-mono)" }}
+          className="mt-1 w-full rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-3 text-xs sm:text-sm font-mono leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]"
         />
 
-        <div className="mt-3 flex flex-wrap items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3 pt-1">
           <button
             type="button"
             onClick={handleVoiceParse}
             disabled={parsing || !dictatedText.trim()}
-            className="min-h-11 inline-flex items-center rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white disabled:opacity-60"
+            className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
           >
-            {parsing ? "Parsing dictation…" : "Fill form from speech"}
+            {parsing ? "Parsing speech…" : "Fill profile from speech"}
           </button>
           <button
             type="button"
@@ -215,202 +272,34 @@ export default function PeoplePage() {
               setFormData(INITIAL_FORM);
               setNeverTellInput("");
               setUnclearFields([]);
-              setShowForm(true);
+              setIsEditing(true);
+              setSelectedContact(null);
             }}
-            className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] px-4 text-xs font-medium hover:bg-[var(--color-paper-sunk)]"
+            className="min-h-11 inline-flex items-center justify-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-ink)] hover:bg-[var(--color-paper-sunk)] active-press transition"
           >
-            Add manually
+            Add contact manually
           </button>
         </div>
       </section>
 
       {error && (
-        <p role="alert" className="rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-sm">
+        <p role="alert" className="rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-sm text-[var(--color-ink)] animate-fade-in">
           {error}
         </p>
       )}
 
-      {/* Contact Form Modal / Drawer */}
-      {showForm && (
-        <section className="rounded-[var(--radius-card)] border-2 border-[var(--color-accent)]/50 bg-[var(--color-paper)] p-5 space-y-4">
-          <div className="flex items-center justify-between border-b border-[var(--color-rule)] pb-3">
-            <h2 className="text-lg font-semibold">
-              {formData.id ? "Edit Contact" : "New Contact"}
-            </h2>
-            <button
-              type="button"
-              onClick={() => setShowForm(false)}
-              className="text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
-            >
-              Cancel
-            </button>
-          </div>
-
-          {unclearFields.length > 0 && (
-            <div className="rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-xs">
-              <span className="font-semibold">Review flagged fields: </span>
-              {unclearFields.join(", ")} were not supplied in dictation. Please verify them.
-            </div>
-          )}
-
-          <form onSubmit={handleSaveContact} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-xs font-medium">Name *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium">Role *</label>
-                <input
-                  type="text"
-                  required
-                  value={formData.role}
-                  onChange={(e) => setFormData({ ...formData, role: e.target.value })}
-                  placeholder="e.g. Packaging vendor, UI designer"
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium">Relationship</label>
-                <input
-                  type="text"
-                  value={formData.relationship}
-                  onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
-                  placeholder="e.g. supplier, freelance colleague"
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium">
-                  Language & Script * <span className="text-[var(--color-ink-faint)]">(free text)</span>
-                </label>
-                <input
-                  type="text"
-                  required
-                  value={formData.language}
-                  onChange={(e) => setFormData({ ...formData, language: e.target.value })}
-                  placeholder="e.g. Hinglish, Roman script or Hindi, Devanagari"
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium">Channel *</label>
-                <select
-                  value={formData.channel}
-                  onChange={(e) => setFormData({ ...formData, channel: e.target.value as Channel })}
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                >
-                  <option value="whatsapp">WhatsApp (wa.me)</option>
-                  <option value="email">Email (mailto:)</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-xs font-medium">Formality</label>
-                <select
-                  value={formData.formality}
-                  onChange={(e) => setFormData({ ...formData, formality: e.target.value as Formality })}
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                >
-                  <option value="formal">Formal</option>
-                  <option value="neutral">Neutral</option>
-                  <option value="casual">Casual</option>
-                </select>
-              </div>
-
-              <div className={unclearFields.includes("phone") ? "rounded p-1 border border-[var(--color-warning)]" : ""}>
-                <label className="block text-xs font-medium">
-                  Phone (E.164) {formData.channel === "whatsapp" && <span className="text-[var(--color-accent)] font-semibold">* Required for WhatsApp</span>}
-                </label>
-                <input
-                  type="text"
-                  value={formData.phone ?? ""}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+919000000099"
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none font-mono"
-                />
-              </div>
-
-              <div className={unclearFields.includes("email") ? "rounded p-1 border border-[var(--color-warning)]" : ""}>
-                <label className="block text-xs font-medium">
-                  Email {formData.channel === "email" && <span className="text-[var(--color-accent)] font-semibold">* Required for Email</span>}
-                </label>
-                <input
-                  type="email"
-                  value={formData.email ?? ""}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="ramesh@sayonce.example"
-                  className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium">Cares About (Priorities)</label>
-              <textarea
-                value={formData.caresAbout}
-                onChange={(e) => setFormData({ ...formData, caresAbout: e.target.value })}
-                rows={2}
-                placeholder="e.g. Quantities, arrival dates, shipment counts. No operational gossip."
-                className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-2.5 text-sm outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-medium">
-                Never Tell (Privacy Shield Topics) <span className="text-[var(--color-ink-faint)]">— separate with semicolons</span>
-              </label>
-              <input
-                type="text"
-                value={neverTellInput}
-                onChange={(e) => setNeverTellInput(e.target.value)}
-                placeholder="pricing; vendor cost; internal margin"
-                className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
-              />
-            </div>
-
-            <div className="flex items-center gap-3 pt-2">
-              <button
-                type="submit"
-                disabled={saving}
-                className="rounded bg-[var(--color-accent)] px-5 py-2 text-xs font-semibold text-white disabled:opacity-60"
-              >
-                {saving ? "Saving…" : "Save Contact"}
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowForm(false)}
-                className="rounded border border-[var(--color-rule)] px-4 py-2 text-xs hover:bg-[var(--color-paper-sunk)]"
-              >
-                Cancel
-              </button>
-            </div>
-          </form>
-        </section>
-      )}
-
-      {/* Dataset filter */}
+      {/* Roster Controls & Directory */}
       <section className="space-y-4">
-        <div className="flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-rule)] pb-3">
           <div className="flex items-center gap-2">
-            <label htmlFor="dataset" className="text-sm font-medium">
+            <label htmlFor="dataset" className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-soft)] font-mono">
               Roster:
             </label>
             <select
               id="dataset"
               value={dataset}
               onChange={(e) => setDataset(e.target.value)}
-              className="min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm"
+              className="min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm text-[var(--color-ink)]"
             >
               <option value="real">My Working Contacts (real)</option>
               <option value="india">Demo: Indian Team</option>
@@ -418,99 +307,393 @@ export default function PeoplePage() {
             </select>
           </div>
 
-          <span className="text-xs text-[var(--color-ink-soft)]">
+          <span className="font-mono text-xs text-[var(--color-ink-soft)]">
             {contacts.length} {contacts.length === 1 ? "contact" : "contacts"}
           </span>
         </div>
 
         {loading ? (
-          <div className="py-8 text-center text-sm text-[var(--color-ink-soft)]">Loading contacts…</div>
+          <div className="py-12 text-center text-sm font-mono text-[var(--color-ink-soft)]">
+            Loading roster…
+          </div>
         ) : contacts.length === 0 ? (
-          <div className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-rule)] p-8 text-center text-sm text-[var(--color-ink-soft)]">
-            No contacts in this roster. Dictate or add one above.
+          <div className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-rule)] bg-[var(--color-surface-raised)]/40 p-12 text-center space-y-3">
+            <p
+              className="font-serif text-lg font-semibold tracking-tight text-[var(--color-ink)]"
+              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            >
+              No contacts in this roster yet.
+            </p>
+            <p className="text-xs text-[var(--color-ink-soft)] max-w-sm mx-auto leading-relaxed">
+              Use the voice box above to speak your first contact, or add one manually.
+            </p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {contacts.map((contact) => (
-              <article
-                key={contact.id}
-                className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 space-y-3 flex flex-col justify-between"
-              >
-                <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <div>
-                      <h3 className="font-semibold text-base">{contact.name}</h3>
-                      <p className="text-xs text-[var(--color-ink-soft)]">
-                        {contact.role} {contact.relationship ? `(${contact.relationship})` : ""}
-                      </p>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      <Badge tone="neutral">{contact.channel}</Badge>
-                      <Badge tone="neutral">{contact.formality}</Badge>
-                    </div>
-                  </div>
-
-                  <div className="mt-3 space-y-1.5 text-xs">
-                    <p>
-                      <span className="text-[var(--color-ink-soft)]">Language: </span>
-                      <span className="font-medium">{contact.language}</span>
-                    </p>
-                    {contact.phone && (
-                      <p>
-                        <span className="text-[var(--color-ink-soft)]">Phone: </span>
-                        <span className="font-mono">{contact.phone}</span>
-                      </p>
-                    )}
-                    {contact.email && (
-                      <p>
-                        <span className="text-[var(--color-ink-soft)]">Email: </span>
-                        <span>{contact.email}</span>
-                      </p>
-                    )}
-                    {contact.caresAbout && (
-                      <p className="text-[var(--color-ink-soft)] line-clamp-2">
-                        <span className="font-medium text-[var(--color-ink)]">Cares about: </span>
-                        {contact.caresAbout}
-                      </p>
-                    )}
-                    {contact.neverTell.length > 0 && (
-                      <div className="flex flex-wrap gap-1 pt-1">
-                        <span className="text-[var(--color-blocked)] font-medium">Never tell:</span>
-                        {contact.neverTell.map((topic, i) => (
-                          <span
-                            key={i}
-                            className="rounded bg-[var(--color-blocked-wash)] px-1.5 py-0.5 text-[10px] text-[var(--color-blocked)] border border-[var(--color-blocked)]/30"
+          <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] overflow-hidden shadow-sm">
+            <ul role="list" className="divide-y divide-[var(--color-rule)]">
+              {contacts.map((contact) => {
+                const initial = (contact.name || "?")[0]?.toUpperCase();
+                return (
+                  <li key={contact.id}>
+                    <button
+                      type="button"
+                      onClick={(e) => handleRowClick(contact, e.currentTarget)}
+                      className="w-full min-h-[52px] text-left px-4 py-3 flex items-center justify-between gap-3 hover:bg-[var(--color-surface-raised)]/60 active-press transition cursor-pointer"
+                    >
+                      <div className="flex items-center gap-3 min-w-0">
+                        <div className="w-9 h-9 rounded-full bg-[var(--color-accent-wash)] text-[var(--color-accent)] font-semibold text-xs flex items-center justify-center font-mono flex-shrink-0 border border-[var(--color-accent)]/20">
+                          {initial}
+                        </div>
+                        <div className="min-w-0">
+                          <h3
+                            className="font-serif text-base font-semibold tracking-tight text-[var(--color-ink)] truncate"
+                            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
                           >
-                            {topic}
-                          </span>
-                        ))}
+                            {contact.name}
+                          </h3>
+                          <p className="text-xs text-[var(--color-ink-soft)] truncate">
+                            {contact.role} {contact.relationship ? `· ${contact.relationship}` : ""}
+                          </p>
+                        </div>
                       </div>
-                    )}
-                  </div>
-                </div>
 
-                <div className="flex items-center justify-end gap-2 border-t border-[var(--color-rule)] pt-3 mt-2">
-                  <button
-                    type="button"
-                    onClick={() => handleEdit(contact)}
-                    className="min-h-11 inline-flex items-center px-2 text-xs font-medium text-[var(--color-ink)] hover:underline"
-                  >
-                    Edit
-                  </button>
-                  <span className="text-[var(--color-rule)]">·</span>
-                  <button
-                    type="button"
-                    onClick={() => handleArchive(contact.id)}
-                    className="min-h-11 inline-flex items-center px-2 text-xs font-medium text-[var(--color-blocked)] hover:underline"
-                  >
-                    Archive
-                  </button>
-                </div>
-              </article>
-            ))}
+                      <div className="flex items-center gap-2 flex-shrink-0">
+                        <div className="hidden sm:flex items-center gap-1.5">
+                          <Badge tone="neutral">{contact.language}</Badge>
+                          <Badge tone="neutral">
+                            {contact.channel === "whatsapp" ? "WhatsApp" : "Email"}
+                          </Badge>
+                          <Badge tone="neutral">{contact.formality}</Badge>
+                        </div>
+                        <span className="text-xs text-[var(--color-ink-faint)] font-mono">→</span>
+                      </div>
+                    </button>
+                  </li>
+                );
+              })}
+            </ul>
           </div>
         )}
       </section>
+
+      {/* Right Drawer with .animate-slide-in-right over backdrop-blur-md veil */}
+      {(selectedContact !== null || isEditing) && (
+        <div className="fixed inset-0 z-50 flex justify-end">
+          {/* Backdrop veil */}
+          <div
+            className="fixed inset-0 bg-black/40 backdrop-blur-md transition-opacity animate-fade-in"
+            onClick={closeDrawer}
+            aria-hidden="true"
+          />
+
+          {/* Drawer surface */}
+          <div
+            ref={drawerRef}
+            role="dialog"
+            aria-modal="true"
+            aria-labelledby="drawer-title"
+            tabIndex={-1}
+            className="animate-slide-in-right relative z-10 w-full max-w-lg bg-[var(--color-paper)] p-6 shadow-2xl overflow-y-auto flex flex-col justify-between border-l border-[var(--color-rule)]"
+          >
+            <div>
+              {/* Drawer Header */}
+              <div className="flex items-center justify-between border-b border-[var(--color-rule)] pb-4">
+                <div className="flex items-center gap-3">
+                  <div className="w-10 h-10 rounded-full bg-[var(--color-accent-wash)] text-[var(--color-accent)] font-semibold text-sm flex items-center justify-center font-mono border border-[var(--color-accent)]/20">
+                    {(isEditing ? formData.name || "?" : selectedContact?.name || "?")[0]?.toUpperCase()}
+                  </div>
+                  <div>
+                    <h2
+                      id="drawer-title"
+                      className="font-serif text-2xl font-semibold tracking-tight text-[var(--color-ink)]"
+                      style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                    >
+                      {isEditing
+                        ? formData.id
+                          ? "Edit Contact"
+                          : "New Contact"
+                        : selectedContact?.name}
+                    </h2>
+                    <p className="text-xs text-[var(--color-ink-soft)]">
+                      {isEditing ? "Profile details" : selectedContact?.role}
+                    </p>
+                  </div>
+                </div>
+
+                <button
+                  type="button"
+                  onClick={closeDrawer}
+                  className="min-h-11 min-w-11 inline-flex items-center justify-center rounded-lg border border-[var(--color-rule)] text-[var(--color-ink-soft)] hover:text-[var(--color-ink)] hover:bg-[var(--color-paper-sunk)] active-press transition"
+                  aria-label="Close drawer"
+                >
+                  ✕
+                </button>
+              </div>
+
+              {/* View Mode: Contact Details */}
+              {!isEditing && selectedContact && (
+                <div className="mt-6 space-y-6 text-sm">
+                  <div className="flex flex-wrap gap-1.5">
+                    <Badge tone="neutral">{selectedContact.language}</Badge>
+                    <Badge tone="neutral">
+                      {selectedContact.channel === "whatsapp" ? "WhatsApp" : "Email"}
+                    </Badge>
+                    <Badge tone="neutral">{selectedContact.formality}</Badge>
+                    {selectedContact.relationship && (
+                      <Badge tone="neutral">{selectedContact.relationship}</Badge>
+                    )}
+                  </div>
+
+                  <div className="space-y-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-4">
+                    {selectedContact.phone && (
+                      <div>
+                        <span className="text-xs font-semibold text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
+                          Phone (wa.me)
+                        </span>
+                        <p className="font-mono text-sm text-[var(--color-ink)] mt-0.5">
+                          {selectedContact.phone}
+                        </p>
+                      </div>
+                    )}
+                    {selectedContact.email && (
+                      <div>
+                        <span className="text-xs font-semibold text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
+                          Email (mailto)
+                        </span>
+                        <p className="font-mono text-sm text-[var(--color-ink)] mt-0.5">
+                          {selectedContact.email}
+                        </p>
+                      </div>
+                    )}
+                  </div>
+
+                  {selectedContact.caresAbout && (
+                    <div>
+                      <h4 className="text-xs font-semibold text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
+                        Priorities (Cares About)
+                      </h4>
+                      <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink)] leading-relaxed">
+                        {selectedContact.caresAbout}
+                      </p>
+                    </div>
+                  )}
+
+                  <div>
+                    <h4 className="text-xs font-semibold text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
+                      Privacy Shield (Never Tell Topics)
+                    </h4>
+                    {selectedContact.neverTell.length > 0 ? (
+                      <div className="mt-2 flex flex-wrap gap-1.5">
+                        {selectedContact.neverTell.map((topic, i) => (
+                          <Badge key={i} tone="locked">
+                            🔒 {topic}
+                          </Badge>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="mt-1 text-xs text-[var(--color-ink-faint)] italic">
+                        No standing restrictions set.
+                      </p>
+                    )}
+                  </div>
+
+                  {selectedContact.learnedRules && selectedContact.learnedRules.length > 0 && (
+                    <div>
+                      <h4 className="text-xs font-semibold text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
+                        Learned Rules (Phase 5 Memory)
+                      </h4>
+                      <ul className="mt-2 list-disc pl-5 text-xs text-[var(--color-ink-soft)] space-y-1">
+                        {selectedContact.learnedRules.map((rule, i) => (
+                          <li key={i}>{rule}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {/* Edit / New Mode: Contact Form */}
+              {isEditing && (
+                <form id="contact-form" onSubmit={handleSaveContact} className="mt-6 space-y-4 text-xs sm:text-sm">
+                  {unclearFields.length > 0 && (
+                    <div className="rounded-[var(--radius-card)] border border-[var(--color-warning)] bg-[var(--color-warning-wash)] p-3 text-xs text-[var(--color-ink)]">
+                      <span className="font-semibold text-[var(--color-warning)]">Review flagged fields: </span>
+                      {unclearFields.join(", ")} were unclear or omitted from dictation. Please verify them.
+                    </div>
+                  )}
+
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">Name *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">Role *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.role}
+                        onChange={(e) => setFormData({ ...formData, role: e.target.value })}
+                        placeholder="e.g. Packaging vendor, Team lead"
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">Relationship</label>
+                      <input
+                        type="text"
+                        value={formData.relationship}
+                        onChange={(e) => setFormData({ ...formData, relationship: e.target.value })}
+                        placeholder="e.g. supplier, client, core team"
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">Language &amp; Script *</label>
+                      <input
+                        type="text"
+                        required
+                        value={formData.language}
+                        onChange={(e) => setFormData({ ...formData, language: e.target.value })}
+                        placeholder="e.g. Hinglish, Roman script or Hindi, Devanagari"
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                      />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-3">
+                      <div>
+                        <label className="block text-xs font-medium text-[var(--color-ink)]">Channel *</label>
+                        <select
+                          value={formData.channel}
+                          onChange={(e) => setFormData({ ...formData, channel: e.target.value as Channel })}
+                          className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                        >
+                          <option value="whatsapp">WhatsApp (wa.me)</option>
+                          <option value="email">Email (mailto:)</option>
+                        </select>
+                      </div>
+
+                      <div>
+                        <label className="block text-xs font-medium text-[var(--color-ink)]">Formality</label>
+                        <select
+                          value={formData.formality}
+                          onChange={(e) => setFormData({ ...formData, formality: e.target.value as Formality })}
+                          className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                        >
+                          <option value="formal">Formal</option>
+                          <option value="neutral">Neutral</option>
+                          <option value="casual">Casual</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div className={unclearFields.includes("phone") ? "rounded border border-[var(--color-warning)] p-1.5" : ""}>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">
+                        Phone (E.164) {formData.channel === "whatsapp" && <span className="text-[var(--color-accent)] font-semibold">* Required for WhatsApp</span>}
+                      </label>
+                      <input
+                        type="text"
+                        value={formData.phone ?? ""}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+919000000099"
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm font-mono outline-none"
+                      />
+                    </div>
+
+                    <div className={unclearFields.includes("email") ? "rounded border border-[var(--color-warning)] p-1.5" : ""}>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">
+                        Email {formData.channel === "email" && <span className="text-[var(--color-accent)] font-semibold">* Required for Email</span>}
+                      </label>
+                      <input
+                        type="email"
+                        value={formData.email ?? ""}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="name@sayonce.example"
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm font-mono outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">Priorities (Cares About)</label>
+                      <textarea
+                        value={formData.caresAbout}
+                        onChange={(e) => setFormData({ ...formData, caresAbout: e.target.value })}
+                        rows={2}
+                        placeholder="e.g. Quantities, arrival dates, shipment counts. No operational gossip."
+                        className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-2.5 text-sm outline-none"
+                      />
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-medium text-[var(--color-ink)]">
+                        Privacy Shield (Never Tell Topics) <span className="text-[var(--color-ink-faint)]">— separate with semicolons</span>
+                      </label>
+                      <input
+                        type="text"
+                        value={neverTellInput}
+                        onChange={(e) => setNeverTellInput(e.target.value)}
+                        placeholder="pricing; vendor cost; internal margin"
+                        className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-sm outline-none"
+                      />
+                    </div>
+                  </div>
+                </form>
+              )}
+            </div>
+
+            {/* Drawer Actions */}
+            <div className="border-t border-[var(--color-rule)] pt-4 mt-8 flex flex-wrap items-center justify-between gap-3">
+              {!isEditing && selectedContact && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => handleStartEdit(selectedContact)}
+                    className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition"
+                  >
+                    Edit profile
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => handleArchive(selectedContact.id)}
+                    className="min-h-11 inline-flex items-center justify-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-blocked)] hover:bg-[var(--color-blocked-wash)] active-press transition"
+                  >
+                    Archive contact
+                  </button>
+                </>
+              )}
+
+              {isEditing && (
+                <>
+                  <button
+                    type="submit"
+                    form="contact-form"
+                    disabled={saving}
+                    className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+                  >
+                    {saving ? "Saving…" : "Save Contact"}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={closeDrawer}
+                    className="min-h-11 inline-flex items-center justify-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-medium text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] active-press transition"
+                  >
+                    Cancel
+                  </button>
+                </>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
