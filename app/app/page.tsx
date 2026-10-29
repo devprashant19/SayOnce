@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import { SpeakBox } from "@/components/SpeakBox";
 import { DraftCard } from "@/components/DraftCard";
 import { FactList } from "@/components/FactList";
@@ -9,6 +9,7 @@ import { PrivacyPanel } from "@/components/PrivacyPanel";
 import { TrustTrailViewer } from "@/components/TrustTrailViewer";
 import { ContradictionBanner } from "@/components/ContradictionBanner";
 import { SendGuidedQueue, type QueueItem } from "@/components/SendGuidedQueue";
+import { CommandBar } from "@/components/CommandBar";
 import { Badge } from "@/components/Badge";
 import { sendTargetFor } from "@/lib/links";
 import { CONTACT_SET_LABELS } from "@/lib/contact-sets";
@@ -17,6 +18,7 @@ import type { CheckOutcome } from "@/lib/checker";
 import type { VoiceReturn } from "@/lib/voice-return";
 import type { TrailEntry } from "@/lib/trail";
 import type { ContradictionAlert } from "@/lib/consistency";
+import type { ParsedCommand } from "@/lib/command-bar";
 import demoUpdates from "@/data/demo/updates.json";
 
 interface Card {
@@ -72,6 +74,18 @@ export default function SpeakPage() {
   const [activeRecipients, setActiveRecipients] = useState<string[]>([]);
   const [showQueue, setShowQueue] = useState(false);
   const [mountTime] = useState(() => Date.now());
+  const [commandBarOpen, setCommandBarOpen] = useState(false);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setCommandBarOpen((prev) => !prev);
+      }
+    }
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
 
   const handleApplyCorrection = useCallback((alert: ContradictionAlert) => {
     setResult((prev) => {
@@ -93,6 +107,87 @@ export default function SpeakPage() {
       };
     });
   }, []);
+
+  const handleExecuteCommand = useCallback(
+    (cmd: ParsedCommand) => {
+      switch (cmd.action) {
+        case "send_selected": {
+          if (!result) break;
+          if (cmd.targets.includes("all")) {
+            const excludeLower = cmd.excludeTargets.map((t) => t.toLowerCase());
+            const toSend = result.cards.filter(
+              (c) =>
+                c.draft &&
+                c.check?.ok &&
+                !excludeLower.some((ex) => c.contact.name.toLowerCase().includes(ex)),
+            );
+            setActiveRecipients(toSend.map((c) => c.contact.id));
+            setShowQueue(true);
+          } else {
+            const match = result.cards.find((c) =>
+              cmd.targets.some((t) => c.contact.name.toLowerCase().includes(t.toLowerCase())),
+            );
+            if (match && match.draft && match.check?.ok) {
+              const target = sendTargetFor(match.draft, match.contact);
+              if (target.href) {
+                window.open(target.href, "_blank", "noopener,noreferrer");
+                handleToggleSent(match.messageId, true);
+              }
+            }
+          }
+          break;
+        }
+        case "modify_draft": {
+          if (!result) break;
+          const target = result.cards.find((c) =>
+            cmd.targets.some(
+              (t) =>
+                c.contact.name.toLowerCase().includes(t.toLowerCase()) ||
+                (t.toLowerCase() === "boss" && c.contact.role.toLowerCase().includes("head")),
+            ),
+          );
+          if (target && target.draft) {
+            const sentences = target.draft.body.split(/(?<=[.?!])\s+/);
+            if (sentences.length > 2) {
+              const shortened = sentences.slice(0, 2).join(" ");
+              setResult((prev) => {
+                if (!prev) return null;
+                return {
+                  ...prev,
+                  cards: prev.cards.map((c) =>
+                    c.contact.id === target.contact.id && c.draft
+                      ? { ...c, draft: { ...c.draft, body: shortened } }
+                      : c,
+                  ),
+                };
+              });
+            }
+          }
+          break;
+        }
+        case "switch_dataset": {
+          if (cmd.params.dataset) {
+            setContactSet(cmd.params.dataset);
+          }
+          break;
+        }
+        case "filter_project": {
+          if (cmd.params.project) {
+            setProject(cmd.params.project);
+          }
+          break;
+        }
+        case "clear": {
+          setSpokenText("");
+          setResult(null);
+          setError(null);
+          break;
+        }
+      }
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [result],
+  );
 
   const fanOut = useCallback(async () => {
     if (spokenText.trim().length === 0) {
@@ -227,10 +322,35 @@ export default function SpeakPage() {
   return (
     <div className="space-y-8">
       <section>
-        <h1 className="text-2xl font-semibold tracking-tight">Speak</h1>
-        <p className="mt-1 text-[var(--color-ink-soft)]">
-          One update. Everyone who needs to know gets their own version.
-        </p>
+        <div className="flex flex-wrap items-center justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-semibold tracking-tight">Speak</h1>
+            <p className="mt-1 text-[var(--color-ink-soft)]">
+              One update. Everyone who needs to know gets their own version.
+            </p>
+          </div>
+          <button
+            type="button"
+            onClick={() => setCommandBarOpen(true)}
+            className="flex min-h-11 items-center gap-1.5 rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 text-xs font-semibold text-[var(--color-ink-soft)] hover:bg-[var(--color-paper)] hover:text-[var(--color-ink)]"
+          >
+            <span>⌘K</span>
+            <span>Command Bar</span>
+          </button>
+        </div>
+
+        <div className="mt-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper-sunk)]/50 p-3 text-xs">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <span className="font-semibold text-[var(--color-ink)]">How SayOnce works:</span>
+            <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[var(--color-ink-soft)]">
+              <span><strong>1. Speak</strong> raw update (mix Hindi & English)</span>
+              <span>→</span>
+              <span><strong>2. Shield</strong> recipient secrets & verify facts</span>
+              <span>→</span>
+              <span><strong>3. Send</strong> tailored WhatsApp/Email in one tap</span>
+            </div>
+          </div>
+        </div>
 
         <div className="mt-6 space-y-4">
           <SpeakBox
@@ -318,12 +438,33 @@ export default function SpeakPage() {
       </section>
 
       {busy && (
-        <section aria-live="polite" className="space-y-3">
+        <section aria-live="polite" aria-label="Fanning out drafts" className="space-y-4">
+          <div className="h-14 animate-pulse rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 flex items-center justify-between">
+            <div className="h-4 w-44 rounded bg-[var(--color-rule)]" />
+            <div className="h-4 w-20 rounded bg-[var(--color-rule)]" />
+          </div>
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="h-28 animate-pulse rounded-[var(--radius-card)] bg-[var(--color-paper-sunk)]"
-            />
+              className="space-y-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="h-5 w-32 animate-pulse rounded bg-[var(--color-rule)]" />
+                <div className="flex gap-2">
+                  <div className="h-5 w-16 animate-pulse rounded-full bg-[var(--color-rule)]" />
+                  <div className="h-5 w-20 animate-pulse rounded-full bg-[var(--color-rule)]" />
+                </div>
+              </div>
+              <div className="space-y-2 pt-2">
+                <div className="h-4 w-full animate-pulse rounded bg-[var(--color-paper-sunk)]" />
+                <div className="h-4 w-5/6 animate-pulse rounded bg-[var(--color-paper-sunk)]" />
+                <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--color-paper-sunk)]" />
+              </div>
+              <div className="pt-2 flex gap-2">
+                <div className="h-9 w-20 animate-pulse rounded bg-[var(--color-rule)]" />
+                <div className="h-9 w-32 animate-pulse rounded bg-[var(--color-rule)]" />
+              </div>
+            </div>
           ))}
         </section>
       )}
@@ -445,6 +586,8 @@ export default function SpeakPage() {
                     draft={card.draft}
                     check={card.check}
                     error={card.error}
+                    facts={result.facts}
+                    project={project}
                     sendHref={target?.href ?? null}
                     sendLabel={target?.label ?? "Send"}
                     sendBlockedReason={target?.blockedReason ?? null}
@@ -480,6 +623,12 @@ export default function SpeakPage() {
           )}
         </>
       )}
+
+      <CommandBar
+        isOpen={commandBarOpen}
+        onClose={() => setCommandBarOpen(false)}
+        onExecute={handleExecuteCommand}
+      />
     </div>
   );
 }

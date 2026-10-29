@@ -1,0 +1,5860 @@
+{
+  "demo_in_1": {
+    "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+    "at": "2026-10-29T15:03:50.233Z",
+    "spokenText": "Okay so the Bhiwandi dispatch, um, the truck didn't leave today because the packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye. And Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein. Anita ko main khud batata hoon ki client ko inform kar diya.",
+    "masked": [],
+    "summary": "Bhiwandi dispatch delayed to Monday due to packaging shortage; informing client of new date without mentioning vendor issues, requesting warehouse support, and following up with Ramesh for remaining cartons.",
+    "decisions": [
+      "Delivery rescheduled to Monday",
+      "Informing client of new schedule",
+      "Requesting 3 people for unloading on Monday",
+      "Following up with Ramesh for 150 cartons by Saturday"
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "the truck didn't leave today because the packaging came short",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-29"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 21,
+          "end": 81
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "Ramesh ne sirf dhai sau cartons bheje",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "250"
+          ],
+          "datesIso": [],
+          "names": [
+            "Ramesh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 83,
+          "end": 120
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_client"
+          ],
+          "reason": "never tell about vendor names"
+        }
+      },
+      {
+        "id": "f3",
+        "text": "we needed four hundred",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "400"
+          ],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 122,
+          "end": 145
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f4",
+        "text": "delivery Friday nahi hogi, now it's Monday",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 147,
+          "end": 189
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f5",
+        "text": "Priya ko bata dena ki delivery Monday hai",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": [
+            "Priya"
+          ]
+        },
+        "sourceSpan": {
+          "start": 191,
+          "end": 232
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f6",
+        "text": "don't tell her the vendor shorted us",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 238,
+          "end": 275
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_client"
+          ],
+          "reason": "never tell about internal blame"
+        }
+      },
+      {
+        "id": "f7",
+        "text": "Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye",
+        "type": "ask",
+        "values": {
+          "numbers": [
+            "3"
+          ],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": [
+            "Suresh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 298,
+          "end": 361
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f8",
+        "text": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "type": "ask",
+        "values": {
+          "numbers": [
+            "150"
+          ],
+          "datesIso": [
+            "2026-10-31"
+          ],
+          "names": [
+            "Ramesh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 364,
+          "end": 435
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f9",
+        "text": "Anita ko main khud batata hoon ki client ko inform kar diya",
+        "type": "commitment",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": [
+            "Anita"
+          ]
+        },
+        "sourceSpan": {
+          "start": 436,
+          "end": 495
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "6c70f49c-19be-4c40-8c7a-3d87b2e0b9c9",
+        "contact": {
+          "id": "c_boss",
+          "name": "Anita Desai",
+          "role": "Operations Head",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "anita.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Update on retail order delivery",
+          "body": "Dear Anita, The retail order delivery is rescheduled from Friday to Monday, 2026-11-02. Best regards,",
+          "usedFactIds": [
+            "f4"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Anita,",
+              "factIds": []
+            },
+            {
+              "sentence": "The retail order delivery is rescheduled from Friday to Monday, 2026-11-02.",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": true,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "e7232a6b-4fc6-42b9-8890-88b60d3f0a86",
+        "contact": {
+          "id": "c_vendor",
+          "name": "Ramesh Kulkarni",
+          "role": "Packaging vendor",
+          "relationship": "our packaging supplier",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+          "neverTell": [
+            "our margins",
+            "what we pay other vendors"
+          ]
+        },
+        "draft": {
+          "subject": null,
+          "body": "Ramesh, baaki 150 cartons parso tak deliver kar dijiye. Thanks.",
+          "usedFactIds": [
+            "f8"
+          ],
+          "sentences": [
+            {
+              "sentence": "Ramesh, baaki 150 cartons parso tak deliver kar dijiye.",
+              "factIds": [
+                "f8"
+              ]
+            },
+            {
+              "sentence": "Thanks.",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_vendor",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "297ba2ee-76f5-4ad2-b693-5a5243288abf",
+        "contact": {
+          "id": "c_warehouse",
+          "name": "Suresh Yadav",
+          "role": "Warehouse lead",
+          "relationship": "runs the Bhiwandi warehouse",
+          "language": "Hindi, Devanagari",
+          "channel": "whatsapp",
+          "phone": "+919000000002",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "सुरेश, डिलीवरी शुक्रवार को नहीं होगी, अब यह सोमवार को आएगी। सोमवार सुबह अनलोडिंग के लिए तीन लोगों की जरूरत है। धन्यवाद।",
+          "usedFactIds": [
+            "f4",
+            "f7"
+          ],
+          "sentences": [
+            {
+              "sentence": "सुरेश, डिलीवरी शुक्रवार को नहीं होगी, अब यह सोमवार को आएगी।",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "सोमवार सुबह अनलोडिंग के लिए तीन लोगों की जरूरत है।",
+              "factIds": [
+                "f7"
+              ]
+            },
+            {
+              "sentence": "धन्यवाद।",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_warehouse",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "c8c58c1f-0862-4c41-a25e-a8bdc8731725",
+        "contact": {
+          "id": "c_client",
+          "name": "Priya Nair",
+          "role": "Client project manager",
+          "relationship": "the customer's side lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "priya.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+          "neverTell": [
+            "internal blame",
+            "vendor names",
+            "our costs"
+          ]
+        },
+        "draft": {
+          "subject": "Update regarding delivery schedule",
+          "body": "Dear Priya Nair, Please be advised that the delivery will now take place on Monday, 2026-11-02, instead of Friday. Regards,",
+          "usedFactIds": [
+            "f4",
+            "f5"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Priya Nair,",
+              "factIds": []
+            },
+            {
+              "sentence": "Please be advised that the delivery will now take place on Monday, 2026-11-02, instead of Friday.",
+              "factIds": [
+                "f4",
+                "f5"
+              ]
+            },
+            {
+              "sentence": "Regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_client",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": true,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "e92603b1-9907-4260-ae20-73aa5d2d27b6",
+        "contact": {
+          "id": "c_team",
+          "name": "Imran Shaikh",
+          "role": "Ops coordinator",
+          "relationship": "works with me day to day",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000003",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "What he has to do next and by when. Short messages only.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "c_boss",
+          "include": true,
+          "reason": "Delivery date has shifted to Monday, requiring management oversight.",
+          "confidence": 0.95,
+          "factIds": [
+            "f4"
+          ]
+        },
+        {
+          "contactId": "c_vendor",
+          "include": true,
+          "reason": "Needs to deliver the remaining 150 cartons by the day after tomorrow.",
+          "confidence": 1,
+          "factIds": [
+            "f8"
+          ]
+        },
+        {
+          "contactId": "c_warehouse",
+          "include": true,
+          "reason": "Needs to schedule three people for unloading on Monday morning.",
+          "confidence": 1,
+          "factIds": [
+            "f4",
+            "f7"
+          ]
+        },
+        {
+          "contactId": "c_client",
+          "include": true,
+          "reason": "Needs to be informed of the new delivery date.",
+          "confidence": 1,
+          "factIds": [
+            "f4",
+            "f5"
+          ]
+        },
+        {
+          "contactId": "c_team",
+          "include": false,
+          "reason": "No specific tasks assigned to Imran in this update.",
+          "confidence": 0.9,
+          "factIds": []
+        }
+      ]
+    },
+    "contradictions": [
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_boss",
+        "recipientName": "Anita Desai",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      },
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_vendor",
+        "recipientName": "Ramesh Kulkarni",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      },
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_warehouse",
+        "recipientName": "Suresh Yadav",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      },
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_client",
+        "recipientName": "Priya Nair",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      }
+    ],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 93,
+      "wordsDelivered": 89,
+      "people": 4,
+      "languages": 3,
+      "minutesSaved": null,
+      "amplification": 1
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Okay so the Bhiwandi dispatch, um, the truck didn't leave today because the packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye. And Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein. Anita ko main khud batata hoon ki client ko inform kar diya.",
+          "project": "Diwali retail order"
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 1,
+        "at": "2026-10-29T15:03:50.233Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "de89d8dd535b180e50f09e950dd96fe4d537b8a5c884ad1549c24d26be5ec071"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6",
+            "f7",
+            "f8",
+            "f9"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 2,
+        "at": "2026-10-29T15:03:58.009Z",
+        "prevHash": "de89d8dd535b180e50f09e950dd96fe4d537b8a5c884ad1549c24d26be5ec071",
+        "hash": "e3053f97a2cedb418a2687ca61e3fcb8fd03979ac93fcb7385a251d0fd0dd671"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "c_boss",
+              "include": true,
+              "reason": "Delivery date has shifted to Monday, requiring management oversight.",
+              "confidence": 0.95,
+              "factIds": [
+                "f4"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_vendor",
+              "include": true,
+              "reason": "Needs to deliver the remaining 150 cartons by the day after tomorrow.",
+              "confidence": 1,
+              "factIds": [
+                "f8"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_warehouse",
+              "include": true,
+              "reason": "Needs to schedule three people for unloading on Monday morning.",
+              "confidence": 1,
+              "factIds": [
+                "f4",
+                "f7"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_client",
+              "include": true,
+              "reason": "Needs to be informed of the new delivery date.",
+              "confidence": 1,
+              "factIds": [
+                "f4",
+                "f5"
+              ],
+              "withheld": [
+                "f2",
+                "f6"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "include": false,
+              "reason": "No specific tasks assigned to Imran in this update.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 3,
+        "at": "2026-10-29T15:04:20.059Z",
+        "prevHash": "e3053f97a2cedb418a2687ca61e3fcb8fd03979ac93fcb7385a251d0fd0dd671",
+        "hash": "a15f32258a033af06a3a21ee3cf70a7940e9afbd6a026abf0b8763edf1b22688"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "c_boss",
+              "usedFactIds": [
+                "f4"
+              ]
+            },
+            {
+              "contactId": "c_vendor",
+              "usedFactIds": [
+                "f8"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "usedFactIds": [
+                "f4",
+                "f7"
+              ]
+            },
+            {
+              "contactId": "c_client",
+              "usedFactIds": [
+                "f4",
+                "f5"
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 4,
+        "at": "2026-10-29T15:05:33.964Z",
+        "prevHash": "a15f32258a033af06a3a21ee3cf70a7940e9afbd6a026abf0b8763edf1b22688",
+        "hash": "d14817c952856dc8271bad963e45fe386522010a205f91a02912af0555d882ab"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "c_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_vendor",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_warehouse",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_client",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_team",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            }
+          ]
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 5,
+        "at": "2026-10-29T15:05:39.591Z",
+        "prevHash": "d14817c952856dc8271bad963e45fe386522010a205f91a02912af0555d882ab",
+        "hash": "1302eb2cedc349afaabb795dfe10f1392a9014129a575009d431b993c013acfe"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "Okay so the Bhiwandi dispatch, um, the truck didn't leave today because the packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye. And Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein. Anita ko main khud batata hoon ki client ko inform kar diya.": {
+    "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+    "at": "2026-10-29T15:03:50.233Z",
+    "spokenText": "Okay so the Bhiwandi dispatch, um, the truck didn't leave today because the packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye. And Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein. Anita ko main khud batata hoon ki client ko inform kar diya.",
+    "masked": [],
+    "summary": "Bhiwandi dispatch delayed to Monday due to packaging shortage; informing client of new date without mentioning vendor issues, requesting warehouse support, and following up with Ramesh for remaining cartons.",
+    "decisions": [
+      "Delivery rescheduled to Monday",
+      "Informing client of new schedule",
+      "Requesting 3 people for unloading on Monday",
+      "Following up with Ramesh for 150 cartons by Saturday"
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "the truck didn't leave today because the packaging came short",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-29"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 21,
+          "end": 81
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "Ramesh ne sirf dhai sau cartons bheje",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "250"
+          ],
+          "datesIso": [],
+          "names": [
+            "Ramesh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 83,
+          "end": 120
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_client"
+          ],
+          "reason": "never tell about vendor names"
+        }
+      },
+      {
+        "id": "f3",
+        "text": "we needed four hundred",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "400"
+          ],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 122,
+          "end": 145
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f4",
+        "text": "delivery Friday nahi hogi, now it's Monday",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 147,
+          "end": 189
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f5",
+        "text": "Priya ko bata dena ki delivery Monday hai",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": [
+            "Priya"
+          ]
+        },
+        "sourceSpan": {
+          "start": 191,
+          "end": 232
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f6",
+        "text": "don't tell her the vendor shorted us",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 238,
+          "end": 275
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_client"
+          ],
+          "reason": "never tell about internal blame"
+        }
+      },
+      {
+        "id": "f7",
+        "text": "Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye",
+        "type": "ask",
+        "values": {
+          "numbers": [
+            "3"
+          ],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": [
+            "Suresh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 298,
+          "end": 361
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f8",
+        "text": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "type": "ask",
+        "values": {
+          "numbers": [
+            "150"
+          ],
+          "datesIso": [
+            "2026-10-31"
+          ],
+          "names": [
+            "Ramesh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 364,
+          "end": 435
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f9",
+        "text": "Anita ko main khud batata hoon ki client ko inform kar diya",
+        "type": "commitment",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": [
+            "Anita"
+          ]
+        },
+        "sourceSpan": {
+          "start": 436,
+          "end": 495
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "6c70f49c-19be-4c40-8c7a-3d87b2e0b9c9",
+        "contact": {
+          "id": "c_boss",
+          "name": "Anita Desai",
+          "role": "Operations Head",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "anita.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Update on retail order delivery",
+          "body": "Dear Anita, The retail order delivery is rescheduled from Friday to Monday, 2026-11-02. Best regards,",
+          "usedFactIds": [
+            "f4"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Anita,",
+              "factIds": []
+            },
+            {
+              "sentence": "The retail order delivery is rescheduled from Friday to Monday, 2026-11-02.",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": true,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "e7232a6b-4fc6-42b9-8890-88b60d3f0a86",
+        "contact": {
+          "id": "c_vendor",
+          "name": "Ramesh Kulkarni",
+          "role": "Packaging vendor",
+          "relationship": "our packaging supplier",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+          "neverTell": [
+            "our margins",
+            "what we pay other vendors"
+          ]
+        },
+        "draft": {
+          "subject": null,
+          "body": "Ramesh, baaki 150 cartons parso tak deliver kar dijiye. Thanks.",
+          "usedFactIds": [
+            "f8"
+          ],
+          "sentences": [
+            {
+              "sentence": "Ramesh, baaki 150 cartons parso tak deliver kar dijiye.",
+              "factIds": [
+                "f8"
+              ]
+            },
+            {
+              "sentence": "Thanks.",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_vendor",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "297ba2ee-76f5-4ad2-b693-5a5243288abf",
+        "contact": {
+          "id": "c_warehouse",
+          "name": "Suresh Yadav",
+          "role": "Warehouse lead",
+          "relationship": "runs the Bhiwandi warehouse",
+          "language": "Hindi, Devanagari",
+          "channel": "whatsapp",
+          "phone": "+919000000002",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "सुरेश, डिलीवरी शुक्रवार को नहीं होगी, अब यह सोमवार को आएगी। सोमवार सुबह अनलोडिंग के लिए तीन लोगों की जरूरत है। धन्यवाद।",
+          "usedFactIds": [
+            "f4",
+            "f7"
+          ],
+          "sentences": [
+            {
+              "sentence": "सुरेश, डिलीवरी शुक्रवार को नहीं होगी, अब यह सोमवार को आएगी।",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "सोमवार सुबह अनलोडिंग के लिए तीन लोगों की जरूरत है।",
+              "factIds": [
+                "f7"
+              ]
+            },
+            {
+              "sentence": "धन्यवाद।",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_warehouse",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "c8c58c1f-0862-4c41-a25e-a8bdc8731725",
+        "contact": {
+          "id": "c_client",
+          "name": "Priya Nair",
+          "role": "Client project manager",
+          "relationship": "the customer's side lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "priya.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+          "neverTell": [
+            "internal blame",
+            "vendor names",
+            "our costs"
+          ]
+        },
+        "draft": {
+          "subject": "Update regarding delivery schedule",
+          "body": "Dear Priya Nair, Please be advised that the delivery will now take place on Monday, 2026-11-02, instead of Friday. Regards,",
+          "usedFactIds": [
+            "f4",
+            "f5"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Priya Nair,",
+              "factIds": []
+            },
+            {
+              "sentence": "Please be advised that the delivery will now take place on Monday, 2026-11-02, instead of Friday.",
+              "factIds": [
+                "f4",
+                "f5"
+              ]
+            },
+            {
+              "sentence": "Regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_client",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": true,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "e92603b1-9907-4260-ae20-73aa5d2d27b6",
+        "contact": {
+          "id": "c_team",
+          "name": "Imran Shaikh",
+          "role": "Ops coordinator",
+          "relationship": "works with me day to day",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000003",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "What he has to do next and by when. Short messages only.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "c_boss",
+          "include": true,
+          "reason": "Delivery date has shifted to Monday, requiring management oversight.",
+          "confidence": 0.95,
+          "factIds": [
+            "f4"
+          ]
+        },
+        {
+          "contactId": "c_vendor",
+          "include": true,
+          "reason": "Needs to deliver the remaining 150 cartons by the day after tomorrow.",
+          "confidence": 1,
+          "factIds": [
+            "f8"
+          ]
+        },
+        {
+          "contactId": "c_warehouse",
+          "include": true,
+          "reason": "Needs to schedule three people for unloading on Monday morning.",
+          "confidence": 1,
+          "factIds": [
+            "f4",
+            "f7"
+          ]
+        },
+        {
+          "contactId": "c_client",
+          "include": true,
+          "reason": "Needs to be informed of the new delivery date.",
+          "confidence": 1,
+          "factIds": [
+            "f4",
+            "f5"
+          ]
+        },
+        {
+          "contactId": "c_team",
+          "include": false,
+          "reason": "No specific tasks assigned to Imran in this update.",
+          "confidence": 0.9,
+          "factIds": []
+        }
+      ]
+    },
+    "contradictions": [
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_boss",
+        "recipientName": "Anita Desai",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      },
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_vendor",
+        "recipientName": "Ramesh Kulkarni",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      },
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_warehouse",
+        "recipientName": "Suresh Yadav",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      },
+      {
+        "id": "contra-f1-f8",
+        "recipientId": "c_client",
+        "recipientName": "Priya Nair",
+        "topic": "ramesh sau cartons",
+        "previousFactId": "f1",
+        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
+        "previousSpokenOn": "2026-10-29",
+        "currentFactId": "f8",
+        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
+        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
+      }
+    ],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 93,
+      "wordsDelivered": 89,
+      "people": 4,
+      "languages": 3,
+      "minutesSaved": null,
+      "amplification": 1
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Okay so the Bhiwandi dispatch, um, the truck didn't leave today because the packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye. And Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein. Anita ko main khud batata hoon ki client ko inform kar diya.",
+          "project": "Diwali retail order"
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 1,
+        "at": "2026-10-29T15:03:50.233Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "de89d8dd535b180e50f09e950dd96fe4d537b8a5c884ad1549c24d26be5ec071"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6",
+            "f7",
+            "f8",
+            "f9"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 2,
+        "at": "2026-10-29T15:03:58.009Z",
+        "prevHash": "de89d8dd535b180e50f09e950dd96fe4d537b8a5c884ad1549c24d26be5ec071",
+        "hash": "e3053f97a2cedb418a2687ca61e3fcb8fd03979ac93fcb7385a251d0fd0dd671"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "c_boss",
+              "include": true,
+              "reason": "Delivery date has shifted to Monday, requiring management oversight.",
+              "confidence": 0.95,
+              "factIds": [
+                "f4"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_vendor",
+              "include": true,
+              "reason": "Needs to deliver the remaining 150 cartons by the day after tomorrow.",
+              "confidence": 1,
+              "factIds": [
+                "f8"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_warehouse",
+              "include": true,
+              "reason": "Needs to schedule three people for unloading on Monday morning.",
+              "confidence": 1,
+              "factIds": [
+                "f4",
+                "f7"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_client",
+              "include": true,
+              "reason": "Needs to be informed of the new delivery date.",
+              "confidence": 1,
+              "factIds": [
+                "f4",
+                "f5"
+              ],
+              "withheld": [
+                "f2",
+                "f6"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "include": false,
+              "reason": "No specific tasks assigned to Imran in this update.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 3,
+        "at": "2026-10-29T15:04:20.059Z",
+        "prevHash": "e3053f97a2cedb418a2687ca61e3fcb8fd03979ac93fcb7385a251d0fd0dd671",
+        "hash": "a15f32258a033af06a3a21ee3cf70a7940e9afbd6a026abf0b8763edf1b22688"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "c_boss",
+              "usedFactIds": [
+                "f4"
+              ]
+            },
+            {
+              "contactId": "c_vendor",
+              "usedFactIds": [
+                "f8"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "usedFactIds": [
+                "f4",
+                "f7"
+              ]
+            },
+            {
+              "contactId": "c_client",
+              "usedFactIds": [
+                "f4",
+                "f5"
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 4,
+        "at": "2026-10-29T15:05:33.964Z",
+        "prevHash": "a15f32258a033af06a3a21ee3cf70a7940e9afbd6a026abf0b8763edf1b22688",
+        "hash": "d14817c952856dc8271bad963e45fe386522010a205f91a02912af0555d882ab"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "c_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_vendor",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_warehouse",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_client",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_team",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            }
+          ]
+        },
+        "updateId": "87bf8234-c987-4ac0-833f-6ddf27caec70",
+        "seq": 5,
+        "at": "2026-10-29T15:05:39.591Z",
+        "prevHash": "d14817c952856dc8271bad963e45fe386522010a205f91a02912af0555d882ab",
+        "hash": "1302eb2cedc349afaabb795dfe10f1392a9014129a575009d431b993c013acfe"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "demo_in_2": {
+    "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+    "at": "2026-10-29T15:05:39.695Z",
+    "spokenText": "Quick update. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited. I'll need last quarter's dispatch records by Wednesday morning, Imran can pull those.",
+    "masked": [],
+    "summary": "Audit scheduled for Wednesday and request for last quarter's dispatch records by Wednesday morning.",
+    "decisions": [
+      "Audit date set for Wednesday",
+      "Imran to pull last quarter's dispatch records"
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "The audit is on Wednesday",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-04"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 28,
+          "end": 52
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_vendor",
+            "c_client"
+          ],
+          "reason": "I don't want the vendor or the client knowing we're being audited"
+        }
+      },
+      {
+        "id": "f2",
+        "text": "I'll need last quarter's dispatch records by Wednesday morning",
+        "type": "ask",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-04"
+          ],
+          "names": [
+            "Imran"
+          ]
+        },
+        "sourceSpan": {
+          "start": 115,
+          "end": 175
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "813b33b6-45f7-4d92-97eb-3e6a8ab94850",
+        "contact": {
+          "id": "c_boss",
+          "name": "Anita Desai",
+          "role": "Operations Head",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "anita.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Audit preparation and dispatch records",
+          "body": "Dear Anita, The audit is scheduled for Wednesday, 2026-11-04. I will need last quarter's dispatch records by Wednesday morning, 2026-11-04, for this review. Best regards,",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Anita,",
+              "factIds": []
+            },
+            {
+              "sentence": "The audit is scheduled for Wednesday, 2026-11-04.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "I will need last quarter's dispatch records by Wednesday morning, 2026-11-04, for this review.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "e8285388-771b-42d1-844d-39c6019341ae",
+        "contact": {
+          "id": "c_vendor",
+          "name": "Ramesh Kulkarni",
+          "role": "Packaging vendor",
+          "relationship": "our packaging supplier",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+          "neverTell": [
+            "our margins",
+            "what we pay other vendors"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "0b7505da-67c8-4cba-a2d4-a9666e3d122c",
+        "contact": {
+          "id": "c_warehouse",
+          "name": "Suresh Yadav",
+          "role": "Warehouse lead",
+          "relationship": "runs the Bhiwandi warehouse",
+          "language": "Hindi, Devanagari",
+          "channel": "whatsapp",
+          "phone": "+919000000002",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "f1d9b822-dffd-4204-968b-dd0572337017",
+        "contact": {
+          "id": "c_client",
+          "name": "Priya Nair",
+          "role": "Client project manager",
+          "relationship": "the customer's side lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "priya.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+          "neverTell": [
+            "internal blame",
+            "vendor names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "02d61271-7128-406d-bcaf-b9cdd98d3c84",
+        "contact": {
+          "id": "c_team",
+          "name": "Imran Shaikh",
+          "role": "Ops coordinator",
+          "relationship": "works with me day to day",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000003",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "What he has to do next and by when. Short messages only.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "Imran, audit Wednesday hai. Last quarter ke dispatch records Wednesday morning tak chahiye. Thanks,",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Imran, audit Wednesday hai.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Last quarter ke dispatch records Wednesday morning tak chahiye.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Thanks,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_team",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "c_boss",
+          "include": true,
+          "reason": "Needs to be aware of the upcoming audit and the data preparation task.",
+          "confidence": 0.95,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        },
+        {
+          "contactId": "c_vendor",
+          "include": false,
+          "reason": "The update does not concern the vendor's packaging supply or delivery schedule.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_warehouse",
+          "include": false,
+          "reason": "The update does not affect warehouse operations or staffing requirements.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_client",
+          "include": false,
+          "reason": "The update does not concern the client's delivery date or project status.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_team",
+          "include": true,
+          "reason": "Needs to prepare the dispatch records for the audit.",
+          "confidence": 0.95,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 39,
+      "wordsDelivered": 44,
+      "people": 2,
+      "languages": 2,
+      "minutesSaved": null,
+      "amplification": 1.1
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Quick update. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited. I'll need last quarter's dispatch records by Wednesday morning, Imran can pull those.",
+          "project": "Diwali retail order"
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 1,
+        "at": "2026-10-29T15:05:39.695Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "b64b456736e52861f0e0976bde1fed43fa655564f751e67baf213b9a6048897b"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2"
+          ],
+          "correctionsApplied": [
+            {
+              "from": "Tuesday",
+              "to": "Wednesday",
+              "note": "Speaker corrected the audit date"
+            }
+          ]
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 2,
+        "at": "2026-10-29T15:05:45.428Z",
+        "prevHash": "b64b456736e52861f0e0976bde1fed43fa655564f751e67baf213b9a6048897b",
+        "hash": "6d86be7ab8cebb57cbb9f31cbe083947c61b24cd5e412fbaad317adaf373c86e"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "c_boss",
+              "include": true,
+              "reason": "Needs to be aware of the upcoming audit and the data preparation task.",
+              "confidence": 0.95,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_vendor",
+              "include": false,
+              "reason": "The update does not concern the vendor's packaging supply or delivery schedule.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": [
+                "f1"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "include": false,
+              "reason": "The update does not affect warehouse operations or staffing requirements.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "c_client",
+              "include": false,
+              "reason": "The update does not concern the client's delivery date or project status.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": [
+                "f1"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "include": true,
+              "reason": "Needs to prepare the dispatch records for the audit.",
+              "confidence": 0.95,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 3,
+        "at": "2026-10-29T15:05:50.158Z",
+        "prevHash": "6d86be7ab8cebb57cbb9f31cbe083947c61b24cd5e412fbaad317adaf373c86e",
+        "hash": "911193a85c82e1a97e2d86043d158254716056a1c4b318c0c82631d6acdae08d"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "c_boss",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 4,
+        "at": "2026-10-29T15:06:32.171Z",
+        "prevHash": "911193a85c82e1a97e2d86043d158254716056a1c4b318c0c82631d6acdae08d",
+        "hash": "3c28419134d004a3fbf7f8120ab2a7099c5d2880b7448f1e539a9fdc5aa044b0"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "c_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_vendor",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_client",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "ok": true,
+              "failures": []
+            }
+          ]
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 5,
+        "at": "2026-10-29T15:06:32.172Z",
+        "prevHash": "3c28419134d004a3fbf7f8120ab2a7099c5d2880b7448f1e539a9fdc5aa044b0",
+        "hash": "656af2c43ba7fccc4b0d87aafd3da9b48703fa153b0095846c60ac58a85fb730"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "Quick update. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited. I'll need last quarter's dispatch records by Wednesday morning, Imran can pull those.": {
+    "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+    "at": "2026-10-29T15:05:39.695Z",
+    "spokenText": "Quick update. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited. I'll need last quarter's dispatch records by Wednesday morning, Imran can pull those.",
+    "masked": [],
+    "summary": "Audit scheduled for Wednesday and request for last quarter's dispatch records by Wednesday morning.",
+    "decisions": [
+      "Audit date set for Wednesday",
+      "Imran to pull last quarter's dispatch records"
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "The audit is on Wednesday",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-04"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 28,
+          "end": 52
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_vendor",
+            "c_client"
+          ],
+          "reason": "I don't want the vendor or the client knowing we're being audited"
+        }
+      },
+      {
+        "id": "f2",
+        "text": "I'll need last quarter's dispatch records by Wednesday morning",
+        "type": "ask",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-04"
+          ],
+          "names": [
+            "Imran"
+          ]
+        },
+        "sourceSpan": {
+          "start": 115,
+          "end": 175
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "813b33b6-45f7-4d92-97eb-3e6a8ab94850",
+        "contact": {
+          "id": "c_boss",
+          "name": "Anita Desai",
+          "role": "Operations Head",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "anita.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Audit preparation and dispatch records",
+          "body": "Dear Anita, The audit is scheduled for Wednesday, 2026-11-04. I will need last quarter's dispatch records by Wednesday morning, 2026-11-04, for this review. Best regards,",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Anita,",
+              "factIds": []
+            },
+            {
+              "sentence": "The audit is scheduled for Wednesday, 2026-11-04.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "I will need last quarter's dispatch records by Wednesday morning, 2026-11-04, for this review.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "e8285388-771b-42d1-844d-39c6019341ae",
+        "contact": {
+          "id": "c_vendor",
+          "name": "Ramesh Kulkarni",
+          "role": "Packaging vendor",
+          "relationship": "our packaging supplier",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+          "neverTell": [
+            "our margins",
+            "what we pay other vendors"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "0b7505da-67c8-4cba-a2d4-a9666e3d122c",
+        "contact": {
+          "id": "c_warehouse",
+          "name": "Suresh Yadav",
+          "role": "Warehouse lead",
+          "relationship": "runs the Bhiwandi warehouse",
+          "language": "Hindi, Devanagari",
+          "channel": "whatsapp",
+          "phone": "+919000000002",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "f1d9b822-dffd-4204-968b-dd0572337017",
+        "contact": {
+          "id": "c_client",
+          "name": "Priya Nair",
+          "role": "Client project manager",
+          "relationship": "the customer's side lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "priya.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+          "neverTell": [
+            "internal blame",
+            "vendor names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "02d61271-7128-406d-bcaf-b9cdd98d3c84",
+        "contact": {
+          "id": "c_team",
+          "name": "Imran Shaikh",
+          "role": "Ops coordinator",
+          "relationship": "works with me day to day",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000003",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "What he has to do next and by when. Short messages only.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "Imran, audit Wednesday hai. Last quarter ke dispatch records Wednesday morning tak chahiye. Thanks,",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Imran, audit Wednesday hai.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Last quarter ke dispatch records Wednesday morning tak chahiye.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Thanks,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_team",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "c_boss",
+          "include": true,
+          "reason": "Needs to be aware of the upcoming audit and the data preparation task.",
+          "confidence": 0.95,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        },
+        {
+          "contactId": "c_vendor",
+          "include": false,
+          "reason": "The update does not concern the vendor's packaging supply or delivery schedule.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_warehouse",
+          "include": false,
+          "reason": "The update does not affect warehouse operations or staffing requirements.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_client",
+          "include": false,
+          "reason": "The update does not concern the client's delivery date or project status.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_team",
+          "include": true,
+          "reason": "Needs to prepare the dispatch records for the audit.",
+          "confidence": 0.95,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 39,
+      "wordsDelivered": 44,
+      "people": 2,
+      "languages": 2,
+      "minutesSaved": null,
+      "amplification": 1.1
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Quick update. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited. I'll need last quarter's dispatch records by Wednesday morning, Imran can pull those.",
+          "project": "Diwali retail order"
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 1,
+        "at": "2026-10-29T15:05:39.695Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "b64b456736e52861f0e0976bde1fed43fa655564f751e67baf213b9a6048897b"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2"
+          ],
+          "correctionsApplied": [
+            {
+              "from": "Tuesday",
+              "to": "Wednesday",
+              "note": "Speaker corrected the audit date"
+            }
+          ]
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 2,
+        "at": "2026-10-29T15:05:45.428Z",
+        "prevHash": "b64b456736e52861f0e0976bde1fed43fa655564f751e67baf213b9a6048897b",
+        "hash": "6d86be7ab8cebb57cbb9f31cbe083947c61b24cd5e412fbaad317adaf373c86e"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "c_boss",
+              "include": true,
+              "reason": "Needs to be aware of the upcoming audit and the data preparation task.",
+              "confidence": 0.95,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_vendor",
+              "include": false,
+              "reason": "The update does not concern the vendor's packaging supply or delivery schedule.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": [
+                "f1"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "include": false,
+              "reason": "The update does not affect warehouse operations or staffing requirements.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "c_client",
+              "include": false,
+              "reason": "The update does not concern the client's delivery date or project status.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": [
+                "f1"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "include": true,
+              "reason": "Needs to prepare the dispatch records for the audit.",
+              "confidence": 0.95,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 3,
+        "at": "2026-10-29T15:05:50.158Z",
+        "prevHash": "6d86be7ab8cebb57cbb9f31cbe083947c61b24cd5e412fbaad317adaf373c86e",
+        "hash": "911193a85c82e1a97e2d86043d158254716056a1c4b318c0c82631d6acdae08d"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "c_boss",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 4,
+        "at": "2026-10-29T15:06:32.171Z",
+        "prevHash": "911193a85c82e1a97e2d86043d158254716056a1c4b318c0c82631d6acdae08d",
+        "hash": "3c28419134d004a3fbf7f8120ab2a7099c5d2880b7448f1e539a9fdc5aa044b0"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "c_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_vendor",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_client",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "ok": true,
+              "failures": []
+            }
+          ]
+        },
+        "updateId": "f2840d9a-cebf-4b73-8bcf-c8374f5ffa90",
+        "seq": 5,
+        "at": "2026-10-29T15:06:32.172Z",
+        "prevHash": "3c28419134d004a3fbf7f8120ab2a7099c5d2880b7448f1e539a9fdc5aa044b0",
+        "hash": "656af2c43ba7fccc4b0d87aafd3da9b48703fa153b0095846c60ac58a85fb730"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "demo_in_3": {
+    "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+    "at": "2026-10-29T15:06:32.262Z",
+    "spokenText": "Achha news. Suresh ki team ne aaj ka backlog clear kar diya, four hundred cartons out. Kal ka target wahi rakhte hain. Ramesh ko thank you bol dena, uske extra truck se hua hai. Anita ko bas ye bata dena ki backlog clear hai.",
+    "masked": [],
+    "summary": "Suresh's team cleared today's backlog of 400 cartons, and we will maintain the same target for tomorrow.",
+    "decisions": [
+      "Maintain the same target for tomorrow."
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "Suresh ki team ne aaj ka backlog clear kar diya",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-29"
+          ],
+          "names": [
+            "Suresh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 12,
+          "end": 60
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "four hundred cartons out",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "400"
+          ],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 62,
+          "end": 86
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f3",
+        "text": "Kal ka target wahi rakhte hain",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-30"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 88,
+          "end": 119
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f4",
+        "text": "Ramesh ko thank you bol dena",
+        "type": "commitment",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": [
+            "Ramesh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 121,
+          "end": 149
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f5",
+        "text": "uske extra truck se hua hai",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 151,
+          "end": 178
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_client"
+          ],
+          "reason": "never tell about vendor names"
+        }
+      },
+      {
+        "id": "f6",
+        "text": "Anita ko bas ye bata dena ki backlog clear hai",
+        "type": "commitment",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": [
+            "Anita"
+          ]
+        },
+        "sourceSpan": {
+          "start": 180,
+          "end": 225
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "e7243795-5107-4bd7-b821-5685e8346a21",
+        "contact": {
+          "id": "c_boss",
+          "name": "Anita Desai",
+          "role": "Operations Head",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "anita.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Backlog status update",
+          "body": "Dear Anita, The backlog is clear. Best regards,",
+          "usedFactIds": [
+            "f6"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Anita,",
+              "factIds": []
+            },
+            {
+              "sentence": "The backlog is clear.",
+              "factIds": [
+                "f6"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "1e317f5c-ed31-48d0-aab3-dbe72a090929",
+        "contact": {
+          "id": "c_vendor",
+          "name": "Ramesh Kulkarni",
+          "role": "Packaging vendor",
+          "relationship": "our packaging supplier",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+          "neverTell": [
+            "our margins",
+            "what we pay other vendors"
+          ]
+        },
+        "draft": {
+          "subject": null,
+          "body": "Suresh ki team ne aaj ka backlog clear kar diya hai. 400 cartons out ho gaye hain, extra truck ki wajah se. Kal ka target wahi rakhte hain. Thank you.",
+          "usedFactIds": [
+            "f1",
+            "f2",
+            "f5",
+            "f3",
+            "f4"
+          ],
+          "sentences": [
+            {
+              "sentence": "Suresh ki team ne aaj ka backlog clear kar diya hai.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "400 cartons out ho gaye hain, extra truck ki wajah se.",
+              "factIds": [
+                "f2",
+                "f5"
+              ]
+            },
+            {
+              "sentence": "Kal ka target wahi rakhte hain.",
+              "factIds": [
+                "f3"
+              ]
+            },
+            {
+              "sentence": "Thank you.",
+              "factIds": [
+                "f4"
+              ]
+            }
+          ],
+          "contactId": "c_vendor",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "8afd0aeb-b2dd-4010-8129-fae5cd17ffd3",
+        "contact": {
+          "id": "c_warehouse",
+          "name": "Suresh Yadav",
+          "role": "Warehouse lead",
+          "relationship": "runs the Bhiwandi warehouse",
+          "language": "Hindi, Devanagari",
+          "channel": "whatsapp",
+          "phone": "+919000000002",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "सुरेश, आपकी टीम ने आज का बैकलॉग क्लियर कर दिया है। एक्स्ट्रा ट्रक की मदद से 400 कार्टन बाहर भेजे गए हैं। कल का टारगेट वही रखते हैं। रमेश को थैंक यू बोल देना और अनीता को बता देना कि बैकलॉग क्लियर है। धन्यवाद।",
+          "usedFactIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "sentences": [
+            {
+              "sentence": "सुरेश, आपकी टीम ने आज का बैकलॉग क्लियर कर दिया है।",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "एक्स्ट्रा ट्रक की मदद से 400 कार्टन बाहर भेजे गए हैं।",
+              "factIds": [
+                "f2",
+                "f5"
+              ]
+            },
+            {
+              "sentence": "कल का टारगेट वही रखते हैं।",
+              "factIds": [
+                "f3"
+              ]
+            },
+            {
+              "sentence": "रमेश को थैंक यू बोल देना और अनीता को बता देना कि बैकलॉग क्लियर है।",
+              "factIds": [
+                "f4",
+                "f6"
+              ]
+            },
+            {
+              "sentence": "धन्यवाद।",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_warehouse",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "a592d92d-eb73-4de4-8e0a-dd459199a9ea",
+        "contact": {
+          "id": "c_client",
+          "name": "Priya Nair",
+          "role": "Client project manager",
+          "relationship": "the customer's side lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "priya.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+          "neverTell": [
+            "internal blame",
+            "vendor names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "607120b6-95c6-4ffb-9541-c052551499ce",
+        "contact": {
+          "id": "c_team",
+          "name": "Imran Shaikh",
+          "role": "Ops coordinator",
+          "relationship": "works with me day to day",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000003",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "What he has to do next and by when. Short messages only.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "c_boss",
+          "include": true,
+          "reason": "Informing her that the backlog is cleared as requested.",
+          "confidence": 1,
+          "factIds": [
+            "f6"
+          ]
+        },
+        {
+          "contactId": "c_vendor",
+          "include": true,
+          "reason": "Acknowledging his contribution to clearing the backlog.",
+          "confidence": 1,
+          "factIds": [
+            "f4"
+          ]
+        },
+        {
+          "contactId": "c_warehouse",
+          "include": false,
+          "reason": "Suresh already knows the backlog is cleared and the target remains the same.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "c_client",
+          "include": false,
+          "reason": "No instruction to update the client; the update is internal.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_team",
+          "include": false,
+          "reason": "No specific action items for Imran in this update.",
+          "confidence": 0.9,
+          "factIds": []
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 44,
+      "wordsDelivered": 11,
+      "people": 1,
+      "languages": 1,
+      "minutesSaved": null,
+      "amplification": 0.3
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Achha news. Suresh ki team ne aaj ka backlog clear kar diya, four hundred cartons out. Kal ka target wahi rakhte hain. Ramesh ko thank you bol dena, uske extra truck se hua hai. Anita ko bas ye bata dena ki backlog clear hai.",
+          "project": "Warehouse shift"
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 1,
+        "at": "2026-10-29T15:06:32.262Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "dee70752584bd2b06f99790b34ef7b2a69bc33d91d0a2a4f63e2a41927c67189"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 2,
+        "at": "2026-10-29T15:06:36.639Z",
+        "prevHash": "dee70752584bd2b06f99790b34ef7b2a69bc33d91d0a2a4f63e2a41927c67189",
+        "hash": "2cc3dc2d3fadd749d21a831ea3092e67188294ea2ad15bb325b924b42bf42b98"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "c_boss",
+              "include": true,
+              "reason": "Informing her that the backlog is cleared as requested.",
+              "confidence": 1,
+              "factIds": [
+                "f6"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_vendor",
+              "include": true,
+              "reason": "Acknowledging his contribution to clearing the backlog.",
+              "confidence": 1,
+              "factIds": [
+                "f4"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_warehouse",
+              "include": false,
+              "reason": "Suresh already knows the backlog is cleared and the target remains the same.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "c_client",
+              "include": false,
+              "reason": "No instruction to update the client; the update is internal.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": [
+                "f5"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "include": false,
+              "reason": "No specific action items for Imran in this update.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 3,
+        "at": "2026-10-29T15:07:08.992Z",
+        "prevHash": "2cc3dc2d3fadd749d21a831ea3092e67188294ea2ad15bb325b924b42bf42b98",
+        "hash": "437c71fb24ddb79061650c6a8ac47d39bf04928e1c5ae24dd96e4a37859f9b31"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "c_boss",
+              "usedFactIds": [
+                "f6"
+              ]
+            }
+          ],
+          "failures": [
+            {
+              "contactId": "c_vendor",
+              "message": "compose:c_vendor: could not produce a valid result after one retry. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}"
+            }
+          ]
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 4,
+        "at": "2026-10-29T15:08:01.260Z",
+        "prevHash": "437c71fb24ddb79061650c6a8ac47d39bf04928e1c5ae24dd96e4a37859f9b31",
+        "hash": "68f05b8a108c14e34da71b8b5f2ec032adcf6a24f1eb478c2b38204c6397ff77"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "c_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_vendor",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_client",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            }
+          ]
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 5,
+        "at": "2026-10-29T15:08:01.260Z",
+        "prevHash": "68f05b8a108c14e34da71b8b5f2ec032adcf6a24f1eb478c2b38204c6397ff77",
+        "hash": "4658685580f27039362264abc9479bf9bac2f8ed08fadbd263eba3425ba59411"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "Achha news. Suresh ki team ne aaj ka backlog clear kar diya, four hundred cartons out. Kal ka target wahi rakhte hain. Ramesh ko thank you bol dena, uske extra truck se hua hai. Anita ko bas ye bata dena ki backlog clear hai.": {
+    "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+    "at": "2026-10-29T15:06:32.262Z",
+    "spokenText": "Achha news. Suresh ki team ne aaj ka backlog clear kar diya, four hundred cartons out. Kal ka target wahi rakhte hain. Ramesh ko thank you bol dena, uske extra truck se hua hai. Anita ko bas ye bata dena ki backlog clear hai.",
+    "masked": [],
+    "summary": "Suresh's team cleared today's backlog of 400 cartons, and we will maintain the same target for tomorrow.",
+    "decisions": [
+      "Maintain the same target for tomorrow."
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "Suresh ki team ne aaj ka backlog clear kar diya",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-29"
+          ],
+          "names": [
+            "Suresh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 12,
+          "end": 60
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "four hundred cartons out",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "400"
+          ],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 62,
+          "end": 86
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f3",
+        "text": "Kal ka target wahi rakhte hain",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-30"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 88,
+          "end": 119
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f4",
+        "text": "Ramesh ko thank you bol dena",
+        "type": "commitment",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": [
+            "Ramesh"
+          ]
+        },
+        "sourceSpan": {
+          "start": 121,
+          "end": 149
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f5",
+        "text": "uske extra truck se hua hai",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 151,
+          "end": 178
+        },
+        "privacy": {
+          "blockedFor": [
+            "c_client"
+          ],
+          "reason": "never tell about vendor names"
+        }
+      },
+      {
+        "id": "f6",
+        "text": "Anita ko bas ye bata dena ki backlog clear hai",
+        "type": "commitment",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": [
+            "Anita"
+          ]
+        },
+        "sourceSpan": {
+          "start": 180,
+          "end": 225
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "e7243795-5107-4bd7-b821-5685e8346a21",
+        "contact": {
+          "id": "c_boss",
+          "name": "Anita Desai",
+          "role": "Operations Head",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "anita.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Backlog status update",
+          "body": "Dear Anita, The backlog is clear. Best regards,",
+          "usedFactIds": [
+            "f6"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Anita,",
+              "factIds": []
+            },
+            {
+              "sentence": "The backlog is clear.",
+              "factIds": [
+                "f6"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "c_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "1e317f5c-ed31-48d0-aab3-dbe72a090929",
+        "contact": {
+          "id": "c_vendor",
+          "name": "Ramesh Kulkarni",
+          "role": "Packaging vendor",
+          "relationship": "our packaging supplier",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+          "neverTell": [
+            "our margins",
+            "what we pay other vendors"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": "compose:c_vendor: could not produce a valid result after one retry. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "8afd0aeb-b2dd-4010-8129-fae5cd17ffd3",
+        "contact": {
+          "id": "c_warehouse",
+          "name": "Suresh Yadav",
+          "role": "Warehouse lead",
+          "relationship": "runs the Bhiwandi warehouse",
+          "language": "Hindi, Devanagari",
+          "channel": "whatsapp",
+          "phone": "+919000000002",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "a592d92d-eb73-4de4-8e0a-dd459199a9ea",
+        "contact": {
+          "id": "c_client",
+          "name": "Priya Nair",
+          "role": "Client project manager",
+          "relationship": "the customer's side lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "priya.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+          "neverTell": [
+            "internal blame",
+            "vendor names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "607120b6-95c6-4ffb-9541-c052551499ce",
+        "contact": {
+          "id": "c_team",
+          "name": "Imran Shaikh",
+          "role": "Ops coordinator",
+          "relationship": "works with me day to day",
+          "language": "Hinglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+919000000003",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "What he has to do next and by when. Short messages only.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "c_boss",
+          "include": true,
+          "reason": "Informing her that the backlog is cleared as requested.",
+          "confidence": 1,
+          "factIds": [
+            "f6"
+          ]
+        },
+        {
+          "contactId": "c_vendor",
+          "include": true,
+          "reason": "Acknowledging his contribution to clearing the backlog.",
+          "confidence": 1,
+          "factIds": [
+            "f4"
+          ]
+        },
+        {
+          "contactId": "c_warehouse",
+          "include": false,
+          "reason": "Suresh already knows the backlog is cleared and the target remains the same.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "c_client",
+          "include": false,
+          "reason": "No instruction to update the client; the update is internal.",
+          "confidence": 1,
+          "factIds": []
+        },
+        {
+          "contactId": "c_team",
+          "include": false,
+          "reason": "No specific action items for Imran in this update.",
+          "confidence": 0.9,
+          "factIds": []
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 44,
+      "wordsDelivered": 11,
+      "people": 1,
+      "languages": 1,
+      "minutesSaved": null,
+      "amplification": 0.3
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Achha news. Suresh ki team ne aaj ka backlog clear kar diya, four hundred cartons out. Kal ka target wahi rakhte hain. Ramesh ko thank you bol dena, uske extra truck se hua hai. Anita ko bas ye bata dena ki backlog clear hai.",
+          "project": "Warehouse shift"
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 1,
+        "at": "2026-10-29T15:06:32.262Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "dee70752584bd2b06f99790b34ef7b2a69bc33d91d0a2a4f63e2a41927c67189"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 2,
+        "at": "2026-10-29T15:06:36.639Z",
+        "prevHash": "dee70752584bd2b06f99790b34ef7b2a69bc33d91d0a2a4f63e2a41927c67189",
+        "hash": "2cc3dc2d3fadd749d21a831ea3092e67188294ea2ad15bb325b924b42bf42b98"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "c_boss",
+              "include": true,
+              "reason": "Informing her that the backlog is cleared as requested.",
+              "confidence": 1,
+              "factIds": [
+                "f6"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_vendor",
+              "include": true,
+              "reason": "Acknowledging his contribution to clearing the backlog.",
+              "confidence": 1,
+              "factIds": [
+                "f4"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "c_warehouse",
+              "include": false,
+              "reason": "Suresh already knows the backlog is cleared and the target remains the same.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "c_client",
+              "include": false,
+              "reason": "No instruction to update the client; the update is internal.",
+              "confidence": 1,
+              "factIds": [],
+              "withheld": [
+                "f5"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "include": false,
+              "reason": "No specific action items for Imran in this update.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 3,
+        "at": "2026-10-29T15:07:08.992Z",
+        "prevHash": "2cc3dc2d3fadd749d21a831ea3092e67188294ea2ad15bb325b924b42bf42b98",
+        "hash": "437c71fb24ddb79061650c6a8ac47d39bf04928e1c5ae24dd96e4a37859f9b31"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "c_boss",
+              "usedFactIds": [
+                "f6"
+              ]
+            }
+          ],
+          "failures": [
+            {
+              "contactId": "c_vendor",
+              "message": "compose:c_vendor: could not produce a valid result after one retry. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}"
+            }
+          ]
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 4,
+        "at": "2026-10-29T15:08:01.260Z",
+        "prevHash": "437c71fb24ddb79061650c6a8ac47d39bf04928e1c5ae24dd96e4a37859f9b31",
+        "hash": "68f05b8a108c14e34da71b8b5f2ec032adcf6a24f1eb478c2b38204c6397ff77"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "c_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "c_vendor",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_warehouse",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_client",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "c_team",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            }
+          ]
+        },
+        "updateId": "c78ef48b-cf19-4de4-830d-7778905e799e",
+        "seq": 5,
+        "at": "2026-10-29T15:08:01.260Z",
+        "prevHash": "68f05b8a108c14e34da71b8b5f2ec032adcf6a24f1eb478c2b38204c6397ff77",
+        "hash": "4658685580f27039362264abc9479bf9bac2f8ed08fadbd263eba3425ba59411"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "demo_gl_1": {
+    "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+    "at": "2026-10-29T15:08:01.322Z",
+    "spokenText": "Right, the São Paulo line is down to one shift from tomorrow, so the November run drops from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift. Jomar, reconfirm the freight booking for the eighteenth.",
+    "masked": [],
+    "summary": "São Paulo line shift reduction, November delivery adjustment, and logistics updates.",
+    "decisions": [
+      "Reduce São Paulo line to one shift.",
+      "Adjust November delivery to 8000 units.",
+      "Reschedule remaining units to December 15th.",
+      "Instruct Lucía to hold pickup until November 18th.",
+      "Update morning shift staffing to 4 people."
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "the São Paulo line is down to one shift from tomorrow",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-30"
+          ],
+          "names": [
+            "São Paulo"
+          ]
+        },
+        "sourceSpan": {
+          "start": 7,
+          "end": 61
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "the November run drops from twelve thousand units to eight thousand",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "12000",
+            "8000"
+          ],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 67,
+          "end": 134
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f3",
+        "text": "Maria needs to know her November delivery is eight thousand",
+        "type": "status",
+        "values": {
+          "numbers": [
+            "8000"
+          ],
+          "datesIso": [],
+          "names": [
+            "Maria"
+          ]
+        },
+        "sourceSpan": {
+          "start": 136,
+          "end": 195
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f4",
+        "text": "the rest moves to December the fifteenth",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-12-15"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 200,
+          "end": 240
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f5",
+        "text": "Don't tell her it's a line problem, just say revised production plan",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 242,
+          "end": 310
+        },
+        "privacy": {
+          "blockedFor": [
+            "g_buyer"
+          ],
+          "reason": "Don't tell her it's a line problem"
+        }
+      },
+      {
+        "id": "f6",
+        "text": "Lucía should hold the pickup until the eighteenth",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-18"
+          ],
+          "names": [
+            "Lucía"
+          ]
+        },
+        "sourceSpan": {
+          "start": 312,
+          "end": 360
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f7",
+        "text": "João needs four people instead of seven on the morning shift",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "4",
+            "7"
+          ],
+          "datesIso": [],
+          "names": [
+            "João"
+          ]
+        },
+        "sourceSpan": {
+          "start": 362,
+          "end": 422
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f8",
+        "text": "Jomar, reconfirm the freight booking for the eighteenth",
+        "type": "ask",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-18"
+          ],
+          "names": [
+            "Jomar"
+          ]
+        },
+        "sourceSpan": {
+          "start": 424,
+          "end": 479
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "004232f0-239e-486a-a11a-38ca6abb7a2b",
+        "contact": {
+          "id": "g_boss",
+          "name": "Daniel Okafor",
+          "role": "Regional Director",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "daniel.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Commercial risk, decisions taken, and what he needs to escalate.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Update on Q4 export run capacity",
+          "body": "Dear Daniel, The November run is dropping from 12000 units to 8000 units. The São Paulo line is down to one shift starting tomorrow, 2026-10-30. The remaining balance moves to December 15, 2026. Best regards,",
+          "usedFactIds": [
+            "f1",
+            "f2",
+            "f4"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Daniel,",
+              "factIds": []
+            },
+            {
+              "sentence": "The November run is dropping from 12000 units to 8000 units.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "The São Paulo line is down to one shift starting tomorrow, 2026-10-30.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "The remaining balance moves to December 15, 2026.",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "5795265a-d8af-4d1d-9125-189efecb3502",
+        "contact": {
+          "id": "g_supplier",
+          "name": "Lucía Hernández",
+          "role": "Supplier account manager",
+          "relationship": "our Mexico City supplier",
+          "language": "Mexican Spanish, informal",
+          "channel": "whatsapp",
+          "phone": "+525500000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "Volumes, pickup windows and payment dates.",
+          "neverTell": [
+            "our margins"
+          ]
+        },
+        "draft": {
+          "subject": null,
+          "body": "Hola Lucía, por favor retén la recolección hasta el día dieciocho. Saludos.",
+          "usedFactIds": [
+            "f6"
+          ],
+          "sentences": [
+            {
+              "sentence": "Hola Lucía, por favor retén la recolección hasta el día dieciocho.",
+              "factIds": [
+                "f6"
+              ]
+            },
+            {
+              "sentence": "Saludos.",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_supplier",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "a86bd7e7-97aa-4b3d-a23c-29838d51fb1c",
+        "contact": {
+          "id": "g_factory",
+          "name": "João Ribeiro",
+          "role": "Factory floor manager",
+          "relationship": "runs the São Paulo line",
+          "language": "Brazilian Portuguese, neutral",
+          "channel": "whatsapp",
+          "phone": "+5511900000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Line schedule changes and headcount for the next shift.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "João, a linha de São Paulo passará a operar em apenas um turno a partir de amanhã, dia 30/10/2026. Para o turno da manhã, você precisará de 4 pessoas em vez de 7. Atenciosamente,",
+          "usedFactIds": [
+            "f1",
+            "f7"
+          ],
+          "sentences": [
+            {
+              "sentence": "João, a linha de São Paulo passará a operar em apenas um turno a partir de amanhã, dia 30/10/2026.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Para o turno da manhã, você precisará de 4 pessoas em vez de 7.",
+              "factIds": [
+                "f7"
+              ]
+            },
+            {
+              "sentence": "Atenciosamente,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_factory",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "025c0737-c750-45f6-84d8-0617203e798e",
+        "contact": {
+          "id": "g_buyer",
+          "name": "Maria Santos",
+          "role": "Buyer",
+          "relationship": "the customer's purchasing lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "maria.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date and the revised quantity. Nothing internal.",
+          "neverTell": [
+            "internal blame",
+            "supplier names",
+            "our costs"
+          ]
+        },
+        "draft": {
+          "subject": "Update regarding your delivery schedule",
+          "body": "Dear Maria Santos, Your November delivery is now eight thousand units. The remaining balance will be delivered on December the fifteenth. Best regards,",
+          "usedFactIds": [
+            "f3",
+            "f4"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Maria Santos,",
+              "factIds": []
+            },
+            {
+              "sentence": "Your November delivery is now eight thousand units.",
+              "factIds": [
+                "f3"
+              ]
+            },
+            {
+              "sentence": "The remaining balance will be delivered on December the fifteenth.",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_buyer",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "0fbd9b2d-fab7-40b0-90de-9dc2a9309684",
+        "contact": {
+          "id": "g_coord",
+          "name": "Jomar Reyes",
+          "role": "Logistics coordinator",
+          "relationship": "works with me day to day, based in Manila",
+          "language": "Taglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+639000000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "His next action and the deadline. Keep it to three lines.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "Jomar, paki-reconfirm yung freight booking para sa November 18.\n\nThanks,",
+          "usedFactIds": [
+            "f8"
+          ],
+          "sentences": [
+            {
+              "sentence": "Jomar, paki-reconfirm yung freight booking para sa November 18.",
+              "factIds": [
+                "f8"
+              ]
+            },
+            {
+              "sentence": "Thanks,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_coord",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "g_boss",
+          "include": true,
+          "reason": "The São Paulo line capacity reduction impacts Q4 export volume and delivery timelines.",
+          "confidence": 0.9,
+          "factIds": [
+            "f1",
+            "f2",
+            "f4"
+          ]
+        },
+        {
+          "contactId": "g_supplier",
+          "include": true,
+          "reason": "The pickup date for the November run has been delayed to the eighteenth.",
+          "confidence": 1,
+          "factIds": [
+            "f6"
+          ]
+        },
+        {
+          "contactId": "g_factory",
+          "include": true,
+          "reason": "The production shift reduction requires a headcount adjustment from seven to four people.",
+          "confidence": 1,
+          "factIds": [
+            "f1",
+            "f7"
+          ]
+        },
+        {
+          "contactId": "g_buyer",
+          "include": true,
+          "reason": "She needs to be informed of the revised November delivery quantity and the December delivery date.",
+          "confidence": 1,
+          "factIds": [
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "contactId": "g_coord",
+          "include": true,
+          "reason": "He needs to reconfirm the freight booking for the new December eighteenth pickup date.",
+          "confidence": 1,
+          "factIds": [
+            "f8"
+          ]
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 81,
+      "wordsDelivered": 97,
+      "people": 4,
+      "languages": 4,
+      "minutesSaved": null,
+      "amplification": 1.2
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Right, the São Paulo line is down to one shift from tomorrow, so the November run drops from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift. Jomar, reconfirm the freight booking for the eighteenth.",
+          "project": "Q4 export run"
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 1,
+        "at": "2026-10-29T15:08:01.322Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "f4fa1ca837492b77047821d3fa27dcd1c629e452b32e01707328757e59de1405"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6",
+            "f7",
+            "f8"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 2,
+        "at": "2026-10-29T15:08:05.920Z",
+        "prevHash": "f4fa1ca837492b77047821d3fa27dcd1c629e452b32e01707328757e59de1405",
+        "hash": "50ca6ff6e714d62e9fab329c45aa7f88ed71df7312816f628287ff53ed86ad9c"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "g_boss",
+              "include": true,
+              "reason": "The São Paulo line capacity reduction impacts Q4 export volume and delivery timelines.",
+              "confidence": 0.9,
+              "factIds": [
+                "f1",
+                "f2",
+                "f4"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_supplier",
+              "include": true,
+              "reason": "The pickup date for the November run has been delayed to the eighteenth.",
+              "confidence": 1,
+              "factIds": [
+                "f6"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_factory",
+              "include": true,
+              "reason": "The production shift reduction requires a headcount adjustment from seven to four people.",
+              "confidence": 1,
+              "factIds": [
+                "f1",
+                "f7"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_buyer",
+              "include": true,
+              "reason": "She needs to be informed of the revised November delivery quantity and the December delivery date.",
+              "confidence": 1,
+              "factIds": [
+                "f3",
+                "f4"
+              ],
+              "withheld": [
+                "f5"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "include": true,
+              "reason": "He needs to reconfirm the freight booking for the new December eighteenth pickup date.",
+              "confidence": 1,
+              "factIds": [
+                "f8"
+              ],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 3,
+        "at": "2026-10-29T15:08:25.376Z",
+        "prevHash": "50ca6ff6e714d62e9fab329c45aa7f88ed71df7312816f628287ff53ed86ad9c",
+        "hash": "31e144bc34905e44735397f12861fd7c3caf77aac7852a77db6509e9169f0b44"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "g_boss",
+              "usedFactIds": [
+                "f1",
+                "f2",
+                "f4"
+              ]
+            },
+            {
+              "contactId": "g_supplier",
+              "usedFactIds": [
+                "f6"
+              ]
+            },
+            {
+              "contactId": "g_factory",
+              "usedFactIds": [
+                "f1",
+                "f7"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "usedFactIds": [
+                "f8"
+              ]
+            }
+          ],
+          "failures": [
+            {
+              "contactId": "g_buyer",
+              "message": "compose:g_buyer: could not produce a valid result after one retry. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}"
+            }
+          ]
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 4,
+        "at": "2026-10-29T15:08:59.998Z",
+        "prevHash": "31e144bc34905e44735397f12861fd7c3caf77aac7852a77db6509e9169f0b44",
+        "hash": "f587b7d8bdb4462ad087a30cf5465fa161016000a23632987503f81edc04ee00"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "g_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_supplier",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_factory",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_buyer",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "ok": true,
+              "failures": []
+            }
+          ]
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 5,
+        "at": "2026-10-29T15:09:00.000Z",
+        "prevHash": "f587b7d8bdb4462ad087a30cf5465fa161016000a23632987503f81edc04ee00",
+        "hash": "bc0b05b8afcf77ede3635766de93ea1a6618c74135ffdd33eedda9de6fd90ba1"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "Right, the São Paulo line is down to one shift from tomorrow, so the November run drops from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift. Jomar, reconfirm the freight booking for the eighteenth.": {
+    "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+    "at": "2026-10-29T15:08:01.322Z",
+    "spokenText": "Right, the São Paulo line is down to one shift from tomorrow, so the November run drops from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift. Jomar, reconfirm the freight booking for the eighteenth.",
+    "masked": [],
+    "summary": "São Paulo line shift reduction, November delivery adjustment, and logistics updates.",
+    "decisions": [
+      "Reduce São Paulo line to one shift.",
+      "Adjust November delivery to 8000 units.",
+      "Reschedule remaining units to December 15th.",
+      "Instruct Lucía to hold pickup until November 18th.",
+      "Update morning shift staffing to 4 people."
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "the São Paulo line is down to one shift from tomorrow",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-10-30"
+          ],
+          "names": [
+            "São Paulo"
+          ]
+        },
+        "sourceSpan": {
+          "start": 7,
+          "end": 61
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "the November run drops from twelve thousand units to eight thousand",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "12000",
+            "8000"
+          ],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 67,
+          "end": 134
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f3",
+        "text": "Maria needs to know her November delivery is eight thousand",
+        "type": "status",
+        "values": {
+          "numbers": [
+            "8000"
+          ],
+          "datesIso": [],
+          "names": [
+            "Maria"
+          ]
+        },
+        "sourceSpan": {
+          "start": 136,
+          "end": 195
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f4",
+        "text": "the rest moves to December the fifteenth",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-12-15"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 200,
+          "end": 240
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f5",
+        "text": "Don't tell her it's a line problem, just say revised production plan",
+        "type": "decision",
+        "values": {
+          "numbers": [],
+          "datesIso": [],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 242,
+          "end": 310
+        },
+        "privacy": {
+          "blockedFor": [
+            "g_buyer"
+          ],
+          "reason": "Don't tell her it's a line problem"
+        }
+      },
+      {
+        "id": "f6",
+        "text": "Lucía should hold the pickup until the eighteenth",
+        "type": "date",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-18"
+          ],
+          "names": [
+            "Lucía"
+          ]
+        },
+        "sourceSpan": {
+          "start": 312,
+          "end": 360
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f7",
+        "text": "João needs four people instead of seven on the morning shift",
+        "type": "quantity",
+        "values": {
+          "numbers": [
+            "4",
+            "7"
+          ],
+          "datesIso": [],
+          "names": [
+            "João"
+          ]
+        },
+        "sourceSpan": {
+          "start": 362,
+          "end": 422
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f8",
+        "text": "Jomar, reconfirm the freight booking for the eighteenth",
+        "type": "ask",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-18"
+          ],
+          "names": [
+            "Jomar"
+          ]
+        },
+        "sourceSpan": {
+          "start": 424,
+          "end": 479
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "004232f0-239e-486a-a11a-38ca6abb7a2b",
+        "contact": {
+          "id": "g_boss",
+          "name": "Daniel Okafor",
+          "role": "Regional Director",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "daniel.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Commercial risk, decisions taken, and what he needs to escalate.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Update on Q4 export run capacity",
+          "body": "Dear Daniel, The November run is dropping from 12000 units to 8000 units. The São Paulo line is down to one shift starting tomorrow, 2026-10-30. The remaining balance moves to December 15, 2026. Best regards,",
+          "usedFactIds": [
+            "f1",
+            "f2",
+            "f4"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Daniel,",
+              "factIds": []
+            },
+            {
+              "sentence": "The November run is dropping from 12000 units to 8000 units.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "The São Paulo line is down to one shift starting tomorrow, 2026-10-30.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "The remaining balance moves to December 15, 2026.",
+              "factIds": [
+                "f4"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "5795265a-d8af-4d1d-9125-189efecb3502",
+        "contact": {
+          "id": "g_supplier",
+          "name": "Lucía Hernández",
+          "role": "Supplier account manager",
+          "relationship": "our Mexico City supplier",
+          "language": "Mexican Spanish, informal",
+          "channel": "whatsapp",
+          "phone": "+525500000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "Volumes, pickup windows and payment dates.",
+          "neverTell": [
+            "our margins"
+          ]
+        },
+        "draft": {
+          "subject": null,
+          "body": "Hola Lucía, por favor retén la recolección hasta el día dieciocho. Saludos.",
+          "usedFactIds": [
+            "f6"
+          ],
+          "sentences": [
+            {
+              "sentence": "Hola Lucía, por favor retén la recolección hasta el día dieciocho.",
+              "factIds": [
+                "f6"
+              ]
+            },
+            {
+              "sentence": "Saludos.",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_supplier",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "a86bd7e7-97aa-4b3d-a23c-29838d51fb1c",
+        "contact": {
+          "id": "g_factory",
+          "name": "João Ribeiro",
+          "role": "Factory floor manager",
+          "relationship": "runs the São Paulo line",
+          "language": "Brazilian Portuguese, neutral",
+          "channel": "whatsapp",
+          "phone": "+5511900000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Line schedule changes and headcount for the next shift.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "João, a linha de São Paulo passará a operar em apenas um turno a partir de amanhã, dia 30/10/2026. Para o turno da manhã, você precisará de 4 pessoas em vez de 7. Atenciosamente,",
+          "usedFactIds": [
+            "f1",
+            "f7"
+          ],
+          "sentences": [
+            {
+              "sentence": "João, a linha de São Paulo passará a operar em apenas um turno a partir de amanhã, dia 30/10/2026.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Para o turno da manhã, você precisará de 4 pessoas em vez de 7.",
+              "factIds": [
+                "f7"
+              ]
+            },
+            {
+              "sentence": "Atenciosamente,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_factory",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "025c0737-c750-45f6-84d8-0617203e798e",
+        "contact": {
+          "id": "g_buyer",
+          "name": "Maria Santos",
+          "role": "Buyer",
+          "relationship": "the customer's purchasing lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "maria.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date and the revised quantity. Nothing internal.",
+          "neverTell": [
+            "internal blame",
+            "supplier names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": "compose:g_buyer: could not produce a valid result after one retry. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}",
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "0fbd9b2d-fab7-40b0-90de-9dc2a9309684",
+        "contact": {
+          "id": "g_coord",
+          "name": "Jomar Reyes",
+          "role": "Logistics coordinator",
+          "relationship": "works with me day to day, based in Manila",
+          "language": "Taglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+639000000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "His next action and the deadline. Keep it to three lines.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "Jomar, paki-reconfirm yung freight booking para sa November 18.\n\nThanks,",
+          "usedFactIds": [
+            "f8"
+          ],
+          "sentences": [
+            {
+              "sentence": "Jomar, paki-reconfirm yung freight booking para sa November 18.",
+              "factIds": [
+                "f8"
+              ]
+            },
+            {
+              "sentence": "Thanks,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_coord",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "g_boss",
+          "include": true,
+          "reason": "The São Paulo line capacity reduction impacts Q4 export volume and delivery timelines.",
+          "confidence": 0.9,
+          "factIds": [
+            "f1",
+            "f2",
+            "f4"
+          ]
+        },
+        {
+          "contactId": "g_supplier",
+          "include": true,
+          "reason": "The pickup date for the November run has been delayed to the eighteenth.",
+          "confidence": 1,
+          "factIds": [
+            "f6"
+          ]
+        },
+        {
+          "contactId": "g_factory",
+          "include": true,
+          "reason": "The production shift reduction requires a headcount adjustment from seven to four people.",
+          "confidence": 1,
+          "factIds": [
+            "f1",
+            "f7"
+          ]
+        },
+        {
+          "contactId": "g_buyer",
+          "include": true,
+          "reason": "She needs to be informed of the revised November delivery quantity and the December delivery date.",
+          "confidence": 1,
+          "factIds": [
+            "f3",
+            "f4"
+          ]
+        },
+        {
+          "contactId": "g_coord",
+          "include": true,
+          "reason": "He needs to reconfirm the freight booking for the new December eighteenth pickup date.",
+          "confidence": 1,
+          "factIds": [
+            "f8"
+          ]
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 81,
+      "wordsDelivered": 97,
+      "people": 4,
+      "languages": 4,
+      "minutesSaved": null,
+      "amplification": 1.2
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Right, the São Paulo line is down to one shift from tomorrow, so the November run drops from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift. Jomar, reconfirm the freight booking for the eighteenth.",
+          "project": "Q4 export run"
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 1,
+        "at": "2026-10-29T15:08:01.322Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "f4fa1ca837492b77047821d3fa27dcd1c629e452b32e01707328757e59de1405"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2",
+            "f3",
+            "f4",
+            "f5",
+            "f6",
+            "f7",
+            "f8"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 2,
+        "at": "2026-10-29T15:08:05.920Z",
+        "prevHash": "f4fa1ca837492b77047821d3fa27dcd1c629e452b32e01707328757e59de1405",
+        "hash": "50ca6ff6e714d62e9fab329c45aa7f88ed71df7312816f628287ff53ed86ad9c"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "g_boss",
+              "include": true,
+              "reason": "The São Paulo line capacity reduction impacts Q4 export volume and delivery timelines.",
+              "confidence": 0.9,
+              "factIds": [
+                "f1",
+                "f2",
+                "f4"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_supplier",
+              "include": true,
+              "reason": "The pickup date for the November run has been delayed to the eighteenth.",
+              "confidence": 1,
+              "factIds": [
+                "f6"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_factory",
+              "include": true,
+              "reason": "The production shift reduction requires a headcount adjustment from seven to four people.",
+              "confidence": 1,
+              "factIds": [
+                "f1",
+                "f7"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_buyer",
+              "include": true,
+              "reason": "She needs to be informed of the revised November delivery quantity and the December delivery date.",
+              "confidence": 1,
+              "factIds": [
+                "f3",
+                "f4"
+              ],
+              "withheld": [
+                "f5"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "include": true,
+              "reason": "He needs to reconfirm the freight booking for the new December eighteenth pickup date.",
+              "confidence": 1,
+              "factIds": [
+                "f8"
+              ],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 3,
+        "at": "2026-10-29T15:08:25.376Z",
+        "prevHash": "50ca6ff6e714d62e9fab329c45aa7f88ed71df7312816f628287ff53ed86ad9c",
+        "hash": "31e144bc34905e44735397f12861fd7c3caf77aac7852a77db6509e9169f0b44"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "g_boss",
+              "usedFactIds": [
+                "f1",
+                "f2",
+                "f4"
+              ]
+            },
+            {
+              "contactId": "g_supplier",
+              "usedFactIds": [
+                "f6"
+              ]
+            },
+            {
+              "contactId": "g_factory",
+              "usedFactIds": [
+                "f1",
+                "f7"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "usedFactIds": [
+                "f8"
+              ]
+            }
+          ],
+          "failures": [
+            {
+              "contactId": "g_buyer",
+              "message": "compose:g_buyer: could not produce a valid result after one retry. {\"error\":{\"code\":503,\"message\":\"This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.\",\"status\":\"UNAVAILABLE\"}}"
+            }
+          ]
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 4,
+        "at": "2026-10-29T15:08:59.998Z",
+        "prevHash": "31e144bc34905e44735397f12861fd7c3caf77aac7852a77db6509e9169f0b44",
+        "hash": "f587b7d8bdb4462ad087a30cf5465fa161016000a23632987503f81edc04ee00"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "g_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_supplier",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_factory",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_buyer",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "ok": true,
+              "failures": []
+            }
+          ]
+        },
+        "updateId": "2778d5bf-b0fb-4304-9f8d-ff61c1be1fe5",
+        "seq": 5,
+        "at": "2026-10-29T15:09:00.000Z",
+        "prevHash": "f587b7d8bdb4462ad087a30cf5465fa161016000a23632987503f81edc04ee00",
+        "hash": "bc0b05b8afcf77ede3635766de93ea1a6618c74135ffdd33eedda9de6fd90ba1"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "demo_gl_2": {
+    "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+    "at": "2026-10-29T15:09:00.059Z",
+    "spokenText": "Just noting for myself that the Manila office is closed on Monday for a public holiday, so Jomar won't be reachable. Nothing changes for anyone else.",
+    "masked": [],
+    "summary": "Manila office is closed on Monday, November 2nd, and Jomar will be unavailable.",
+    "decisions": [
+      "Manila office closure on Monday, November 2nd."
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "the Manila office is closed on Monday for a public holiday",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 26,
+          "end": 85
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "Jomar won't be reachable",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": [
+            "Jomar Reyes"
+          ]
+        },
+        "sourceSpan": {
+          "start": 91,
+          "end": 115
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "c2f89975-a0da-4b31-80d3-1fc305a00513",
+        "contact": {
+          "id": "g_boss",
+          "name": "Daniel Okafor",
+          "role": "Regional Director",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "daniel.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Commercial risk, decisions taken, and what he needs to escalate.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Manila office status update",
+          "body": "Dear Daniel,\n\nPlease be advised that the Manila office is closed on Monday, 2026-11-02, for a public holiday. Additionally, Jomar will not be reachable on that date.\n\nBest regards,",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Daniel,",
+              "factIds": []
+            },
+            {
+              "sentence": "Please be advised that the Manila office is closed on Monday, 2026-11-02, for a public holiday.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Additionally, Jomar will not be reachable on that date.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "5bc589a6-7382-42ca-8ffe-2644b0ca700c",
+        "contact": {
+          "id": "g_supplier",
+          "name": "Lucía Hernández",
+          "role": "Supplier account manager",
+          "relationship": "our Mexico City supplier",
+          "language": "Mexican Spanish, informal",
+          "channel": "whatsapp",
+          "phone": "+525500000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "Volumes, pickup windows and payment dates.",
+          "neverTell": [
+            "our margins"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "d4972432-236a-48b1-8400-e44a25a51d69",
+        "contact": {
+          "id": "g_factory",
+          "name": "João Ribeiro",
+          "role": "Factory floor manager",
+          "relationship": "runs the São Paulo line",
+          "language": "Brazilian Portuguese, neutral",
+          "channel": "whatsapp",
+          "phone": "+5511900000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Line schedule changes and headcount for the next shift.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "bd3e9357-9a40-47a4-851b-590fa95defae",
+        "contact": {
+          "id": "g_buyer",
+          "name": "Maria Santos",
+          "role": "Buyer",
+          "relationship": "the customer's purchasing lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "maria.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date and the revised quantity. Nothing internal.",
+          "neverTell": [
+            "internal blame",
+            "supplier names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "39d00840-a547-47f6-b7bb-4ad85e9a07c2",
+        "contact": {
+          "id": "g_coord",
+          "name": "Jomar Reyes",
+          "role": "Logistics coordinator",
+          "relationship": "works with me day to day, based in Manila",
+          "language": "Taglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+639000000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "His next action and the deadline. Keep it to three lines.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "Jomar, take note na closed ang Manila office sa Monday, November 2, for a public holiday. Hindi ka rin reachable sa araw na yan. Thanks.",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Jomar, take note na closed ang Manila office sa Monday, November 2, for a public holiday.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Hindi ka rin reachable sa araw na yan.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Thanks.",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_coord",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "g_boss",
+          "include": true,
+          "reason": "Manila office closure impacts Q4 export timeline and logistics coordination.",
+          "confidence": 0.85,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        },
+        {
+          "contactId": "g_supplier",
+          "include": false,
+          "reason": "The Manila office holiday does not affect the Mexico City supplier's production or pickup schedule.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "g_factory",
+          "include": false,
+          "reason": "The Manila office holiday does not affect the São Paulo factory line operations.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "g_buyer",
+          "include": false,
+          "reason": "The internal logistics team's availability does not impact the customer's delivery date or quantity.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "g_coord",
+          "include": true,
+          "reason": "Jomar needs to know the office is closed and he will be unreachable for the Q4 export run.",
+          "confidence": 0.95,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 26,
+      "wordsDelivered": 58,
+      "people": 2,
+      "languages": 2,
+      "minutesSaved": null,
+      "amplification": 2.2
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Just noting for myself that the Manila office is closed on Monday for a public holiday, so Jomar won't be reachable. Nothing changes for anyone else.",
+          "project": "Q4 export run"
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 1,
+        "at": "2026-10-29T15:09:00.059Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "a0ef2ec64dabc32edadd471cd377e5c2669cc2f62d5aa54b858913d091da50e8"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 2,
+        "at": "2026-10-29T15:09:12.095Z",
+        "prevHash": "a0ef2ec64dabc32edadd471cd377e5c2669cc2f62d5aa54b858913d091da50e8",
+        "hash": "13a87839b17952234078ddf5fd95032a35526bd3cb113b848781fb3166e2826d"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "g_boss",
+              "include": true,
+              "reason": "Manila office closure impacts Q4 export timeline and logistics coordination.",
+              "confidence": 0.85,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_supplier",
+              "include": false,
+              "reason": "The Manila office holiday does not affect the Mexico City supplier's production or pickup schedule.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "g_factory",
+              "include": false,
+              "reason": "The Manila office holiday does not affect the São Paulo factory line operations.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "g_buyer",
+              "include": false,
+              "reason": "The internal logistics team's availability does not impact the customer's delivery date or quantity.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "g_coord",
+              "include": true,
+              "reason": "Jomar needs to know the office is closed and he will be unreachable for the Q4 export run.",
+              "confidence": 0.95,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 3,
+        "at": "2026-10-29T15:09:32.812Z",
+        "prevHash": "13a87839b17952234078ddf5fd95032a35526bd3cb113b848781fb3166e2826d",
+        "hash": "0c949ce1e51bd52442de3df81234b239bbfdbc0d98632d6bf6b6614c2f347215"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "g_boss",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 4,
+        "at": "2026-10-29T15:09:58.664Z",
+        "prevHash": "0c949ce1e51bd52442de3df81234b239bbfdbc0d98632d6bf6b6614c2f347215",
+        "hash": "a17e3902024d3a9530d22dada2d8bf849f654b61c468f2d0a745b076100ec081"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "g_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_supplier",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_factory",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_buyer",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "ok": true,
+              "failures": []
+            }
+          ]
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 5,
+        "at": "2026-10-29T15:09:58.665Z",
+        "prevHash": "a17e3902024d3a9530d22dada2d8bf849f654b61c468f2d0a745b076100ec081",
+        "hash": "fe44413daed741174e12cb46523dfb4c6d2820f63df3769a9956f146c3541fd1"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  },
+  "Just noting for myself that the Manila office is closed on Monday for a public holiday, so Jomar won't be reachable. Nothing changes for anyone else.": {
+    "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+    "at": "2026-10-29T15:09:00.059Z",
+    "spokenText": "Just noting for myself that the Manila office is closed on Monday for a public holiday, so Jomar won't be reachable. Nothing changes for anyone else.",
+    "masked": [],
+    "summary": "Manila office is closed on Monday, November 2nd, and Jomar will be unavailable.",
+    "decisions": [
+      "Manila office closure on Monday, November 2nd."
+    ],
+    "facts": [
+      {
+        "id": "f1",
+        "text": "the Manila office is closed on Monday for a public holiday",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": []
+        },
+        "sourceSpan": {
+          "start": 26,
+          "end": 85
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      },
+      {
+        "id": "f2",
+        "text": "Jomar won't be reachable",
+        "type": "status",
+        "values": {
+          "numbers": [],
+          "datesIso": [
+            "2026-11-02"
+          ],
+          "names": [
+            "Jomar Reyes"
+          ]
+        },
+        "sourceSpan": {
+          "start": 91,
+          "end": 115
+        },
+        "privacy": {
+          "blockedFor": [],
+          "reason": ""
+        }
+      }
+    ],
+    "cards": [
+      {
+        "messageId": "c2f89975-a0da-4b31-80d3-1fc305a00513",
+        "contact": {
+          "id": "g_boss",
+          "name": "Daniel Okafor",
+          "role": "Regional Director",
+          "relationship": "my manager",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "daniel.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Commercial risk, decisions taken, and what he needs to escalate.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": "Manila office status update",
+          "body": "Dear Daniel,\n\nPlease be advised that the Manila office is closed on Monday, 2026-11-02, for a public holiday. Additionally, Jomar will not be reachable on that date.\n\nBest regards,",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Dear Daniel,",
+              "factIds": []
+            },
+            {
+              "sentence": "Please be advised that the Manila office is closed on Monday, 2026-11-02, for a public holiday.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Additionally, Jomar will not be reachable on that date.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Best regards,",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_boss",
+          "channel": "email"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "5bc589a6-7382-42ca-8ffe-2644b0ca700c",
+        "contact": {
+          "id": "g_supplier",
+          "name": "Lucía Hernández",
+          "role": "Supplier account manager",
+          "relationship": "our Mexico City supplier",
+          "language": "Mexican Spanish, informal",
+          "channel": "whatsapp",
+          "phone": "+525500000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "Volumes, pickup windows and payment dates.",
+          "neverTell": [
+            "our margins"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "d4972432-236a-48b1-8400-e44a25a51d69",
+        "contact": {
+          "id": "g_factory",
+          "name": "João Ribeiro",
+          "role": "Factory floor manager",
+          "relationship": "runs the São Paulo line",
+          "language": "Brazilian Portuguese, neutral",
+          "channel": "whatsapp",
+          "phone": "+5511900000001",
+          "email": null,
+          "formality": "neutral",
+          "caresAbout": "Line schedule changes and headcount for the next shift.",
+          "neverTell": []
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "bd3e9357-9a40-47a4-851b-590fa95defae",
+        "contact": {
+          "id": "g_buyer",
+          "name": "Maria Santos",
+          "role": "Buyer",
+          "relationship": "the customer's purchasing lead",
+          "language": "English",
+          "channel": "email",
+          "phone": null,
+          "email": "maria.demo@sayonce.example",
+          "formality": "formal",
+          "caresAbout": "Her delivery date and the revised quantity. Nothing internal.",
+          "neverTell": [
+            "internal blame",
+            "supplier names",
+            "our costs"
+          ]
+        },
+        "draft": null,
+        "check": null,
+        "error": null,
+        "sent": false,
+        "sentAt": null
+      },
+      {
+        "messageId": "39d00840-a547-47f6-b7bb-4ad85e9a07c2",
+        "contact": {
+          "id": "g_coord",
+          "name": "Jomar Reyes",
+          "role": "Logistics coordinator",
+          "relationship": "works with me day to day, based in Manila",
+          "language": "Taglish, Roman script",
+          "channel": "whatsapp",
+          "phone": "+639000000001",
+          "email": null,
+          "formality": "casual",
+          "caresAbout": "His next action and the deadline. Keep it to three lines.",
+          "neverTell": []
+        },
+        "draft": {
+          "subject": null,
+          "body": "Jomar, take note na closed ang Manila office sa Monday, November 2, for a public holiday. Hindi ka rin reachable sa araw na yan. Thanks.",
+          "usedFactIds": [
+            "f1",
+            "f2"
+          ],
+          "sentences": [
+            {
+              "sentence": "Jomar, take note na closed ang Manila office sa Monday, November 2, for a public holiday.",
+              "factIds": [
+                "f1"
+              ]
+            },
+            {
+              "sentence": "Hindi ka rin reachable sa araw na yan.",
+              "factIds": [
+                "f2"
+              ]
+            },
+            {
+              "sentence": "Thanks.",
+              "factIds": []
+            }
+          ],
+          "contactId": "g_coord",
+          "channel": "whatsapp"
+        },
+        "check": {
+          "ok": true,
+          "failures": []
+        },
+        "error": null,
+        "regenerated": false,
+        "overridden": false,
+        "sent": false,
+        "sentAt": null
+      }
+    ],
+    "routing": {
+      "concernsNobody": false,
+      "decisions": [
+        {
+          "contactId": "g_boss",
+          "include": true,
+          "reason": "Manila office closure impacts Q4 export timeline and logistics coordination.",
+          "confidence": 0.85,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        },
+        {
+          "contactId": "g_supplier",
+          "include": false,
+          "reason": "The Manila office holiday does not affect the Mexico City supplier's production or pickup schedule.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "g_factory",
+          "include": false,
+          "reason": "The Manila office holiday does not affect the São Paulo factory line operations.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "g_buyer",
+          "include": false,
+          "reason": "The internal logistics team's availability does not impact the customer's delivery date or quantity.",
+          "confidence": 0.9,
+          "factIds": []
+        },
+        {
+          "contactId": "g_coord",
+          "include": true,
+          "reason": "Jomar needs to know the office is closed and he will be unreachable for the Q4 export run.",
+          "confidence": 0.95,
+          "factIds": [
+            "f1",
+            "f2"
+          ]
+        }
+      ]
+    },
+    "contradictions": [],
+    "whoDidIForget": [],
+    "voiceReturn": {
+      "wordsSpoken": 26,
+      "wordsDelivered": 58,
+      "people": 2,
+      "languages": 2,
+      "minutesSaved": null,
+      "amplification": 2.2
+    },
+    "trail": [
+      {
+        "actor": "user",
+        "type": "spoken",
+        "payload": {
+          "text": "Just noting for myself that the Manila office is closed on Monday for a public holiday, so Jomar won't be reachable. Nothing changes for anyone else.",
+          "project": "Q4 export run"
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 1,
+        "at": "2026-10-29T15:09:00.059Z",
+        "prevHash": "0000000000000000000000000000000000000000000000000000000000000000",
+        "hash": "a0ef2ec64dabc32edadd471cd377e5c2669cc2f62d5aa54b858913d091da50e8"
+      },
+      {
+        "actor": "ai",
+        "type": "extracted",
+        "payload": {
+          "factIds": [
+            "f1",
+            "f2"
+          ],
+          "correctionsApplied": []
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 2,
+        "at": "2026-10-29T15:09:12.095Z",
+        "prevHash": "a0ef2ec64dabc32edadd471cd377e5c2669cc2f62d5aa54b858913d091da50e8",
+        "hash": "13a87839b17952234078ddf5fd95032a35526bd3cb113b848781fb3166e2826d"
+      },
+      {
+        "actor": "ai",
+        "type": "routed",
+        "payload": {
+          "strategy": "ai-route",
+          "concernsNobody": false,
+          "perContact": [
+            {
+              "contactId": "g_boss",
+              "include": true,
+              "reason": "Manila office closure impacts Q4 export timeline and logistics coordination.",
+              "confidence": 0.85,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            },
+            {
+              "contactId": "g_supplier",
+              "include": false,
+              "reason": "The Manila office holiday does not affect the Mexico City supplier's production or pickup schedule.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "g_factory",
+              "include": false,
+              "reason": "The Manila office holiday does not affect the São Paulo factory line operations.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "g_buyer",
+              "include": false,
+              "reason": "The internal logistics team's availability does not impact the customer's delivery date or quantity.",
+              "confidence": 0.9,
+              "factIds": [],
+              "withheld": []
+            },
+            {
+              "contactId": "g_coord",
+              "include": true,
+              "reason": "Jomar needs to know the office is closed and he will be unreachable for the Q4 export run.",
+              "confidence": 0.95,
+              "factIds": [
+                "f1",
+                "f2"
+              ],
+              "withheld": []
+            }
+          ]
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 3,
+        "at": "2026-10-29T15:09:32.812Z",
+        "prevHash": "13a87839b17952234078ddf5fd95032a35526bd3cb113b848781fb3166e2826d",
+        "hash": "0c949ce1e51bd52442de3df81234b239bbfdbc0d98632d6bf6b6614c2f347215"
+      },
+      {
+        "actor": "ai",
+        "type": "composed",
+        "payload": {
+          "drafts": [
+            {
+              "contactId": "g_boss",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "usedFactIds": [
+                "f1",
+                "f2"
+              ]
+            }
+          ],
+          "failures": []
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 4,
+        "at": "2026-10-29T15:09:58.664Z",
+        "prevHash": "0c949ce1e51bd52442de3df81234b239bbfdbc0d98632d6bf6b6614c2f347215",
+        "hash": "a17e3902024d3a9530d22dada2d8bf849f654b61c468f2d0a745b076100ec081"
+      },
+      {
+        "actor": "system",
+        "type": "verified",
+        "payload": {
+          "results": [
+            {
+              "contactId": "g_boss",
+              "ok": true,
+              "failures": []
+            },
+            {
+              "contactId": "g_supplier",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_factory",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_buyer",
+              "ok": false,
+              "failures": [
+                "no-draft"
+              ]
+            },
+            {
+              "contactId": "g_coord",
+              "ok": true,
+              "failures": []
+            }
+          ]
+        },
+        "updateId": "e9440baf-47b1-4f02-a3bd-a7f384069871",
+        "seq": 5,
+        "at": "2026-10-29T15:09:58.665Z",
+        "prevHash": "a17e3902024d3a9530d22dada2d8bf849f654b61c468f2d0a745b076100ec081",
+        "hash": "fe44413daed741174e12cb46523dfb4c6d2820f63df3769a9956f146c3541fd1"
+      }
+    ],
+    "trailVerdict": {
+      "ok": true,
+      "length": 5
+    },
+    "cached": true
+  }
+}

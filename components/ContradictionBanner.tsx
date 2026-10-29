@@ -116,3 +116,4 @@ export function ContradictionBanner({
     </section>
   );
 }
+
