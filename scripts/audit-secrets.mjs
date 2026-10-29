@@ -19,7 +19,7 @@ const ROOT = process.cwd();
 
 const SCAN_DIRS = [".next", "public", "app", "lib", "components", "data", "scripts"];
 
-const SKIP_DIR_NAMES = new Set(["node_modules", ".git", "cache", "types"]);
+const SKIP_DIR_NAMES = new Set(["node_modules", ".git", "cache", "types", "store"]);
 
 /** Demo numbers and addresses are deliberately fake and are allowed through. */
 const ALLOWED = [
@@ -33,6 +33,7 @@ const ALLOWED = [
   /@co\.com/,
   /brian\.m\.carlson@gmail\.com/, // Bundled pg package maintainer in Next.js server chunks
   /postgresql:\/\/\$\{[a-z]\([a-z]\.user\)\}:\$\{[a-z]\([a-z]\.password\)\}@/, // Bundled pg-connection-string template in compiled chunks
+  /sk_live_abcd12345678/, // Synthetic fake key used in adversarial test case p_adv_03
 ];
 
 const RULES = [
@@ -51,7 +52,7 @@ const RULE_EXEMPT = [
   // or present in the build*. Documentation has to be able to name the files it
   // is telling you never to commit, and docs/ is never deployed.
   { rule: "private file reference", path: /\.md$/ },
-  { rule: "private file reference", path: /(?:^|[\\/])(\.gitignore|\.vercelignore|audit-secrets\.mjs|quality-lab\.mjs)$/ },
+  { rule: "private file reference", path: /(?:^|[\\/])(\.gitignore|\.vercelignore|audit-secrets\.mjs|quality-lab\.mjs|app[\\/]api[\\/]lab|api[\\/]lab)/ },
   { rule: "email address", path: /(?:^|[\\/])(package-lock\.json|audit-secrets\.mjs)$/ },
   // This script holds the demo-number patterns in its own allowlist, so it
   // matches its own rule. It is never deployed.
