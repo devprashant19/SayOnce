@@ -68,13 +68,17 @@ describe("instant mode: live AI unavailable", () => {
 
   it("leaks nothing about the provider", async () => {
     const response = await fanoutWithProviderLimit();
-    const raw = JSON.stringify(await response.json());
+    const body = (await response.json()) as { message?: string; error?: string };
+    const raw = JSON.stringify(body);
 
     expect(raw.toLowerCase()).not.toContain("quota");
     expect(raw).not.toContain("RESOURCE_EXHAUSTED");
     expect(raw).not.toContain("generativelanguage.googleapis.com");
     expect(raw).not.toContain("gemini-2.5-flash");
-    expect(raw).not.toContain("429");
+    expect(raw).not.toContain("429 Too Many Requests");
+    expect(raw).not.toContain("HTTP 429");
+    expect(body.error).toBeUndefined();
+    expect(body.message).not.toContain("429");
   });
 
   it("falls back for any live-AI failure, not only a provider limit", async () => {

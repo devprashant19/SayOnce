@@ -1,9 +1,10 @@
 import Link from "next/link";
 import { Badge } from "@/components/Badge";
+import { ProofContainer } from "@/components/ProofContainer";
 import { measured, proofEvidence, type Measured } from "@/lib/proof";
 
 /**
- * The Evidence Dashboard — /proof.
+ * The Evidence Tear Sheet — /proof.
  *
  * Every number on this page is read from stored data or from the latest
  * Quality Lab run on disk. **Nothing here is hardcoded, and nothing that has
@@ -37,25 +38,57 @@ function Stat({
   note: string;
   tone?: "neutral" | "verified" | "accent";
 }) {
-  const colour = !value.isMeasured
-    ? "text-[var(--color-ink-faint)]"
-    : tone === "verified"
+  if (!value.isMeasured) {
+    return (
+      <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-5 flex flex-col justify-between">
+        <div>
+          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-soft)]">
+            {label}
+          </span>
+          <div className="mt-2 text-sm font-mono italic text-[var(--color-ink-faint)]">
+            {value.text}
+          </div>
+        </div>
+        <p className="mt-3 text-xs text-[var(--color-ink-faint)] leading-relaxed">{note}</p>
+      </div>
+    );
+  }
+
+  const match = value.text.match(/^([\d.,]+)\s*(.*)$/);
+  const numPart = match ? match[1] : value.text;
+  const unitPart = match ? match[2] : "";
+
+  const colour =
+    tone === "verified"
       ? "text-[var(--color-verified)]"
       : tone === "accent"
         ? "text-[var(--color-accent)]"
         : "text-[var(--color-ink)]";
 
   return (
-    <div className="rounded-xl border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-5">
-      <span className="text-xs font-semibold text-[var(--color-ink-soft)]">{label}</span>
-      <div
-        className={`mt-2 font-bold tracking-tight ${colour} ${
-          value.isMeasured ? "text-3xl" : "text-base"
-        }`}
-      >
-        {value.text}
+    <div className="hover-card-lift rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-5 shadow-sm flex flex-col justify-between">
+      <div>
+        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-soft)]">
+          {label}
+        </span>
+        <div className="mt-2 flex items-baseline gap-1.5">
+          <span
+            className={`font-serif text-3xl sm:text-4xl font-semibold tracking-tight ${colour}`}
+            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          >
+            {numPart}
+          </span>
+          {unitPart ? (
+            <span
+              className="font-mono text-xs sm:text-sm font-semibold text-[var(--color-ink-soft)]"
+              style={{ fontFamily: "var(--font-jetbrains), var(--font-mono)" }}
+            >
+              {unitPart}
+            </span>
+          ) : null}
+        </div>
       </div>
-      <p className="mt-1 text-xs text-[var(--color-ink-soft)]">{note}</p>
+      <p className="mt-3 text-xs text-[var(--color-ink-soft)] leading-relaxed">{note}</p>
     </div>
   );
 }
@@ -68,50 +101,63 @@ export default async function ProofPage() {
   const { realUse, lab, isEmpty } = await proofEvidence();
 
   return (
-    <div className="mx-auto max-w-5xl space-y-14 py-6 sm:py-10">
-      <section className="space-y-4 border-b border-[var(--color-rule)] pb-8">
+    <ProofContainer>
+      {/* Masthead */}
+      <section className="reveal-on-scroll space-y-4 border-b border-[var(--color-rule)] pb-10">
         <div className="flex flex-wrap items-center gap-2">
-          <Badge tone={lab && lab.inventedFacts === 0 ? "verified" : "neutral"}>
+          <span className="font-mono text-[11px] uppercase tracking-wider text-[var(--color-accent)] font-semibold">
+            Evidence Tear Sheet
+          </span>
+          <span className="text-[var(--color-rule)]">/</span>
+          <Badge tone={lab && lab.inventedFacts === 0 ? "verified" : "neutral"} animated>
             {lab ? `Quality Lab · ${lab.gradedCount} cases graded` : "Quality Lab · no run yet"}
           </Badge>
           {realUse.updateCount > 0 && (
             <Badge tone="neutral">{realUse.updateCount} real updates</Badge>
           )}
         </div>
-        <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Proof</h1>
-        <p className="max-w-2xl text-[var(--color-ink-soft)]">
-          Everything on this page is read from stored data or from the latest
-          Quality Lab run. Anything not yet measured says so, rather than
-          showing an estimate.
+
+        <h1
+          className="font-serif text-3xl sm:text-5xl font-semibold tracking-tight text-[var(--color-ink)]"
+          style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+        >
+          Proof &amp; Real Use
+        </h1>
+
+        <p className="max-w-2xl text-sm sm:text-base text-[var(--color-ink-soft)] leading-relaxed">
+          Everything on this tear sheet is read directly from database updates or from the latest Quality Lab run on disk. Anything not yet measured says so explicitly, rather than presenting a fabricated or estimated figure.
         </p>
+
         {isEmpty && (
-          <p className="max-w-2xl rounded-lg border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-4 text-sm">
-            <strong>Nothing measured yet.</strong> This page fills in as SayOnce
-            is used on real updates and as the Quality Lab is run. It shows gaps
-            rather than guesses on purpose.
-          </p>
+          <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-4 text-xs sm:text-sm text-[var(--color-ink-soft)] leading-relaxed">
+            <strong className="text-[var(--color-ink)]">Nothing measured yet.</strong> This tear sheet fills in as SayOnce is used on real updates and as the Quality Lab is run. It preserves honest gaps rather than optimistic guesses by design.
+          </div>
         )}
       </section>
 
-      <section aria-labelledby="real-use" className="space-y-5">
+      {/* Section 1: Real use */}
+      <section aria-labelledby="real-use" className="reveal-on-scroll space-y-5 border-b border-[var(--color-rule)] pb-12">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Real use
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            01 / Field Evidence
           </span>
-          <h2 id="real-use" className="mt-1 text-2xl font-bold tracking-tight">
+          <h2
+            id="real-use"
+            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
+            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          >
             What it has actually produced
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)]">
-            From the real dataset only. Demo sessions are excluded, so a visitor
-            trying the app cannot move these numbers.
+          <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink-soft)] leading-relaxed">
+            From the real dataset only. Demo sessions are excluded, so a visitor trying sample updates cannot move these figures.
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Stat
             label="Updates spoken"
             value={measured(realUse.updateCount || null, (n) => String(n))}
-            note="Each one fanned out to several people"
+            note="Each one fanned out to several people in their preferred language"
           />
           <Stat
             label="Messages drafted"
@@ -121,7 +167,7 @@ export default async function ProofPage() {
           <Stat
             label="Recipients reached"
             value={measured(realUse.recipientCount || null, (n) => String(n))}
-            note="Distinct people across WhatsApp and email"
+            note="Distinct individuals across WhatsApp and email"
           />
           <Stat
             label="Voice amplification"
@@ -136,27 +182,29 @@ export default async function ProofPage() {
         </div>
       </section>
 
-      <section aria-labelledby="time" className="space-y-5">
+      {/* Section 2: Time */}
+      <section aria-labelledby="time" className="reveal-on-scroll space-y-5 border-b border-[var(--color-rule)] pb-12">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Time
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            02 / Time Savings
           </span>
-          <h2 id="time" className="mt-1 text-2xl font-bold tracking-tight">
+          <h2
+            id="time"
+            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
+            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          >
             Minutes per update, before and after
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)]">
-            The &ldquo;before&rdquo; figure is timed by hand on the old way of
-            working, and can only be measured once — before the tool is in use.
-            The &ldquo;after&rdquo; figure the app measures itself, from opening
-            Speak to the last send.
+          <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink-soft)] leading-relaxed">
+            The before figure is timed by hand on the old manual workflow. The after figure the app measures itself, from opening Speak to the final sent message.
           </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="grid gap-4 sm:grid-cols-2">
           <Stat
             label="Before SayOnce"
             value={measured(realUse.baselineMinutes, (n) => `${n} min`)}
-            note="Measured on five updates written the old way"
+            note="Measured across updates written the manual way"
           />
           <Stat
             label="With SayOnce"
@@ -171,48 +219,49 @@ export default async function ProofPage() {
           <Stat
             label="Saved per update"
             value={measured(realUse.minutesSavedPerUpdate, (n) => `${n} min`)}
-            note="Needs both figures above"
+            note="Requires both baseline and actual measurements"
           />
           <Stat
-            label="Reduction"
+            label="Time reduction"
             value={measured(realUse.percentSaved, (n) => `${n}%`)}
-            note="Needs both figures above"
+            note="Requires both baseline and actual measurements"
           />
         </div>
 
         {realUse.minutesSavedPerUpdate === null && (
-          <p className="rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 text-sm text-[var(--color-ink-soft)]">
+          <p className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-4 text-xs text-[var(--color-ink-soft)] leading-relaxed">
             No time saving is shown because{" "}
             {realUse.baselineMinutes === null && realUse.actualMinutes === null
               ? "neither the baseline nor any elapsed time has been measured"
               : realUse.baselineMinutes === null
                 ? "the baseline has not been measured"
                 : "no update has a measured elapsed time"}
-            . Computing one from an estimate would make every other number here
-            worth less.
+            . Fabricating an estimate would compromise the integrity of every other claim on this page.
           </p>
         )}
       </section>
 
-      <section aria-labelledby="accuracy" className="space-y-5">
+      {/* Section 3: Accuracy */}
+      <section aria-labelledby="accuracy" className="reveal-on-scroll space-y-5 border-b border-[var(--color-rule)] pb-12">
         <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Accuracy
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            03 / Benchmark Lab
           </span>
-          <h2 id="accuracy" className="mt-1 text-2xl font-bold tracking-tight">
+          <h2
+            id="accuracy"
+            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
+            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          >
             The latest Quality Lab run
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)]">
-            A recorded set of spoken updates run through the live pipeline, each
-            graded against the recipients and facts it should have produced. Two
-            of these are hard gates and are not averages.
+          <p className="mt-1 text-xs sm:text-sm text-[var(--color-ink-soft)] leading-relaxed">
+            A recorded suite of spoken updates run through the live pipeline, each graded against gold-standard recipients and extracted facts. Hard gates cannot be averaged out.
           </p>
         </div>
 
         {lab === null ? (
-          <p className="rounded-lg border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-4 text-sm">
-            No Quality Lab run has completed yet. Run <code>npm run lab</code>{" "}
-            and this table fills in from the result.
+          <p className="rounded-[var(--radius-card)] border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-4 text-xs sm:text-sm text-[var(--color-ink)]">
+            No Quality Lab run has completed yet. Run <code className="font-mono">npm run lab</code> and this table will fill in from the results.
           </p>
         ) : (
           <>
@@ -220,21 +269,21 @@ export default async function ProofPage() {
               tabIndex={0}
               role="region"
               aria-label="Quality Lab metrics table, scrolls horizontally"
-              className="overflow-x-auto"
+              className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)]"
             >
-              <table className="w-full min-w-[32rem] border-collapse text-sm">
+              <table className="w-full min-w-[32rem] border-collapse text-left text-xs sm:text-sm">
                 <caption className="sr-only">
                   Quality Lab metrics against their targets
                 </caption>
                 <thead>
-                  <tr className="border-b border-[var(--color-rule)] text-left">
-                    <th scope="col" className="py-2 pr-4 font-semibold">Metric</th>
-                    <th scope="col" className="py-2 pr-4 font-semibold">Result</th>
-                    <th scope="col" className="py-2 pr-4 font-semibold">Target</th>
-                    <th scope="col" className="py-2 font-semibold">Verdict</th>
+                  <tr className="border-b border-[var(--color-rule)] bg-[var(--color-surface-raised)] text-[var(--color-ink-soft)]">
+                    <th scope="col" className="p-3 font-semibold">Metric</th>
+                    <th scope="col" className="p-3 font-semibold">Result</th>
+                    <th scope="col" className="p-3 font-semibold">Target</th>
+                    <th scope="col" className="p-3 font-semibold">Verdict</th>
                   </tr>
                 </thead>
-                <tbody>
+                <tbody className="divide-y divide-[var(--color-rule)]">
                   {(
                     [
                       ["Invented facts", String(lab.inventedFacts), "0", lab.inventedFacts === 0, true],
@@ -246,19 +295,19 @@ export default async function ProofPage() {
                       ["Channel fit", pct(lab.channelFit), "95%", lab.channelFit >= 0.95, false],
                     ] as Array<[string, string, string, boolean, boolean]>
                   ).map(([name, result, target, ok, hard]) => (
-                    <tr key={name} className="border-b border-[var(--color-rule)]/60">
-                      <td className="py-2 pr-4">
-                        {name}
+                    <tr key={name} className="hover:bg-[var(--color-surface-raised)]/40 transition">
+                      <td className="p-3">
+                        <span className="font-medium text-[var(--color-ink)]">{name}</span>
                         {hard && (
-                          <span className="ml-2 text-xs text-[var(--color-ink-faint)]">
+                          <span className="ml-2 font-mono text-[10px] text-[var(--color-blocked)] font-semibold uppercase tracking-wider">
                             hard gate
                           </span>
                         )}
                       </td>
-                      <td className="py-2 pr-4 font-medium">{result}</td>
-                      <td className="py-2 pr-4 text-[var(--color-ink-soft)]">{target}</td>
-                      <td className="py-2">
-                        <Badge tone={ok ? "verified" : hard ? "blocked" : "warning"}>
+                      <td className="p-3 font-mono font-medium text-[var(--color-ink)]">{result}</td>
+                      <td className="p-3 font-mono text-[var(--color-ink-soft)]">{target}</td>
+                      <td className="p-3">
+                        <Badge tone={ok ? "verified" : hard ? "blocked" : "warning"} animated>
                           {ok ? "met" : hard ? "failed" : "below target"}
                         </Badge>
                       </td>
@@ -276,47 +325,51 @@ export default async function ProofPage() {
         )}
       </section>
 
-      <section
-        aria-labelledby="how"
-        className="space-y-4 border-t border-[var(--color-rule)] pt-8"
-      >
-        <h2 id="how" className="text-xl font-bold tracking-tight">
-          How these numbers are produced
-        </h2>
-        <ul className="list-disc space-y-2 pl-5 text-sm text-[var(--color-ink-soft)]">
+      {/* Section 4: Rules & Actions */}
+      <section aria-labelledby="how" className="reveal-on-scroll space-y-5">
+        <div>
+          <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
+            04 / Measurement Rules
+          </span>
+          <h2
+            id="how"
+            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
+            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          >
+            How these numbers are produced
+          </h2>
+        </div>
+
+        <ul className="list-disc space-y-2.5 pl-5 text-xs sm:text-sm text-[var(--color-ink-soft)] leading-relaxed">
           <li>
-            Real-use totals are aggregates over the real dataset. No name, phone
-            number or email address is read or shown.
+            Real-use totals are aggregates over the real dataset. No personal name, phone number, or email address is read or stored on this page.
           </li>
           <li>
-            The accuracy table is the most recent Quality Lab run, which sends
-            every recorded case through the same pipeline the app uses.
+            The accuracy table is the most recent Quality Lab run, which sends recorded updates through the identical pipeline used in production.
           </li>
           <li>
-            Invented facts are counted by a deterministic checker with no model
-            in it. It has final authority: a draft it fails cannot be sent
-            without an explicit, logged override.
+            Invented facts are counted by a deterministic verifier with no generative model in it. It maintains absolute authority over all draft releases.
           </li>
           <li>
-            Anything not measured says &ldquo;Not yet measured&rdquo;. No figure
-            here is estimated, rounded up, or carried over from another run.
+            Anything not measured says &ldquo;Not yet measured&rdquo;. No figure on this tear sheet is estimated, rounded up, or carried over from unverified runs.
           </li>
         </ul>
-        <div className="flex flex-wrap gap-3 pt-2">
+
+        <div className="flex flex-wrap gap-3 pt-4">
           <Link
             href="/demo"
-            className="min-h-11 content-center rounded bg-[var(--color-accent)] px-4 text-sm font-semibold text-white"
+            className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-white shadow-sm hover:opacity-90 active-press transition"
           >
             Try the demo
           </Link>
           <Link
             href="/lab"
-            className="min-h-11 content-center rounded border border-[var(--color-rule)] px-4 text-sm font-semibold"
+            className="min-h-11 inline-flex items-center justify-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-5 text-sm font-semibold text-[var(--color-ink)] hover:bg-[var(--color-paper-sunk)] active-press transition"
           >
             Open the Quality Lab
           </Link>
         </div>
       </section>
-    </div>
+    </ProofContainer>
   );
 }
