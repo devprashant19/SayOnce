@@ -77,6 +77,16 @@ describe("invented facts", () => {
     expect(outcome.failures.find((f) => f.code === "invented-number")?.evidence).toBe("500");
   });
 
+  it("does not treat the English verb 'do not' or Hindi verb 'bhej do' as the numeral 2", () => {
+    const outcome = checkDraft({
+      draft: draft({ body: "Please do not test build 41 yet. Bhej do." }),
+      contact: contact(),
+      allowedFacts: [fact({ id: "f41", text: "Do not test build 41", values: { numbers: ["41"], datesIso: [], names: [] } })],
+      allFacts: [fact({ id: "f41", text: "Do not test build 41", values: { numbers: ["41"], datesIso: [], names: [] } })],
+    });
+    expect(outcome.failures.map((f) => f.code)).not.toContain("invented-number");
+  });
+
   it("treats a number spoken in words as the same quantity", () => {
     const outcome = checkDraft({
       draft: draft({ body: "Ramesh bhai, two hundred fifty cartons aaye hain." }),

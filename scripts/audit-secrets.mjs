@@ -30,6 +30,8 @@ const ALLOWED = [
   /@sayonce\.example/,
   /@example\.com/,
   /@co\.com/,
+  /brian\.m\.carlson@gmail\.com/, // Bundled pg package maintainer in Next.js server chunks
+  /postgresql:\/\/\$\{e\(d\.user\)\}:\$\{e\(d\.password\)\}@/, // Bundled pg-connection-string template
 ];
 
 const RULES = [

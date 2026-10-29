@@ -4,6 +4,7 @@ import { useCallback, useState } from "react";
 import { SpeakBox } from "@/components/SpeakBox";
 import { DraftCard } from "@/components/DraftCard";
 import { FactList } from "@/components/FactList";
+import { KnowledgeMatrix } from "@/components/KnowledgeMatrix";
 import { Badge } from "@/components/Badge";
 import { sendTargetFor } from "@/lib/links";
 import { CONTACT_SET_LABELS } from "@/lib/contact-sets";
@@ -26,6 +27,16 @@ interface FanoutResponse {
   decisions: string[];
   facts: Fact[];
   cards: Card[];
+  routing?: {
+    concernsNobody: boolean;
+    decisions: Array<{
+      contactId: string;
+      include: boolean;
+      reason: string;
+      confidence: number;
+      factIds: string[];
+    }>;
+  };
   voiceReturn: VoiceReturn;
   trailVerdict: { ok: boolean; length: number };
 }
@@ -40,6 +51,7 @@ export default function SpeakPage() {
   const [error, setError] = useState<string | null>(null);
   const [result, setResult] = useState<FanoutResponse | null>(null);
   const [highlight, setHighlight] = useState<string[] | null>(null);
+  const [activeRecipients, setActiveRecipients] = useState<string[]>([]);
 
   const fanOut = useCallback(async () => {
     if (spokenText.trim().length === 0) {
@@ -60,7 +72,10 @@ export default function SpeakPage() {
         setError("error" in payload ? payload.error : "Fan out failed. Try again.");
         return;
       }
-      setResult(payload as FanoutResponse);
+      const fanoutData = payload as FanoutResponse;
+      setResult(fanoutData);
+      const activeIds = fanoutData.cards.filter((c) => c.draft !== null).map((c) => c.contact.id);
+      setActiveRecipients(activeIds);
     } catch {
       setError("Could not reach the server. Check your connection and try again.");
     } finally {
@@ -182,6 +197,19 @@ export default function SpeakPage() {
             highlightFactIds={highlight}
           />
 
+          <KnowledgeMatrix
+            facts={result.facts}
+            contacts={result.cards.map((c) => c.contact)}
+            cards={result.cards}
+            activeContactIds={activeRecipients}
+            onToggleContact={(id) => {
+              setActiveRecipients((prev) =>
+                prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+              );
+            }}
+            onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
+          />
+
           <section className="flex flex-wrap items-center gap-2 text-sm">
             <Badge tone={result.trailVerdict.ok ? "verified" : "blocked"}>
               Trust trail {result.trailVerdict.ok ? "intact" : "broken"} ·{" "}
@@ -197,30 +225,39 @@ export default function SpeakPage() {
             </span>
           </section>
 
+          {result.routing?.concernsNobody && (
+            <div className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 text-sm text-[var(--color-ink-soft)]">
+              This update concerns nobody on the selected roster. No drafts were generated.
+            </div>
+          )}
+
           <section className="space-y-3">
             <h2 className="text-lg font-semibold">
-              {result.cards.length} {result.cards.length === 1 ? "message" : "messages"}
+              {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length}{" "}
+              {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length === 1 ? "message" : "messages"}
             </h2>
-            {result.cards.map((card, index) => {
-              const target =
-                card.draft === null
-                  ? null
-                  : sendTargetFor(card.draft, card.contact);
-              return (
-                <DraftCard
-                  key={card.contact.id}
-                  index={index}
-                  contact={card.contact}
-                  draft={card.draft}
-                  check={card.check}
-                  error={card.error}
-                  sendHref={target?.href ?? null}
-                  sendLabel={target?.label ?? "Send"}
-                  sendBlockedReason={target?.blockedReason ?? null}
-                  onHoverSentence={setHighlight}
-                />
-              );
-            })}
+            {result.cards
+              .filter((card) => activeRecipients.includes(card.contact.id) && (card.draft !== null || card.error !== null))
+              .map((card, index) => {
+                const target =
+                  card.draft === null
+                    ? null
+                    : sendTargetFor(card.draft, card.contact);
+                return (
+                  <DraftCard
+                    key={card.contact.id}
+                    index={index}
+                    contact={card.contact}
+                    draft={card.draft}
+                    check={card.check}
+                    error={card.error}
+                    sendHref={target?.href ?? null}
+                    sendLabel={target?.label ?? "Send"}
+                    sendBlockedReason={target?.blockedReason ?? null}
+                    onHoverSentence={setHighlight}
+                  />
+                );
+              })}
           </section>
         </>
       )}

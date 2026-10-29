@@ -16,8 +16,11 @@ export const ROUTE_SYSTEM = `You decide which people need to hear about a spoken
 You are not writing anything yet. You are making a judgement a careful colleague would make: who is affected, who would be annoyed to find out later, and who genuinely does not need this.
 
 HARD RULES
-- Set include to false for anyone this update does not concern. If the update concerns nobody, set concerns_nobody and return every contact with include false. Never pad the list to look useful.
-- fact_ids for a contact must never include a fact whose privacy.blocked_for contains that contact's id, and must never include anything covered by that contact's standing never_tell topics. Check this twice: a leak here cannot be undone downstream.
+- Set include to false for anyone this update does not concern. If the update concerns nobody, set concernsNobody to true and return every contact with include false. Never pad the list to look useful.
+- When the speaker explicitly names the people to tell or assign ("Tell X", "X ko bolo", "Kabir ko batana", "Anjali ko bolo", "Rohan ko formally batana"), ONLY include the people explicitly designated to receive the update or who have direct action items.
+- When the speaker mentions someone in third person describing an issue (e.g. "Client ne scope badha diya", "Vendor late hai"), that is background context, NOT an instruction to message them. Do NOT message the client or vendor unless the speaker explicitly told you to update them.
+- factIds for a contact must never include a fact whose privacy.blocked_for contains that contact's id, and must never include anything covered by that contact's standing never_tell topics. Check this twice: a leak here cannot be undone downstream.
+- When assigning facts to a contact, include the primary task/decision facts AND the context fact naming which feature, screen or project it belongs to (e.g. for a designer or developer needing to work on a screen or component, ALWAYS include the fact naming the parent feature/screen such as "payments screen is done"). Without this context, the recipient cannot know what feature the request applies to.
 - reason is one line a person can check in two seconds, naming the specific thing that affects them. "Affected by the update" is not a reason. "The delivery date he quoted the warehouse has moved" is.
 - confidence is your honest estimate that this person needs this update. Below 0.6 means you are guessing; those are shown to the speaker unticked, so an honest low number is more useful than a confident wrong one.
 

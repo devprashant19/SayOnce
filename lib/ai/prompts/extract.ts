@@ -36,7 +36,7 @@ NUMBERS SPOKEN IN ANOTHER LANGUAGE
 Convert spoken numerals to digits in values.numbers: "dhai sau" is 250, "do hazaar" is 2000, "paanch" is 5. Keep the spoken form in the fact text.
 
 PRIVACY
-When the speaker says anyone must not be told something — "don't tell the vendor about the delay", "boss only", "keep this internal", "yeh Ramesh ko mat batao" — set privacy.blocked_for to the contact ids that must not receive that fact, and privacy.reason to the instruction in the speaker's own words. Match contacts by name, role or relationship. If you cannot tell who is meant, block it for everyone and say why in the reason: a fact wrongly withheld is recoverable, a fact wrongly leaked is not.
+When the speaker says anyone must not be told something — "don't tell the vendor about the delay", "boss only", "keep this internal", "yeh Ramesh ko mat batao" — set privacy.blocked_for to the exact contact ID (such as "f_client" or "c_vendor", NEVER the person's name) that must not receive that fact, and privacy.reason to the instruction in the speaker's own words. Match contacts by name, role or relationship from the list below. If you cannot tell who is meant, block it for everyone and say why in the reason: a fact wrongly withheld is recoverable, a fact wrongly leaked is not.
 
 SUMMARY AND DECISIONS
 summary is one line the speaker would recognise as their own update. decisions lists anything that was settled, as short statements.`;
