@@ -87,6 +87,18 @@ function numbersIn(text: string): Set<string> {
     found.add(normaliseNumber(match[0]));
   }
   for (const word of words(text)) {
+    if (word === "do") {
+      // "do" is frequently an English verb ("do not", "please do", "to do")
+      // or a Hindi imperative verb modifier ("bhej do", "kar do", "bata do"),
+      // not the numeral 2. Only treat as 2 when not acting as a verb.
+      if (
+        /\b(?:please|to|will|can|could|would|should|did|does)\s+do\b/i.test(text) ||
+        /\bdo\s+(?:not|n't|it|this|that|you|we|so|the|any|more|a|an)\b/i.test(text) ||
+        /\b(?:bhej|kar|de|bata|rok|rakh|dekh|sun|le|padh|likh|aa|ja|khol|band|samajh|soch)\s+do\b/i.test(text)
+      ) {
+        continue;
+      }
+    }
     const mapped = WORD_NUMBERS[word];
     if (mapped) found.add(mapped);
   }
