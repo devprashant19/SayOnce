@@ -251,6 +251,7 @@ export async function POST(request: Request) {
     decisions,
     facts,
     cards,
+    routing: routeOutput.value,
     voiceReturn: voiceReturn({
       spokenText: scrubbed.text,
       drafts: composed.drafts,
