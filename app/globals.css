@@ -272,6 +272,13 @@ html.theme-transition *::after {
   animation: check-pop 180ms var(--ease) both;
 }
 .animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--color-surface-raised) 0%,
+    var(--color-line) 50%,
+    var(--color-surface-raised) 100%
+  );
+  background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }
 .wave-bar {
@@ -279,9 +286,20 @@ html.theme-transition *::after {
   animation: wave 1.6s ease-in-out infinite;
 }
 
+/* Progressive enhancement scroll reveal */
+html.js-reveal .reveal-on-scroll {
+  opacity: 0;
+  transform: translateY(14px);
+  transition: opacity 320ms var(--ease), transform 320ms var(--ease);
+}
+html.js-reveal .reveal-on-scroll.is-revealed {
+  opacity: 1;
+  transform: translateY(0);
+}
+
 /* The fan-out: the one signature moment. */
 .stagger-children > * {
-  animation: fade-in 320ms var(--ease) both;
+  animation: fan-in 320ms var(--ease) both;
 }
 .stagger-children > *:nth-child(1) {
   animation-delay: 0ms;

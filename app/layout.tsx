@@ -50,7 +50,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               className="inline-flex min-h-11 items-center py-1 hover:opacity-90 transition active-press"
               aria-label="SayOnce Home"
             >
-              <SayOnceWordmark size={28} />
+              <SayOnceWordmark size={28} animated />
             </Link>
             <nav aria-label="Main" className="flex flex-wrap items-center gap-x-1 sm:gap-x-2 text-sm">
               {NAV.map((item) => (

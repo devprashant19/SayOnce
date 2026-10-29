@@ -380,26 +380,31 @@ function SpeakContent() {
     : [];
 
   return (
-    <div className="space-y-8">
-      <section>
+    <div className="space-y-6">
+      <header>
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-semibold tracking-tight">Speak</h1>
-            <p className="mt-1 text-[var(--color-ink-soft)]">
+            <h1
+              className="font-serif text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
+              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            >
+              Speak Console
+            </h1>
+            <p className="mt-1 text-sm text-[var(--color-ink-soft)]">
               One update. Everyone who needs to know gets their own version.
             </p>
           </div>
           <button
             type="button"
             onClick={() => setCommandBarOpen(true)}
-            className="flex min-h-11 items-center gap-1.5 rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 text-xs font-semibold text-[var(--color-ink-soft)] hover:bg-[var(--color-paper)] hover:text-[var(--color-ink)]"
+            className="flex min-h-11 items-center gap-2 rounded-lg border border-[var(--color-rule)] bg-[var(--color-surface-raised)] px-3 text-xs font-semibold text-[var(--color-ink-soft)] hover:bg-[var(--color-paper)] hover:text-[var(--color-ink)] active-press transition"
           >
-            <span>⌘K</span>
+            <kbd className="font-mono text-[10px] bg-[var(--color-paper-sunk)] px-1.5 py-0.5 rounded border border-[var(--color-rule)]">⌘K</kbd>
             <span>Command Bar</span>
           </button>
         </div>
 
-        <div className="mt-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper-sunk)]/50 p-3 text-xs">
+        <div className="mt-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-3 text-xs">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <span className="font-semibold text-[var(--color-ink)]">How SayOnce works:</span>
             <div className="flex flex-wrap items-center gap-2 sm:gap-4 text-[var(--color-ink-soft)]">
@@ -429,7 +434,7 @@ function SpeakContent() {
               <button
                 type="button"
                 onClick={() => setTourOpen(true)}
-                className="min-h-11 inline-flex items-center rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white hover:opacity-90 transition"
+                className="min-h-11 inline-flex items-center rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white hover:opacity-90 active-press transition"
               >
                 Guided tour (5 steps)
               </button>
@@ -441,7 +446,7 @@ function SpeakContent() {
                   setContactSet("india");
                   setResult(null);
                 }}
-                className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-semibold hover:bg-[var(--color-paper-sunk)] transition"
+                className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-semibold hover:bg-[var(--color-paper-sunk)] active-press transition"
               >
                 Reset demo ↺
               </button>
@@ -460,334 +465,409 @@ function SpeakContent() {
             </div>
           </div>
         )}
+      </header>
 
-        <div id="fanout-controls" className="mt-6 space-y-4">
-          <SpeakBox
-            value={spokenText}
-            onChange={(val) => {
-              setSpokenText(val);
-              setSelectedDemoId(null);
-            }}
-            onSubmit={fanOut}
-            disabled={busy}
-          />
-
-          <div className="flex flex-wrap items-end gap-4">
-            <div>
-              <label htmlFor="project" className="block text-sm font-medium">
-                Project
-              </label>
-              <select
-                id="project"
-                value={project}
-                onChange={(event) => setProject(event.target.value)}
-                className="mt-1 min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm"
-              >
-                {PROJECTS.map((name) => (
-                  <option key={name} value={name}>
-                    {name}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label htmlFor="contact-set" className="block text-sm font-medium">
-                Contacts
-              </label>
-              <select
-                id="contact-set"
-                value={contactSet}
-                onChange={(event) => setContactSet(event.target.value)}
-                className="mt-1 min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm"
-              >
-                {Object.entries(CONTACT_SET_LABELS).map(([value, label]) => (
-                  <option key={value} value={value}>
-                    {label}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <button
-              type="button"
-              onClick={fanOut}
-              disabled={busy}
-              className="min-h-11 rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-white disabled:opacity-60"
-            >
-              {busy ? "Fanning out…" : "Fan out"}
-            </button>
-          </div>
-
-          <div>
-            <p className="text-sm font-medium">Or try a sample update</p>
-            <div className="mt-2 flex flex-wrap gap-2">
-              {samples.map((sample) => (
-                <button
-                  key={sample.id}
-                  type="button"
-                  onClick={() => {
-                    setSpokenText(sample.spokenText);
-                    setProject(sample.project);
-                    setSelectedDemoId(sample.id);
-                    setInstantMode(false);
-                    setError(null);
-                  }}
-                  className={`min-h-11 inline-flex items-center rounded-full border px-4 text-xs transition ${
-                    instantMode
-                      ? "border-[var(--color-accent)] bg-[var(--color-accent)]/15 font-bold text-[var(--color-accent)] ring-2 ring-[var(--color-accent)]"
-                      : "border-[var(--color-rule)] hover:bg-[var(--color-paper-sunk)]"
-                  }`}
-                >
-                  {sample.label}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {instantMode && (
-          <div
-            role="status"
-            className="mt-4 rounded-[var(--radius-card)] border-2 border-[var(--color-accent)] bg-[var(--color-accent-wash)] p-4 shadow-sm"
-          >
-            <div className="flex items-start gap-3">
-              <span className="text-xl">⚡</span>
-              <div className="space-y-3">
-                <div>
-                  <p className="font-semibold text-sm text-[var(--color-ink)]">
-                    Instant mode
-                  </p>
-                  <p className="text-xs text-[var(--color-ink-soft)] mt-0.5">
-                    Showing a prepared fan-out, drafted and checked ahead of time
-                    so it appears with no wait. Pick another sample to switch:
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {samples.map((sample) => (
-                    <button
-                      key={sample.id}
-                      type="button"
-                      onClick={() => {
-                        setSpokenText(sample.spokenText);
-                        setProject(sample.project);
-                        setSelectedDemoId(sample.id);
-                        setInstantMode(false);
-                        setError(null);
-                      }}
-                      className="min-h-11 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-white transition transform active:scale-95 inline-flex items-center gap-1.5"
-                    >
-                      <span>▶</span>
-                      <span>{sample.label}</span>
-                    </button>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-
-        {error !== null && !instantMode && (
-          <p
-            role="alert"
-            className="mt-4 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-sm"
-          >
-            {error}
-          </p>
-        )}
-      </section>
-
-      {busy && (
-        <section aria-live="polite" aria-label="Fanning out drafts" className="space-y-4">
-          <div className="h-14 animate-pulse rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 flex items-center justify-between">
-            <div className="h-4 w-44 rounded bg-[var(--color-rule)]" />
-            <div className="h-4 w-20 rounded bg-[var(--color-rule)]" />
-          </div>
-          {[0, 1, 2].map((i) => (
-            <div
-              key={i}
-              className="space-y-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4"
-            >
-              <div className="flex items-center justify-between">
-                <div className="h-5 w-32 animate-pulse rounded bg-[var(--color-rule)]" />
-                <div className="flex gap-2">
-                  <div className="h-5 w-16 animate-pulse rounded-full bg-[var(--color-rule)]" />
-                  <div className="h-5 w-20 animate-pulse rounded-full bg-[var(--color-rule)]" />
-                </div>
-              </div>
-              <div className="space-y-2 pt-2">
-                <div className="h-4 w-full animate-pulse rounded bg-[var(--color-paper-sunk)]" />
-                <div className="h-4 w-5/6 animate-pulse rounded bg-[var(--color-paper-sunk)]" />
-                <div className="h-4 w-2/3 animate-pulse rounded bg-[var(--color-paper-sunk)]" />
-              </div>
-              <div className="pt-2 flex gap-2">
-                <div className="h-9 w-20 animate-pulse rounded bg-[var(--color-rule)]" />
-                <div className="h-9 w-32 animate-pulse rounded bg-[var(--color-rule)]" />
-              </div>
-            </div>
-          ))}
-        </section>
-      )}
-
-      {result !== null && (
-        <>
-          <FactList
-            facts={result.facts}
-            spokenText={result.spokenText}
-            highlightFactIds={highlight}
-          />
-
-          <div id="knowledge-matrix-section">
-            <KnowledgeMatrix
-              facts={result.facts}
-              contacts={result.cards.map((c) => c.contact)}
-              cards={result.cards}
-              activeContactIds={activeRecipients}
-              onToggleContact={(id) => {
-                setActiveRecipients((prev) =>
-                  prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-                );
+      {/* Two-pane at >=1024px: Left 40% (sticky), Right 60% (scrolls) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+        {/* Left Pane: Sticky 40% */}
+        <aside className="lg:col-span-5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto space-y-5 pr-1">
+          <div id="fanout-controls" className="space-y-4">
+            <SpeakBox
+              value={spokenText}
+              onChange={(val) => {
+                setSpokenText(val);
+                setSelectedDemoId(null);
               }}
-              onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
+              onSubmit={fanOut}
+              disabled={busy}
             />
-          </div>
 
-          <section id="trail-badge-section" className="flex flex-wrap items-center gap-2 text-sm">
-            <Badge tone={result.trailVerdict.ok ? "verified" : "blocked"}>
-              Trust trail {result.trailVerdict.ok ? "intact" : "broken"} ·{" "}
-              {result.trailVerdict.length} entries
-            </Badge>
-            <span className="text-[var(--color-ink-soft)]">
-              You spoke {result.voiceReturn.wordsSpoken} words. SayOnce delivered{" "}
-              {result.voiceReturn.wordsDelivered} words to {result.voiceReturn.people} people
-              in {result.voiceReturn.languages}{" "}
-              {result.voiceReturn.languages === 1 ? "language" : "languages"}.
-              {result.voiceReturn.minutesSaved !== null &&
-                ` About ${result.voiceReturn.minutesSaved} minutes saved.`}
-            </span>
-          </section>
-
-          {result.routing?.concernsNobody && (
-            <div className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 text-sm text-[var(--color-ink-soft)]">
-              This update concerns nobody on the selected roster. No drafts were generated.
-            </div>
-          )}
-
-          {result.contradictions && result.contradictions.length > 0 && (
-            <ContradictionBanner
-              alerts={result.contradictions}
-              updateId={result.updateId}
-              onApplyCorrection={handleApplyCorrection}
-            />
-          )}
-
-          {result.whoDidIForget && result.whoDidIForget.length > 0 && (
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-accent)]/40 bg-[var(--color-accent-wash)] p-3.5 text-xs flex flex-wrap items-center justify-between gap-3 shadow-sm">
-              <div className="flex items-center gap-2">
-                <span className="text-sm">💡</span>
-                <span className="text-[var(--color-ink)]">
-                  <strong>Who did I forget?</strong>{" "}
-                  {result.whoDidIForget
-                    .map(
-                      (f) =>
-                        `${f.name} usually hears about "${project}" (${f.timesSeen} of last ${f.totalRecent} updates)`,
-                    )
-                    .join("; ")}
-                </span>
+            <div className="flex flex-wrap items-end gap-3">
+              <div className="flex-1 min-w-[120px]">
+                <label htmlFor="project" className="block text-xs font-medium text-[var(--color-ink-soft)]">
+                  Project
+                </label>
+                <select
+                  id="project"
+                  value={project}
+                  onChange={(event) => setProject(event.target.value)}
+                  className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm text-[var(--color-ink)]"
+                >
+                  {PROJECTS.map((name) => (
+                    <option key={name} value={name}>
+                      {name}
+                    </option>
+                  ))}
+                </select>
               </div>
-              <div className="flex items-center gap-2">
-                {result.whoDidIForget.map((f) => (
+
+              <div className="flex-1 min-w-[120px]">
+                <label htmlFor="contact-set" className="block text-xs font-medium text-[var(--color-ink-soft)]">
+                  Contacts
+                </label>
+                <select
+                  id="contact-set"
+                  value={contactSet}
+                  onChange={(event) => setContactSet(event.target.value)}
+                  className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm text-[var(--color-ink)]"
+                >
+                  {Object.entries(CONTACT_SET_LABELS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <button
+                type="button"
+                onClick={fanOut}
+                disabled={busy}
+                className="min-h-11 inline-flex items-center justify-center gap-1.5 rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+              >
+                <span>{busy ? "Fanning out…" : "Fan out"}</span>
+                <kbd className="text-[10px] ml-1 px-1.5 py-0.5 rounded bg-white/20 font-mono tracking-wider">⌘↵</kbd>
+              </button>
+            </div>
+
+            <div>
+              <p className="text-xs font-medium text-[var(--color-ink-soft)]">Or try a sample update</p>
+              <div className="mt-2 flex flex-wrap gap-2">
+                {samples.map((sample) => (
                   <button
-                    key={f.contactId}
+                    key={sample.id}
                     type="button"
-                    onClick={() =>
-                      setActiveRecipients((prev) =>
-                        prev.includes(f.contactId) ? prev : [...prev, f.contactId],
-                      )
-                    }
-                    className="rounded bg-[var(--color-ink)] px-2.5 py-1 font-semibold text-white hover:opacity-90"
+                    onClick={() => {
+                      setSpokenText(sample.spokenText);
+                      setProject(sample.project);
+                      setSelectedDemoId(sample.id);
+                      setInstantMode(false);
+                      setError(null);
+                    }}
+                    className={`min-h-11 inline-flex items-center rounded-full border px-3.5 text-xs transition ${
+                      instantMode
+                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]/15 font-bold text-[var(--color-accent)] ring-2 ring-[var(--color-accent)]"
+                        : "border-[var(--color-rule)] bg-[var(--color-paper)] hover:bg-[var(--color-paper-sunk)] text-[var(--color-ink)]"
+                    }`}
                   >
-                    Add {f.name} +
+                    {sample.label}
                   </button>
                 ))}
               </div>
             </div>
+          </div>
+
+          {instantMode && (
+            <div
+              role="status"
+              className="rounded-[var(--radius-card)] border-2 border-[var(--color-accent)] bg-[var(--color-accent-wash)] p-4 shadow-sm animate-fade-in"
+            >
+              <div className="flex items-start gap-3">
+                <span className="text-xl">⚡</span>
+                <div className="space-y-3">
+                  <div>
+                    <div className="flex items-center gap-2">
+                      <p className="font-semibold text-sm text-[var(--color-ink)]">
+                        Instant mode
+                      </p>
+                      <Badge tone="verified" animated>Cached 0 AI calls</Badge>
+                    </div>
+                    <p className="text-xs text-[var(--color-ink-soft)] mt-0.5">
+                      Showing a prepared fan-out, drafted and checked ahead of time
+                      so it appears with no wait. Pick another sample to switch:
+                    </p>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {samples.map((sample) => (
+                      <button
+                        key={sample.id}
+                        type="button"
+                        onClick={() => {
+                          setSpokenText(sample.spokenText);
+                          setProject(sample.project);
+                          setSelectedDemoId(sample.id);
+                          setInstantMode(false);
+                          setError(null);
+                        }}
+                        className="min-h-11 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-white transition transform active:scale-95 inline-flex items-center gap-1.5"
+                      >
+                        <span>▶</span>
+                        <span>{sample.label}</span>
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </div>
           )}
 
-          <section id="drafts-section" className="space-y-3">
-            <div className="flex flex-wrap items-center justify-between gap-3">
-              <h2 className="text-lg font-semibold">
-                {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length}{" "}
-                {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length === 1 ? "message" : "messages"}
-              </h2>
-              {sendableQueueItems.length > 0 && (
-                <button
-                  type="button"
-                  onClick={() => setShowQueue(true)}
-                  className="rounded bg-[var(--color-ink)] px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:opacity-90"
-                >
-                  Send all ({sendableQueueItems.filter((q) => !q.isSent).length} pending) · Guided queue →
-                </button>
+          {error !== null && !instantMode && (
+            <p
+              role="alert"
+              className="rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-sm text-[var(--color-ink)] animate-fade-in"
+            >
+              {error}
+            </p>
+          )}
+
+          {/* After a run: spoken text and extracted facts beneath it */}
+          {result !== null && (
+            <div className="space-y-4 pt-2">
+              <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-3 text-xs space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <Badge tone={result.trailVerdict.ok ? "verified" : "blocked"} animated>
+                    Trust trail {result.trailVerdict.ok ? "intact" : "broken"} · {result.trailVerdict.length} entries
+                  </Badge>
+                </div>
+                <p className="text-[var(--color-ink-soft)] leading-relaxed">
+                  You spoke {result.voiceReturn.wordsSpoken} words. SayOnce delivered{" "}
+                  {result.voiceReturn.wordsDelivered} words to {result.voiceReturn.people} people
+                  in {result.voiceReturn.languages}{" "}
+                  {result.voiceReturn.languages === 1 ? "language" : "languages"}.
+                  {result.voiceReturn.minutesSaved !== null &&
+                    ` ~${result.voiceReturn.minutesSaved} minutes saved.`}
+                </p>
+              </div>
+
+              <FactList
+                facts={result.facts}
+                spokenText={result.spokenText}
+                highlightFactIds={highlight}
+              />
+
+              {result.contradictions && result.contradictions.length > 0 && (
+                <ContradictionBanner
+                  alerts={result.contradictions}
+                  updateId={result.updateId}
+                  onApplyCorrection={handleApplyCorrection}
+                />
+              )}
+
+              {result.whoDidIForget && result.whoDidIForget.length > 0 && (
+                <div className="rounded-[var(--radius-card)] border border-[var(--color-accent)]/40 bg-[var(--color-accent-wash)] p-3.5 text-xs flex flex-wrap items-center justify-between gap-3 shadow-sm">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm">💡</span>
+                    <span className="text-[var(--color-ink)]">
+                      <strong>Who did I forget?</strong>{" "}
+                      {result.whoDidIForget
+                        .map(
+                          (f) =>
+                            `${f.name} usually hears about "${project}" (${f.timesSeen} of last ${f.totalRecent} updates)`,
+                        )
+                        .join("; ")}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    {result.whoDidIForget.map((f) => (
+                      <button
+                        key={f.contactId}
+                        type="button"
+                        onClick={() =>
+                          setActiveRecipients((prev) =>
+                            prev.includes(f.contactId) ? prev : [...prev, f.contactId],
+                          )
+                        }
+                        className="min-h-11 rounded bg-[var(--color-ink)] px-3 py-1 font-semibold text-white hover:opacity-90 active-press transition"
+                      >
+                        Add {f.name} +
+                      </button>
+                    ))}
+                  </div>
+                </div>
               )}
             </div>
-
-            {result.cards
-              .filter((card) => activeRecipients.includes(card.contact.id) && (card.draft !== null || card.error !== null))
-              .map((card, index) => {
-                const target =
-                  card.draft === null
-                    ? null
-                    : sendTargetFor(card.draft, card.contact);
-                return (
-                  <DraftCard
-                    key={card.contact.id}
-                    index={index}
-                    messageId={card.messageId}
-                    updateId={result.updateId}
-                    contact={card.contact}
-                    draft={card.draft}
-                    check={card.check}
-                    error={card.error}
-                    facts={result.facts}
-                    project={project}
-                    sendHref={target?.href ?? null}
-                    sendLabel={target?.label ?? "Send"}
-                    sendBlockedReason={target?.blockedReason ?? null}
-                    sent={card.sent}
-                    sentAt={card.sentAt}
-                    overridden={card.overridden}
-                    onToggleSent={handleToggleSent}
-                    onOverride={handleOverride}
-                    onHoverSentence={setHighlight}
-                    activeFactIds={highlight}
-                  />
-                );
-              })}
-          </section>
-
-          <div id="privacy-shield-section">
-            <PrivacyPanel
-              facts={result.facts}
-              contacts={result.cards.map((c) => c.contact)}
-            />
-          </div>
-
-          <div id="trail-section">
-            <TrustTrailViewer
-              entries={result.trail}
-              updateId={result.updateId}
-            />
-          </div>
-
-          {showQueue && result && (
-            <SendGuidedQueue
-              items={sendableQueueItems}
-              updateId={result.updateId}
-              onClose={() => setShowQueue(false)}
-              onToggleSent={handleToggleSent}
-            />
           )}
-        </>
+        </aside>
+
+        {/* Right Pane: Scrolls 60% */}
+        <main className="lg:col-span-7 space-y-6 min-w-0">
+          {busy && (
+            <section aria-live="polite" aria-label="Fanning out drafts" className="space-y-4">
+              <div className="h-14 animate-shimmer rounded-[var(--radius-card)] border border-[var(--color-rule)] p-4 flex items-center justify-between" />
+              {[0, 1, 2].map((i) => (
+                <div
+                  key={i}
+                  className="space-y-3 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4"
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="h-5 w-32 animate-shimmer rounded" />
+                    <div className="flex gap-2">
+                      <div className="h-5 w-16 animate-shimmer rounded-full" />
+                      <div className="h-5 w-20 animate-shimmer rounded-full" />
+                    </div>
+                  </div>
+                  <div className="space-y-2 pt-2">
+                    <div className="h-4 w-full animate-shimmer rounded" />
+                    <div className="h-4 w-5/6 animate-shimmer rounded" />
+                    <div className="h-4 w-2/3 animate-shimmer rounded" />
+                  </div>
+                  <div className="pt-2 flex gap-2">
+                    <div className="h-11 w-24 animate-shimmer rounded" />
+                    <div className="h-11 w-32 animate-shimmer rounded" />
+                  </div>
+                </div>
+              ))}
+            </section>
+          )}
+
+          {result !== null && !busy && (
+            <>
+              {result.routing?.concernsNobody && (
+                <div className="rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-4 text-sm text-[var(--color-ink-soft)]">
+                  This update concerns nobody on the selected roster. No drafts were generated.
+                </div>
+              )}
+
+              <section id="drafts-section" className="space-y-4">
+                <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-rule)] pb-3">
+                  <div>
+                    <h2
+                      className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
+                      style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                    >
+                      Drafted Messages ({result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length})
+                    </h2>
+                    <p className="text-xs text-[var(--color-ink-soft)]">
+                      Staggered cards fanned out with deterministic fact checks.
+                    </p>
+                  </div>
+                  {sendableQueueItems.length > 0 && (
+                    <button
+                      type="button"
+                      onClick={() => setShowQueue(true)}
+                      className="min-h-11 rounded-lg bg-[var(--color-ink)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition"
+                    >
+                      Send all ({sendableQueueItems.filter((q) => !q.isSent).length} pending) · Guided queue →
+                    </button>
+                  )}
+                </div>
+
+                <div className="space-y-4 stagger-children">
+                  {result.cards
+                    .filter((card) => activeRecipients.includes(card.contact.id) && (card.draft !== null || card.error !== null))
+                    .map((card, index) => {
+                      const target =
+                        card.draft === null
+                          ? null
+                          : sendTargetFor(card.draft, card.contact);
+                      return (
+                        <DraftCard
+                          key={card.contact.id}
+                          index={index}
+                          messageId={card.messageId}
+                          updateId={result.updateId}
+                          contact={card.contact}
+                          draft={card.draft}
+                          check={card.check}
+                          error={card.error}
+                          facts={result.facts}
+                          project={project}
+                          sendHref={target?.href ?? null}
+                          sendLabel={target?.label ?? "Send"}
+                          sendBlockedReason={target?.blockedReason ?? null}
+                          sent={card.sent}
+                          sentAt={card.sentAt}
+                          overridden={card.overridden}
+                          onToggleSent={handleToggleSent}
+                          onOverride={handleOverride}
+                          onHoverSentence={setHighlight}
+                          activeFactIds={highlight}
+                        />
+                      );
+                    })}
+                </div>
+              </section>
+
+              {/* Collapsible Knowledge Matrix */}
+              <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition" open>
+                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
+                  <span className="flex items-center gap-2">
+                    <span>Knowledge Matrix</span>
+                    <span className="text-xs text-[var(--color-ink-soft)] font-normal">
+                      ({result.facts.length} facts × {result.cards.length} recipients)
+                    </span>
+                  </span>
+                  <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div id="knowledge-matrix-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
+                  <KnowledgeMatrix
+                    facts={result.facts}
+                    contacts={result.cards.map((c) => c.contact)}
+                    cards={result.cards}
+                    activeContactIds={activeRecipients}
+                    onToggleContact={(id) => {
+                      setActiveRecipients((prev) =>
+                        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+                      );
+                    }}
+                    onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
+                  />
+                </div>
+              </details>
+
+              {/* Collapsible Privacy Panel */}
+              <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition">
+                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
+                  <span className="flex items-center gap-2">
+                    <span>🛡 Privacy Shield</span>
+                    <span className="text-xs text-[var(--color-ink-soft)] font-normal">
+                      Deliberate omission rules
+                    </span>
+                  </span>
+                  <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div id="privacy-shield-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
+                  <PrivacyPanel
+                    facts={result.facts}
+                    contacts={result.cards.map((c) => c.contact)}
+                  />
+                </div>
+              </details>
+
+              {/* Collapsible Trust Trail */}
+              <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition">
+                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
+                  <span className="flex items-center gap-2">
+                    <span>⛓ Trust Trail</span>
+                    <span className="text-xs text-[var(--color-ink-soft)] font-normal">
+                      Cryptographic tamper-evident chain ({result.trail.length} entries)
+                    </span>
+                  </span>
+                  <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
+                </summary>
+                <div id="trail-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
+                  <TrustTrailViewer
+                    entries={result.trail}
+                    updateId={result.updateId}
+                  />
+                </div>
+              </details>
+            </>
+          )}
+
+          {!result && !busy && (
+            <div className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-rule)] bg-[var(--color-surface-raised)]/40 p-12 text-center space-y-3">
+              <p
+                className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
+                style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              >
+                &ldquo;One update. Everyone who needs to know gets their own version.&rdquo;
+              </p>
+              <p className="text-xs text-[var(--color-ink-soft)] max-w-sm mx-auto leading-relaxed">
+                Hold your Wispr key and speak into the console on the left, or pick one of the sample updates to test instant mode. Draft cards, fact-check outcomes, and knowledge routing will fan out here.
+              </p>
+            </div>
+          )}
+        </main>
+      </div>
+
+      {showQueue && result && (
+        <SendGuidedQueue
+          items={sendableQueueItems}
+          updateId={result.updateId}
+          onClose={() => setShowQueue(false)}
+          onToggleSent={handleToggleSent}
+        />
       )}
 
       <CommandBar

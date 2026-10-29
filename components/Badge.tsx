@@ -19,15 +19,21 @@ export function Badge({
   tone = "neutral",
   children,
   title,
+  animated = false,
+  className = "",
 }: {
   tone?: Tone;
   children: React.ReactNode;
   title?: string;
+  animated?: boolean;
+  className?: string;
 }) {
   return (
     <span
       title={title}
-      className={`inline-flex items-center gap-1 rounded-full border px-2 py-0.5 text-xs font-medium ${TONES[tone]}`}
+      className={`inline-flex items-center gap-1 rounded-full border px-2.5 py-0.5 text-xs font-medium ${TONES[tone]} ${
+        animated ? "animate-badge-pop" : ""
+      } ${className}`}
     >
       {children}
     </span>

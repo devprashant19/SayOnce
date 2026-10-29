@@ -201,11 +201,16 @@ export function DraftCard(props: DraftCardProps) {
 
   return (
     <article
-      className="fan-in rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4"
+      className="fan-in hover-card-lift rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 shadow-sm"
       style={{ animationDelay: `${Math.min(props.index, 8) * 60}ms` }}
     >
       <header className="flex flex-wrap items-center gap-2">
-        <h3 className="font-semibold">{contact.name}</h3>
+        <h3
+          className="font-serif text-lg font-semibold tracking-tight text-[var(--color-ink)]"
+          style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+        >
+          {contact.name}
+        </h3>
         <span className="text-sm text-[var(--color-ink-soft)]">{contact.role}</span>
         <div className="ml-auto flex flex-wrap items-center gap-1.5">
           <Badge tone="neutral">{contact.language}</Badge>
@@ -213,19 +218,24 @@ export function DraftCard(props: DraftCardProps) {
             {contact.channel === "whatsapp" ? "WhatsApp" : "Email"}
           </Badge>
           {isSent && (
-            <Badge tone="verified">
-              ✓ Sent {formatSentTime(sentAt)}
+            <Badge tone="verified" animated>
+              <span className="animate-check-pop inline-block">✓</span> Sent {formatSentTime(sentAt)}
             </Badge>
           )}
           {check?.ok && (
             <Badge
               tone="verified"
+              animated
               title="Every number, date and name in this draft appears in what you said. Nothing withheld leaked. Language, script and length all match the profile."
             >
-              Facts verified
+              <span className="animate-check-pop inline-block">✓</span> Facts verified
             </Badge>
           )}
-          {failed && !isOverridden && <Badge tone="blocked">Needs your eyes</Badge>}
+          {failed && !isOverridden && (
+            <Badge tone="blocked" animated>
+              Needs your eyes
+            </Badge>
+          )}
           {failed && isOverridden && <Badge tone="neutral">Overridden</Badge>}
         </div>
       </header>
@@ -305,18 +315,18 @@ export function DraftCard(props: DraftCardProps) {
               fontFamily:
                 currentScript === "devanagari"
                   ? "'Noto Sans Devanagari', var(--font-sans)"
-                  : undefined,
+                  : "var(--font-jetbrains), var(--font-mono)",
             }}
-            className="mt-2 w-full resize-y rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-3 text-sm leading-relaxed outline-none"
+            className="mt-2 w-full resize-y rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-3 font-mono text-xs sm:text-sm leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]"
           />
 
           {draft.sentences.length > 0 && props.onHoverSentence && (
             <p className="mt-2 text-xs text-[var(--color-ink-faint)]">
-              Hover or tap a sentence below to see the words it came from.
+              Hover or focus a sentence below to see the words it came from.
             </p>
           )}
           {draft.sentences.length > 0 && props.onHoverSentence && (
-            <ul className="mt-1 space-y-0.5 text-xs">
+            <ul className="mt-1 space-y-1 text-xs">
               {draft.sentences.map((sentence, i) => {
                 const isSentenceActive =
                   props.activeFactIds &&
@@ -329,11 +339,18 @@ export function DraftCard(props: DraftCardProps) {
                     onFocus={() => props.onHoverSentence?.(sentence.factIds)}
                     onBlur={() => props.onHoverSentence?.(null)}
                     onClick={() => props.onHoverSentence?.(sentence.factIds)}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        props.onHoverSentence?.(sentence.factIds);
+                      }
+                    }}
                     tabIndex={0}
-                    className={`cursor-default rounded px-1.5 py-0.5 transition-colors ${
+                    aria-label={`Sentence ${i + 1}: ${sentence.sentence}`}
+                    className={`cursor-pointer rounded px-2 py-1 outline-none transition-colors ${
                       isSentenceActive
-                        ? "bg-[var(--color-accent-wash)] font-medium text-[var(--color-ink)]"
-                        : "text-[var(--color-ink-soft)] hover:bg-[var(--color-accent-wash)] focus:bg-[var(--color-accent-wash)]"
+                        ? "bg-[var(--color-accent-wash)] font-medium text-[var(--color-ink)] ring-1 ring-[var(--color-accent)]"
+                        : "text-[var(--color-ink-soft)] hover:bg-[var(--color-accent-wash)] hover:text-[var(--color-ink)] focus:bg-[var(--color-accent-wash)] focus:text-[var(--color-ink)] focus:ring-1 focus:ring-[var(--color-accent)]"
                     }`}
                   >
                     {sentence.sentence}

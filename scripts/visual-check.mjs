@@ -271,6 +271,18 @@ for (const theme of themes) {
           continue;
         }
 
+        // Scroll the whole page once so scroll-triggered reveals fire. Otherwise
+        // below-the-fold sections stay at opacity 0, the screenshot shows blank
+        // space, and the audit skips them as invisible.
+        await page.evaluate(async () => {
+          const step = Math.max(200, Math.floor(window.innerHeight * 0.8));
+          for (let y = 0; y < document.documentElement.scrollHeight; y += step) {
+            window.scrollTo(0, y);
+            await new Promise((r) => setTimeout(r, 60));
+          }
+          window.scrollTo(0, 0);
+        });
+
         // Let entrance animations settle so a mid-flight frame is not audited.
         await page.waitForTimeout(700);
 

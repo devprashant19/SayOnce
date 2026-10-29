@@ -39,13 +39,14 @@ export function SpeakBox({ value, onChange, onSubmit, disabled, label }: SpeakBo
 
   return (
     <div>
-      <label htmlFor="speak" className="block text-sm font-medium">
-        {label ?? "Your update"}
-      </label>
-      <p id="speak-hint" className="mt-1 text-sm text-[var(--color-ink-soft)]">
-        Hold your Wispr key and talk. Any language, any mix. Ctrl or Cmd + Enter
-        to fan out.
-      </p>
+      <div className="flex items-center justify-between">
+        <label htmlFor="speak" className="block text-sm font-semibold tracking-tight text-[var(--color-ink)]">
+          {label ?? "Your update"}
+        </label>
+        <span className="text-[11px] font-mono text-[var(--color-ink-faint)]">
+          Wispr Flow ready
+        </span>
+      </div>
       <textarea
         id="speak"
         ref={ref}
@@ -65,9 +66,20 @@ export function SpeakBox({ value, onChange, onSubmit, disabled, label }: SpeakBo
           }
         }}
         placeholder="Hold your Wispr key and talk…"
-        style={{ viewTransitionName: "speak-box" }}
-        className="mt-3 w-full resize-none rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 text-base leading-relaxed outline-none placeholder:text-[var(--color-ink-faint)] disabled:opacity-60"
+        style={{
+          viewTransitionName: "speak-box",
+          fontFamily: "var(--font-jetbrains), var(--font-mono)",
+        }}
+        className="mt-2 w-full resize-none rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-4 font-mono text-sm sm:text-base leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] placeholder:text-[var(--color-ink-faint)] disabled:opacity-60"
       />
+      <p
+        id="speak-hint"
+        className={`mt-1.5 text-xs text-[var(--color-ink-soft)] transition-opacity duration-200 ${
+          value.trim() ? "opacity-0 pointer-events-none h-0 overflow-hidden" : "opacity-100"
+        }`}
+      >
+        Hold your Wispr key and talk. Any language, any mix. <kbd className="font-mono text-[10px] bg-[var(--color-paper-sunk)] px-1.5 py-0.5 rounded border border-[var(--color-rule)]">⌘↵</kbd> to fan out.
+      </p>
     </div>
   );
 }
