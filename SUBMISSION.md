@@ -2,35 +2,27 @@
 
 **By WeMakeDevs and Wispr Flow**
 
-> **Status: not yet submittable.** Two things are outstanding, both marked
-> `TODO` below: the app is not deployed, and no real-use numbers have been
-> measured. Nothing in this file states a figure that has not been verified —
-> §6 lists exactly what is missing.
+> **Status: partially submittable.** The app is deployed and live. Real-use
+> numbers have not yet been measured. Nothing in this file states a figure that
+> has not been verified — §6 lists exactly what is missing.
 
 ---
 
 ## 1. Judge demo link — put this first
 
-```
-TODO: paste the production /demo URL here after deploying.
-      npx vercel --prod, then confirm it is live:
-      curl -s -o /dev/null -w "%{http_code}\n" <url>/demo    # must print 200
-```
+**https://say-once-kappa.vercel.app/demo**
 
 > *No sign-in. Click Fan out.*
-
-**Do not put a URL in this file until `curl` returns 200 for it.** A dead link
-at the top of a submission is worse than no link.
 
 ## 2. Links
 
 | What | URL |
 | --- | --- |
-| Judge demo | `TODO after deploy` → `/demo` |
-| Landing story | `TODO after deploy` → `/` |
-| Speak app | `TODO after deploy` → `/app` |
-| Evidence dashboard | `TODO after deploy` → `/proof` |
-| Quality Lab | `TODO after deploy` → `/lab` |
+| Judge demo | https://say-once-kappa.vercel.app/demo |
+| Landing story | https://say-once-kappa.vercel.app/ |
+| Speak app | https://say-once-kappa.vercel.app/app |
+| Evidence dashboard | https://say-once-kappa.vercel.app/proof |
+| Quality Lab | https://say-once-kappa.vercel.app/lab |
 | Repository | https://github.com/devprashant19/SayOnce |
 
 ---
@@ -185,10 +177,9 @@ Fix these before submitting. Nothing else in this file is blocked on them.
 
 | # | Item | Why it matters | How |
 | --- | --- | --- | --- |
-| 1 | **Not deployed.** There is no live URL. | Criterion 3 is "a live link they can open and use". The URL previously in this file returned HTTP 503. | `npm run verify:all && npm run audit:secrets`, then `npx vercel --prod`, smoke test, and paste the URL into §1 and §2 |
-| 2 | **No baseline measured.** `SAYONCE_BASELINE_MINUTES` is unset. | A time saving cannot be computed without it, and it can only be measured **before** the tool is in use. | Time five updates written the old way; put the average in `.env.local` |
-| 3 | **No real use.** The real dataset is empty. | Criterion 1 is "a real problem in your own work". | Use it for your actual updates; the app measures elapsed time itself |
-| 4 | **Golden set is 20 cases**, built from a drafted spec. | The 10 `real` cases should be your own dictated updates. | Dictate over `p_real_01`–`08` in `data/golden/golden-set.draft.json` |
+| 1 | **No baseline measured.** `SAYONCE_BASELINE_MINUTES` is unset. | A time saving cannot be computed without it, and it can only be measured **before** the tool is in use. | Time five updates written the old way; put the average in `.env.local` |
+| 2 | **No real use.** The real dataset is empty. | Criterion 1 is "a real problem in your own work". | Use it for your actual updates; the app measures elapsed time itself |
+| 3 | **Golden set is 20 cases**, built from a drafted spec. | The 10 `real` cases should be your own dictated updates. | Dictate over `p_real_01`–`08` in `data/golden/golden-set.draft.json` |
 
 ### Removed from an earlier draft of this file
 
