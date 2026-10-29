@@ -127,6 +127,16 @@ describe("invented facts", () => {
     });
     expect(outcome.failures.map((f) => f.code)).not.toContain("invented-name");
   });
+
+  it("does not flag sign-off closings like Best, Cheers, Sincerely as invented people", () => {
+    const outcome = checkDraft({
+      draft: draft({ body: "Hi Ramesh, delivery moves to Monday 2 November.\n\nBest,\nCheers,\nSincerely, Team" }),
+      contact: contact({ name: "Ramesh" }),
+      allowedFacts: [DELIVERY],
+      allFacts: [DELIVERY],
+    });
+    expect(outcome.failures.map((f) => f.code)).not.toContain("invented-name");
+  });
 });
 
 describe("privacy shield", () => {
