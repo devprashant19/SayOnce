@@ -556,7 +556,7 @@ export default function LandingPage() {
               attempts to sneak a withheld fact into a draft, the verifier halts sending.
             </p>
             <div className="mt-4 rounded bg-[var(--color-paper-sunk)] p-2 font-mono text-[11px] text-[var(--color-verified)]">
-              Zero tolerance · 0 leaks across golden set
+              lib/checker.ts · blocked facts never enter the prompt
             </div>
           </div>
 

@@ -6,6 +6,18 @@
  */
 
 import "server-only";
+import { randomBytes } from "node:crypto";
+
+/**
+ * A random secret for local development, generated once per process. Never a
+ * literal: a committed secret is a known secret, and this one signs the demo
+ * session ids that keep visitors isolated from each other.
+ */
+let devSecret: string | null = null;
+function developmentSessionSecret(): string {
+  if (!devSecret) devSecret = randomBytes(32).toString("base64");
+  return devSecret;
+}
 
 function required(name: string, hint: string): string {
   const value = process.env[name];
@@ -78,13 +90,24 @@ export const env = {
   get demoDailyAiCap(): number {
     return optionalNumber("DEMO_DAILY_AI_CAP", 400);
   },
+  /**
+   * Signs demo session ids, which is what keeps one visitor's demo rows out of
+   * another's. A committed fallback would mean anyone with the repo could forge
+   * a session id, so the development convenience is a per-process random value
+   * rather than a literal: sessions do not survive a restart locally, which is
+   * the correct trade for never shipping a known key.
+   */
   get demoSessionSecret(): string {
-    const val = process.env.DEMO_SESSION_SECRET;
-    if (val && val.trim().length > 0) return val;
+    const value = process.env.DEMO_SESSION_SECRET;
+    if (value && value.trim().length > 0) return value;
+
     if (process.env.NODE_ENV === "production") {
-      return required("DEMO_SESSION_SECRET", "Phase D needs it; 32+ random bytes, base64.");
+      return required(
+        "DEMO_SESSION_SECRET",
+        "Phase D needs it; 32+ random bytes, base64. Generate one with: node -e \"console.log(require('crypto').randomBytes(32).toString('base64'))\"",
+      );
     }
-    return "sayonce_dev_demo_session_secret_32bytes_min_fallback_key=";
+    return developmentSessionSecret();
   },
   /** Null until a real baseline has been measured. Never faked. */
   get baselineMinutes(): number | null {

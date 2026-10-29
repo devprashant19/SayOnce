@@ -52,7 +52,7 @@ Two of these are worth planning the demo around: **Command Mode on a draft**
 Dictate all of it:
 
 - every prompt and correction to your agents
-- all 34 golden test updates (this is the single biggest block of words, and it
+- every golden test update (this is the single biggest block of words, and it
   is work you have to do anyway)
 - SPEC.md, and every update to it after a phase
 - every feedback note

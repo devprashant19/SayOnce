@@ -7,7 +7,7 @@ See also [../09-WISPR-INTEGRATION.md](../09-WISPR-INTEGRATION.md).
 
 ## Dictate everything
 
-Prompts, corrections, all 34 golden test updates, `SPEC.md`, every feedback
+Prompts, corrections, every golden test update, `SPEC.md`, every feedback
 note, the #NoHandsChallenge posts, the README, the submission write-up.
 
 **Keyboard is allowed for shortcuts and small fixes.** The rule is voice for
