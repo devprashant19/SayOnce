@@ -22,7 +22,8 @@
     "smoke:ai": "node --env-file=.env.local scripts/smoke-ai.mjs",
     "check": "npm run typecheck && npm run lint && npm run test",
     "visual": "node scripts/visual-check.mjs",
-    "verify:cached": "vitest run tests/cached-path-zero-ai.test.ts --reporter=verbose"
+    "verify:cached": "vitest run tests/cached-path-zero-ai.test.ts --reporter=verbose",
+    "smoke:prod": "node scripts/smoke-playwright.mjs"
   },
   "dependencies": {
     "@google/genai": "^2.32.0",
