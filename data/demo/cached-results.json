@@ -488,56 +488,7 @@
         }
       ]
     },
-    "contradictions": [
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_boss",
-        "recipientName": "Anita Desai",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      },
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_vendor",
-        "recipientName": "Ramesh Kulkarni",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      },
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_warehouse",
-        "recipientName": "Suresh Yadav",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      },
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_client",
-        "recipientName": "Priya Nair",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      }
-    ],
+    "contradictions": [],
     "whoDidIForget": [],
     "voiceReturn": {
       "wordsSpoken": 93,
@@ -1228,56 +1179,7 @@
         }
       ]
     },
-    "contradictions": [
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_boss",
-        "recipientName": "Anita Desai",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      },
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_vendor",
-        "recipientName": "Ramesh Kulkarni",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      },
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_warehouse",
-        "recipientName": "Suresh Yadav",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      },
-      {
-        "id": "contra-f1-f8",
-        "recipientId": "c_client",
-        "recipientName": "Priya Nair",
-        "topic": "ramesh sau cartons",
-        "previousFactId": "f1",
-        "previousFactText": "Ramesh ne sirf dhai sau cartons bheje.",
-        "previousSpokenOn": "2026-10-29",
-        "currentFactId": "f8",
-        "currentFactText": "Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein",
-        "suggestedCorrection": "Update: ramesh sau cartons moves from 250 to 150."
-      }
-    ],
+    "contradictions": [],
     "whoDidIForget": [],
     "voiceReturn": {
       "wordsSpoken": 93,

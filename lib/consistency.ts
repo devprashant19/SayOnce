@@ -35,10 +35,15 @@ const STOPWORDS = new Set([
 ]);
 
 function extractKeywords(text: string): Set<string> {
-  const words = text
-    .toLowerCase()
-    .replace(/[^\w\s]/gu, " ")
-    .split(/\s+/u)
+  // Proper nouns are who an update is about, not what it is about. Two facts
+  // both mentioning Ramesh are not therefore about the same subject, and
+  // treating them that way turns every busy Hinglish update into a pile of
+  // contradictions. A word is taken as a name when it is capitalised away
+  // from the start of the text.
+  const tokens = text.replace(/[^\w\s]/gu, " ").split(/\s+/u).filter(Boolean);
+  const words = tokens
+    .filter((w, i) => i === 0 || w[0] !== w[0]!.toUpperCase() || /^\d/.test(w))
+    .map((w) => w.toLowerCase())
     .filter((w) => w.length > 2 && !STOPWORDS.has(w));
   return new Set(words);
 }
@@ -79,8 +84,11 @@ function identifyTopic(textA: string, textB: string): string | null {
   const wordsB = extractKeywords(textB);
   const common = [...wordsA].filter((w) => wordsB.has(w));
 
-  if (common.length >= 2) {
-    return common.join(" ");
+  // Three shared content words before two statements count as one subject.
+  // Two is low enough that any pair of sentences about the same object in the
+  // same project collides.
+  if (common.length >= 3) {
+    return common.slice(0, 3).join(" ");
   }
   return null;
 }

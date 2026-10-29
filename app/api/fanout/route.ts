@@ -137,6 +137,12 @@ async function servePrepared(
       trail: freshTrail,
       trailVerdict: verifyChain(freshTrail),
       cached: true,
+      // A prepared fan-out has no history behind it, so it cannot honestly
+      // claim a contradiction with an earlier update or name someone it left
+      // out. Whatever was captured when the sample was generated is not a
+      // finding about this run.
+      contradictions: [],
+      whoDidIForget: [],
       ...extra,
     });
   
