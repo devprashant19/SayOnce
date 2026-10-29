@@ -35,6 +35,11 @@ SayOnce takes one spoken update and produces one message per reader.
 6. **The log writes itself** — every update with its facts, its decisions, and
    who was told.
 
+## Demo and Evidence
+
+- **Judge Demo**: [`/demo`](/demo) — zero sign-in, one-click fan-out, instant pre-cached sample runs and 5-step guided tour.
+- **Evidence Dashboard**: [`/proof`](/proof) — measured minutes saved, Voice Return leverage, 5/5 tamper tests, and anonymised recipient feedback.
+
 ## What makes it trustworthy
 
 **Nothing invented.** Every number, date, name and place in every message must
@@ -72,8 +77,9 @@ The AI pipeline runs server-side only; no key is ever sent to the browser.
 core fan-out.
 
 ```bash
-npm run verify:all      # typecheck, lint, 118 offline tests, production build
+npm run verify:all      # typecheck, lint, 187 offline tests, production build
 npm run test            # the deterministic core — no network, no key, no cost
+npm run test:tamper     # cryptographic SHA-256 tamper-evident integrity proof
 npm run test:live       # the real pipeline against the real model (needs a key)
 npm run lab             # the recorded test set through the live pipeline
 npm run audit:secrets   # leak audit over the built output
