@@ -28,7 +28,44 @@ export async function extract(input: ExtractInput) {
     schema: ExtractResult,
   });
 
-  return { ...result, value: clampSpans(result.value, input.spokenText) };
+  const clamped = clampSpans(result.value, input.spokenText);
+  return { ...result, value: normalizeBlocked(clamped, input.contacts) };
+}
+
+/**
+ * Normalise any contact names or roles that landed in blockedFor into their
+ * canonical contact ids, so privacy filtering downstream never misses a match
+ * due to name vs id mismatch.
+ */
+function normalizeBlocked(value: ExtractResult, contacts: Contact[]): ExtractResult {
+  return {
+    ...value,
+    facts: value.facts.map((fact) => {
+      const normalizedBlocked = fact.privacy.blockedFor.map((target) => {
+        const exactId = contacts.find((c) => c.id === target);
+        if (exactId) return exactId.id;
+        const lower = target.toLowerCase().trim();
+        const byName = contacts.find((c) => {
+          const lowerName = c.name.toLowerCase();
+          const firstName = lowerName.split(/\s+/)[0] ?? "";
+          return (
+            lowerName === lower ||
+            lowerName.includes(lower) ||
+            (firstName.length > 0 && lower.includes(firstName))
+          );
+        });
+        if (byName) return byName.id;
+        return target;
+      });
+      return {
+        ...fact,
+        privacy: {
+          ...fact.privacy,
+          blockedFor: Array.from(new Set(normalizedBlocked)),
+        },
+      };
+    }),
+  };
 }
 
 /**

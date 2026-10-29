@@ -55,7 +55,15 @@ export interface ComposeAllResult {
 }
 
 export async function composeAll(inputs: ComposeOneInput[]): Promise<ComposeAllResult> {
-  const settled = await Promise.allSettled(inputs.map((input) => composeOne(input)));
+  // Stagger each compose call slightly to avoid concurrent burst limits on free-tier API quotas
+  const settled = await Promise.allSettled(
+    inputs.map(async (input, idx) => {
+      if (idx > 0) {
+        await new Promise((r) => setTimeout(r, idx * 350));
+      }
+      return composeOne(input);
+    }),
+  );
 
   const drafts: Draft[] = [];
   const failures: ComposeAllResult["failures"] = [];

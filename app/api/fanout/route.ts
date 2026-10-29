@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { z } from "zod";
 import { extract } from "@/lib/ai/extract";
+import { route } from "@/lib/ai/route";
 import { composeAll } from "@/lib/ai/compose";
 import { checkDraft, type CheckOutcome } from "@/lib/checker";
 import { scrub } from "@/lib/scrub";
@@ -117,30 +118,79 @@ export async function POST(request: Request) {
     );
   }
 
-  // --- Phase 1 routing stand-in -------------------------------------------
-  // Everyone gets every fact that is not blocked for them. Phase 2 replaces
-  // this with the Route step; the privacy filter below stays either way,
-  // because the Privacy Shield is enforced by what Compose is handed.
-  const assignments = contacts.map((contact) => ({
-    contact,
-    facts: facts.filter((f) => !f.privacy.blockedFor.includes(contact.id)),
-    project: body.project,
-  }));
+  // --- Phase 2: Route step ------------------------------------------------
+  // Decides who needs to know and which facts each person receives.
+  // Privacy Shield post-filter strictly enforces blocked facts and standing instructions.
+  let routeOutput: Awaited<ReturnType<typeof route>>;
+  try {
+    routeOutput = await route({
+      facts,
+      contacts,
+      project: body.project,
+    });
+  } catch (error) {
+    console.error("ROUTE ERROR:", error);
+    routeOutput = {
+      value: {
+        concernsNobody: false,
+        decisions: contacts.map((c) => ({
+          contactId: c.id,
+          include: true,
+          reason: "Fallback routing",
+          confidence: 0.8,
+          factIds: facts.filter((f) => !f.privacy.blockedFor.includes(c.id)).map((f) => f.id),
+        })),
+      },
+      usage: { inputTokens: 0, outputTokens: 0 },
+      retried: false,
+    };
+  }
+
+  const assignments = contacts.map((contact) => {
+    const decision = routeOutput.value.decisions.find((d) => d.contactId === contact.id);
+    const isIncluded =
+      !routeOutput.value.concernsNobody &&
+      (decision?.include ?? false) &&
+      (decision?.confidence ?? 0) >= 0.5;
+
+    // Allowed facts: only facts routed to this contact, minus any privacy.blockedFor facts
+    const rawFactIds = decision?.factIds ?? [];
+    const allowedFacts = facts.filter((f) => {
+      if (!rawFactIds.includes(f.id)) return false;
+      if (f.privacy.blockedFor.includes(contact.id)) return false;
+      return true;
+    });
+
+    return {
+      contact,
+      decision,
+      isIncluded: isIncluded && allowedFacts.length > 0,
+      facts: allowedFacts,
+      project: body.project,
+    };
+  });
 
   note({
-    actor: "system",
+    actor: "ai",
     type: "routed",
     payload: {
-      strategy: "phase1-all-contacts",
+      strategy: "ai-route",
+      concernsNobody: routeOutput.value.concernsNobody,
       perContact: assignments.map((a) => ({
         contactId: a.contact.id,
+        include: a.isIncluded,
+        reason: a.decision?.reason ?? "Not affected.",
+        confidence: a.decision?.confidence ?? 0,
         factIds: a.facts.map((f) => f.id),
-        withheld: facts.filter((f) => f.privacy.blockedFor.includes(a.contact.id)).map((f) => f.id),
+        withheld: facts
+          .filter((f) => f.privacy.blockedFor.includes(a.contact.id))
+          .map((f) => f.id),
       })),
     },
   });
 
-  const composed = await composeAll(assignments);
+  const includedAssignments = assignments.filter((a) => a.isIncluded);
+  const composed = await composeAll(includedAssignments);
   note({
     actor: "ai",
     type: "composed",
@@ -151,6 +201,14 @@ export async function POST(request: Request) {
   });
 
   const cards: FanoutCard[] = assignments.map((assignment) => {
+    if (!assignment.isIncluded) {
+      return {
+        contact: assignment.contact,
+        draft: null,
+        check: null,
+        error: null,
+      };
+    }
     const draft = composed.drafts.find((d) => d.contactId === assignment.contact.id) ?? null;
     if (!draft) {
       const failure = composed.failures.find((f) => f.contactId === assignment.contact.id);

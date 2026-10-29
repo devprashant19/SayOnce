@@ -2,3 +2,4 @@
 REVOKE UPDATE, DELETE ON trail_entries FROM PUBLIC;
 CREATE RULE trail_no_update AS ON UPDATE TO trail_entries DO INSTEAD NOTHING;
 CREATE RULE trail_no_delete AS ON DELETE TO trail_entries DO INSTEAD NOTHING;
+
