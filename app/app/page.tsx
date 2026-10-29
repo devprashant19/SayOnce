@@ -7,6 +7,7 @@ import { FactList } from "@/components/FactList";
 import { KnowledgeMatrix } from "@/components/KnowledgeMatrix";
 import { PrivacyPanel } from "@/components/PrivacyPanel";
 import { TrustTrailViewer } from "@/components/TrustTrailViewer";
+import { ContradictionBanner } from "@/components/ContradictionBanner";
 import { SendGuidedQueue, type QueueItem } from "@/components/SendGuidedQueue";
 import { Badge } from "@/components/Badge";
 import { sendTargetFor } from "@/lib/links";
@@ -15,6 +16,7 @@ import type { Contact, Draft, Fact } from "@/lib/types";
 import type { CheckOutcome } from "@/lib/checker";
 import type { VoiceReturn } from "@/lib/voice-return";
 import type { TrailEntry } from "@/lib/trail";
+import type { ContradictionAlert } from "@/lib/consistency";
 import demoUpdates from "@/data/demo/updates.json";
 
 interface Card {
@@ -45,6 +47,13 @@ interface FanoutResponse {
       factIds: string[];
     }>;
   };
+  contradictions?: ContradictionAlert[];
+  whoDidIForget?: Array<{
+    contactId: string;
+    name: string;
+    timesSeen: number;
+    totalRecent: number;
+  }>;
   voiceReturn: VoiceReturn;
   trail: TrailEntry[];
   trailVerdict: { ok: boolean; length: number };
@@ -62,6 +71,28 @@ export default function SpeakPage() {
   const [highlight, setHighlight] = useState<string[] | null>(null);
   const [activeRecipients, setActiveRecipients] = useState<string[]>([]);
   const [showQueue, setShowQueue] = useState(false);
+  const [mountTime] = useState(() => Date.now());
+
+  const handleApplyCorrection = useCallback((alert: ContradictionAlert) => {
+    setResult((prev) => {
+      if (!prev) return null;
+      return {
+        ...prev,
+        cards: prev.cards.map((c) => {
+          if (c.contact.id === alert.recipientId && c.draft) {
+            return {
+              ...c,
+              draft: {
+                ...c.draft,
+                body: `${c.draft.body}\n\n${alert.suggestedCorrection}`,
+              },
+            };
+          }
+          return c;
+        }),
+      };
+    });
+  }, []);
 
   const fanOut = useCallback(async () => {
     if (spokenText.trim().length === 0) {
@@ -72,10 +103,11 @@ export default function SpeakPage() {
     setError(null);
     setResult(null);
     try {
+      const elapsedSeconds = Math.max(1, Math.round((Date.now() - mountTime) / 1000));
       const response = await fetch("/api/fanout", {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ spokenText, project, contactSet }),
+        body: JSON.stringify({ spokenText, project, contactSet, elapsedSeconds }),
       });
       const payload = (await response.json()) as FanoutResponse | { error: string };
       if (!response.ok) {
@@ -91,7 +123,7 @@ export default function SpeakPage() {
     } finally {
       setBusy(false);
     }
-  }, [spokenText, project, contactSet]);
+  }, [spokenText, project, contactSet, mountTime]);
 
   const handleToggleSent = useCallback(
     async (messageId: string, nextSent: boolean) => {
@@ -335,6 +367,47 @@ export default function SpeakPage() {
           {result.routing?.concernsNobody && (
             <div className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 text-sm text-[var(--color-ink-soft)]">
               This update concerns nobody on the selected roster. No drafts were generated.
+            </div>
+          )}
+
+          {result.contradictions && result.contradictions.length > 0 && (
+            <ContradictionBanner
+              alerts={result.contradictions}
+              updateId={result.updateId}
+              onApplyCorrection={handleApplyCorrection}
+            />
+          )}
+
+          {result.whoDidIForget && result.whoDidIForget.length > 0 && (
+            <div className="rounded-[var(--radius-card)] border border-[var(--color-accent)]/40 bg-[var(--color-accent-wash)] p-3.5 text-xs flex flex-wrap items-center justify-between gap-3 shadow-sm">
+              <div className="flex items-center gap-2">
+                <span className="text-sm">💡</span>
+                <span className="text-[var(--color-ink)]">
+                  <strong>Who did I forget?</strong>{" "}
+                  {result.whoDidIForget
+                    .map(
+                      (f) =>
+                        `${f.name} usually hears about "${project}" (${f.timesSeen} of last ${f.totalRecent} updates)`,
+                    )
+                    .join("; ")}
+                </span>
+              </div>
+              <div className="flex items-center gap-2">
+                {result.whoDidIForget.map((f) => (
+                  <button
+                    key={f.contactId}
+                    type="button"
+                    onClick={() =>
+                      setActiveRecipients((prev) =>
+                        prev.includes(f.contactId) ? prev : [...prev, f.contactId],
+                      )
+                    }
+                    className="rounded bg-[var(--color-ink)] px-2.5 py-1 font-semibold text-white hover:opacity-90"
+                  >
+                    Add {f.name} +
+                  </button>
+                ))}
+              </div>
             </div>
           )}
 

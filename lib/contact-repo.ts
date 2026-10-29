@@ -129,6 +129,58 @@ export async function listContacts(dataset = REAL_DATASET): Promise<Contact[]> {
     );
 }
 
+export async function getContact(id: string): Promise<Contact | null> {
+  if (env.hasDatabase) {
+    try {
+      const rows = await db()
+        .select()
+        .from(schema.contacts)
+        .where(and(eq(schema.contacts.id, id), isNull(schema.contacts.archivedAt)));
+      if (rows.length > 0) {
+        const r = rows[0]!;
+        const c = Contact.parse({
+          id: r.id,
+          name: r.name,
+          role: r.role,
+          relationship: r.relationship,
+          language: r.language,
+          channel: r.channel,
+          phone: r.phone,
+          email: r.email,
+          formality: r.formality,
+          caresAbout: r.caresAbout,
+          neverTell: r.neverTell,
+          profileVersion: r.profileVersion ?? 1,
+          learnedRules: [],
+        });
+        return c;
+      }
+    } catch {
+      // fallback
+    }
+  }
+
+  const rows = ensureLocalStore();
+  const r = rows.find((row) => row.id === id && !row.archivedAt);
+  if (!r) return null;
+  const c = Contact.parse({
+    id: r.id,
+    name: r.name,
+    role: r.role,
+    relationship: r.relationship,
+    language: r.language,
+    channel: r.channel,
+    phone: r.phone,
+    email: r.email,
+    formality: r.formality,
+    caresAbout: r.caresAbout,
+    neverTell: r.neverTell,
+    learnedRules: r.learnedRules ?? [],
+    profileVersion: r.profileVersion ?? 1,
+  });
+  return c;
+}
+
 export async function saveContact(
   contact: Omit<Contact, "id"> & { id?: string; profileVersion?: number; learnedRules?: string[] },
   dataset = REAL_DATASET,
@@ -243,4 +295,72 @@ export async function archiveContact(id: string): Promise<void> {
     row.archivedAt = new Date().toISOString();
     writeLocalStore(rows);
   }
+}
+
+export async function updateContactProfile(
+  id: string,
+  updates: {
+    formality?: Formality;
+    learnedRulesToAdd?: string[];
+  },
+): Promise<{ contact: Contact; profileVersion: number }> {
+  const current = await getContact(id);
+  const currentLearned = current?.learnedRules ?? [];
+  const nextRules = [...currentLearned];
+
+  for (const rule of updates.learnedRulesToAdd ?? []) {
+    if (!nextRules.includes(rule.trim())) {
+      nextRules.push(rule.trim());
+    }
+  }
+
+  const nextFormality = updates.formality ?? current?.formality ?? "neutral";
+  const currentVersion = current?.profileVersion ?? 1;
+  const nextVersion = currentVersion + 1;
+
+  if (env.hasDatabase && current) {
+    try {
+      await db()
+        .update(schema.contacts)
+        .set({
+          formality: nextFormality,
+          profileVersion: nextVersion,
+        })
+        .where(eq(schema.contacts.id, id));
+    } catch (err) {
+      console.warn("DB updateContactProfile failed:", err);
+    }
+  }
+
+  const rows = ensureLocalStore();
+  const existingIdx = rows.findIndex((r) => r.id === id);
+  if (existingIdx >= 0) {
+    rows[existingIdx] = {
+      ...rows[existingIdx]!,
+      formality: nextFormality,
+      learnedRules: nextRules,
+      profileVersion: nextVersion,
+    };
+    writeLocalStore(rows);
+  }
+
+  const updatedContact: Contact = {
+    ...(current ?? {
+      id,
+      name: id,
+      role: "",
+      relationship: "",
+      language: "English",
+      channel: "email" as Channel,
+      phone: null,
+      email: null,
+      caresAbout: "",
+      neverTell: [],
+    }),
+    formality: nextFormality,
+    learnedRules: nextRules,
+    profileVersion: nextVersion,
+  };
+
+  return { contact: updatedContact, profileVersion: nextVersion };
 }

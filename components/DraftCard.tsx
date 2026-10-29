@@ -42,6 +42,14 @@ export function DraftCard(props: DraftCardProps) {
   const [isSent, setIsSent] = useState(props.sent ?? false);
   const [sentAt, setSentAt] = useState(props.sentAt ?? null);
   const [isOverridden, setIsOverridden] = useState(props.overridden ?? false);
+  const [feedbackInput, setFeedbackInput] = useState("");
+  const [parsingFeedback, setParsingFeedback] = useState(false);
+  const [feedbackProposal, setFeedbackProposal] = useState<{
+    formality?: string;
+    learnedRules: string[];
+    explanation: string;
+  } | null>(null);
+  const [feedbackStatus, setFeedbackStatus] = useState<string | null>(null);
 
   const failed = check !== null && !check.ok;
   const sendable = draft !== null && (!failed || isOverridden) && props.sendHref !== null;
@@ -76,6 +84,75 @@ export function DraftCard(props: DraftCardProps) {
     if (!props.messageId || !props.onOverride) return;
     setIsOverridden(true);
     await props.onOverride(props.messageId);
+  }
+
+  async function handleParseFeedback() {
+    if (!feedbackInput.trim()) return;
+    setParsingFeedback(true);
+    setFeedbackStatus(null);
+    try {
+      const res = await fetch("/api/feedback/parse", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          feedbackText: feedbackInput,
+          contactId: contact.id,
+          contactName: contact.name,
+          currentFormality: contact.formality,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFeedbackProposal(data.proposal);
+      }
+    } catch (err) {
+      console.warn("Feedback parse failed:", err);
+    } finally {
+      setParsingFeedback(false);
+    }
+  }
+
+  async function handleAcceptProposal() {
+    if (!feedbackProposal) return;
+    try {
+      const res = await fetch(`/api/contacts/${contact.id}/profile`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          updateId: props.updateId,
+          action: "accept",
+          formality: feedbackProposal.formality,
+          learnedRulesToAdd: feedbackProposal.learnedRules,
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setFeedbackStatus(`✓ Preferences updated to v${data.profileVersion}! Future drafts will follow these rules.`);
+        setFeedbackProposal(null);
+        setFeedbackInput("");
+      }
+    } catch (err) {
+      console.warn("Accept proposal failed:", err);
+    }
+  }
+
+  async function handleRejectProposal() {
+    if (!feedbackProposal) return;
+    try {
+      await fetch(`/api/contacts/${contact.id}/profile`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          updateId: props.updateId,
+          action: "reject",
+          proposalSummary: feedbackProposal.explanation,
+        }),
+      });
+      setFeedbackStatus("Proposal discarded. Logged in audit trail.");
+      setFeedbackProposal(null);
+    } catch (err) {
+      console.warn("Reject proposal failed:", err);
+    }
   }
 
   function formatSentTime(iso: string | null): string {
@@ -272,6 +349,89 @@ export function DraftCard(props: DraftCardProps) {
                 {props.sendBlockedReason}
               </span>
             )}
+          </div>
+
+          {/* Voice feedback that sticks (Phase 5) */}
+          <div className="mt-4 border-t border-[var(--color-rule)] pt-3">
+            <details className="group">
+              <summary className="cursor-pointer text-xs font-semibold text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]">
+                💡 Tell SayOnce what was wrong with this draft…
+              </summary>
+
+              <div className="mt-3 space-y-3 rounded bg-[var(--color-paper-sunk)] p-3 text-xs">
+                <p className="text-[var(--color-ink-soft)]">
+                  Dictate or type what you didn&apos;t like (e.g. &quot;Too formal for {contact.name}, he hates long messages&quot; or &quot;Never include sign-offs&quot;). SayOnce will turn it into lasting preference rules for future drafts.
+                </p>
+
+                <div className="flex flex-wrap items-center gap-2">
+                  <input
+                    type="text"
+                    value={feedbackInput}
+                    onChange={(e) => setFeedbackInput(e.target.value)}
+                    placeholder={`e.g. Too formal, keep under three lines…`}
+                    className="flex-1 min-h-9 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleParseFeedback}
+                    disabled={parsingFeedback || !feedbackInput.trim()}
+                    className="min-h-9 rounded bg-[var(--color-ink)] px-3 font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                  >
+                    {parsingFeedback ? "Analyzing…" : "Propose change"}
+                  </button>
+                </div>
+
+                {feedbackProposal && (
+                  <div className="space-y-2 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] p-3">
+                    <p className="font-semibold text-[var(--color-ink)]">
+                      Proposed profile change:
+                    </p>
+                    <p className="text-[var(--color-ink-soft)] italic">
+                      &quot;{feedbackProposal.explanation}&quot;
+                    </p>
+
+                    <div className="flex flex-wrap gap-1.5 pt-1">
+                      {feedbackProposal.formality && (
+                        <span className="rounded bg-[var(--color-accent-wash)] px-2 py-0.5 font-medium text-[var(--color-accent)]">
+                          Formality: {feedbackProposal.formality}
+                        </span>
+                      )}
+                      {feedbackProposal.learnedRules.map((rule, idx) => (
+                        <span
+                          key={idx}
+                          className="rounded bg-[var(--color-paper-sunk)] border border-[var(--color-rule)] px-2 py-0.5 font-medium text-[var(--color-ink)]"
+                        >
+                          Rule: {rule}
+                        </span>
+                      ))}
+                    </div>
+
+                    <div className="flex items-center gap-2 pt-2">
+                      <button
+                        type="button"
+                        onClick={handleAcceptProposal}
+                        className="rounded bg-[var(--color-verified)] px-3 py-1 font-semibold text-white shadow-sm hover:opacity-90"
+                      >
+                        Accept & remember →
+                      </button>
+                      <button
+                        type="button"
+                        onClick={handleRejectProposal}
+                        className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-1 font-medium hover:bg-[var(--color-paper)]"
+                      >
+                        Reject
+                      </button>
+                    </div>
+                  </div>
+                )}
+
+                {feedbackStatus && (
+                  <p className="font-medium text-[var(--color-verified)]">
+                    {feedbackStatus}
+                  </p>
+                )}
+              </div>
+            </details>
           </div>
         </>
       )}

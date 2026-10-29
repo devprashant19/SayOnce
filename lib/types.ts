@@ -36,6 +36,9 @@ export const Contact = z.object({
   caresAbout: z.string().default(""),
   /** Standing topics this person must never be told about. */
   neverTell: z.array(z.string()).default([]),
+  /** Learned preferences from voice feedback. Phase 5. */
+  learnedRules: z.array(z.string()).optional(),
+  profileVersion: z.number().int().optional(),
 });
 export type Contact = z.infer<typeof Contact>;
 
