@@ -98,6 +98,7 @@ export async function POST(request: Request) {
       },
     });
   } catch (error) {
+    console.error("FANOUT ERROR:", error);
     return NextResponse.json(
       {
         error:
