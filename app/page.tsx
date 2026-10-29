@@ -358,7 +358,7 @@ export default function LandingPage() {
       </section>
 
       {/* =========================================================================
-          SCENE 4: COMPOSE — THE SIGNATURE MOMENT
+          SCENE 4: COMPOSE — THE 4-COLUMN "WHAT THEY HEARD" COMPARISON
          ========================================================================= */}
       <section aria-labelledby="compose-heading" className="space-y-6">
         <div>
@@ -366,100 +366,53 @@ export default function LandingPage() {
             Step 3 · The Signature Moment
           </span>
           <h2 id="compose-heading" className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
-            Each avatar unfolds into its own language, script, and channel
+            What they heard: one update, four tailored versions
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
             Not a translation. Not a shared summary. Four completely different messages written
-            simultaneously — WhatsApp in Devanagari Hindi, formal client email in English, ops in
-            Hinglish.
+            simultaneously from the exact same dictation — each in their own language, script, tone and channel.
           </p>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-3">
-          {/* Card 1: Ramesh (WhatsApp Devanagari) */}
-          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-rule)] bg-[var(--color-paper)] p-5 shadow-xs">
+        <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-4">
+          {/* Card 1: Anita (Boss / Agency Head - Formal Email) */}
+          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm hover-card-lift">
             <div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-base">Ramesh (Vendor)</h3>
-                  <p className="text-xs text-[var(--color-ink-soft)]">Direct · Devanagari Script</p>
+                  <h3 className="font-bold text-sm">Anita Desai</h3>
+                  <p className="text-xs text-[var(--color-muted)]">Boss · Formal English</p>
                 </div>
-                <span className="rounded bg-[var(--color-verified-wash)] px-2 py-0.5 text-xs font-semibold text-[var(--color-verified)]">
-                  WhatsApp (wa.me)
+                <span className="rounded bg-indigo-50 dark:bg-indigo-950/60 px-2 py-0.5 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300">
+                  Email
                 </span>
               </div>
 
-              {/* Chat Bubble Presentation */}
-              <div className="mt-4 rounded-lg bg-[var(--color-paper-sunk)] p-4 border border-[var(--color-rule)]">
-                <p
-                  className="text-sm leading-relaxed text-[var(--color-ink)]"
-                  style={{ fontFamily: "'Noto Sans Devanagari', var(--font-sans)" }}
-                  lang="hi"
-                >
-                  नमस्ते रमेश जी, आज भिवंडी डिस्पैच में 250 कार्टन ही मिले हैं जबकि हमें 400 की
-                  ज़रूरत थी। कृपया बाकी 150 कार्टन शनिवार तक भिजवाना सुनिश्चित करें ताकि काम न
-                  रुके। धन्यवाद।
-                </p>
-              </div>
-
-              <div className="mt-3 flex flex-wrap gap-1 text-[11px] text-[var(--color-ink-faint)]">
-                <span>Facts: f2, f3</span> · <span>Zero numbers invented</span>
-              </div>
-            </div>
-
-            <div className="mt-5 border-t border-[var(--color-rule)] pt-3">
-              <a
-                href="https://wa.me/?text=नमस्ते%20रमेश%20जी..."
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#25D366] px-3 py-2 text-xs font-bold text-white hover:opacity-90 transition"
-              >
-                <span>Send via WhatsApp (wa.me)</span>
-                <span>↗</span>
-              </a>
-            </div>
-          </article>
-
-          {/* Card 2: Priya Sharma (Email English) */}
-          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-rule)] bg-[var(--color-paper)] p-5 shadow-xs">
-            <div>
-              <div className="flex items-center justify-between">
-                <div>
-                  <h3 className="font-bold text-base">Priya Sharma (Client)</h3>
-                  <p className="text-xs text-[var(--color-ink-soft)]">Formal · English</p>
+              {/* Envelope Presentation */}
+              <div className="mt-3.5 rounded-lg bg-[var(--color-surface-raised)] p-3 border border-[var(--color-line)] space-y-1.5">
+                <div className="text-[11px] font-semibold text-[var(--color-muted)]">
+                  Sub: Retail order delivery schedule update
                 </div>
-                <span className="rounded bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
-                  Email (mailto:)
-                </span>
-              </div>
-
-              {/* Email Envelope Presentation */}
-              <div className="mt-4 rounded-lg bg-[var(--color-paper-sunk)] p-4 border border-[var(--color-rule)] space-y-2">
-                <div className="text-xs font-semibold text-[var(--color-ink-soft)]">
-                  Subject: Update: Diwali Retail Order dispatch schedule
-                </div>
-                <p className="text-sm leading-relaxed text-[var(--color-ink)]">
-                  Dear Priya,
+                <p className="text-xs leading-relaxed text-[var(--color-ink)]">
+                  Hi Anita,
                   <br />
                   <br />
-                  I am writing to confirm that our Diwali order dispatch is now confirmed for
-                  delivery on Monday, 2 November. We are tracking all logistics milestones
-                  closely to ensure seamless receipt at your facility.
+                  Just confirming that client notification has been completed regarding the rescheduled Monday delivery for the Bhiwandi retail order.
                   <br />
                   <br />
-                  Warm regards,
+                  Best regards.
                 </p>
               </div>
 
               <div className="mt-3 flex items-center gap-1 text-[11px] font-semibold text-[var(--color-verified)]">
-                <span>✓ Shield verified: 0 vendor excuses leaked</span>
+                <span>✓ Status verified · 0 friction</span>
               </div>
             </div>
 
-            <div className="mt-5 border-t border-[var(--color-rule)] pt-3">
+            <div className="mt-4 border-t border-[var(--color-line)] pt-3">
               <a
-                href="mailto:priya@example.com?subject=Update&body=Dear%20Priya..."
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 py-2 text-xs font-bold text-white hover:opacity-90 transition"
+                href="mailto:anita@example.com?subject=Update&body=Hi%20Anita..."
+                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 text-xs font-semibold text-white hover:opacity-90 transition active-press cursor-pointer"
               >
                 <span>Send via Email (mailto:)</span>
                 <span>↗</span>
@@ -467,41 +420,126 @@ export default function LandingPage() {
             </div>
           </article>
 
-          {/* Card 3: Suresh Kumar (Hinglish Ops) */}
-          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-rule)] bg-[var(--color-paper)] p-5 shadow-xs">
+          {/* Card 2: Ramesh (Vendor - Hindi Devanagari WhatsApp) */}
+          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm hover-card-lift">
             <div>
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="font-bold text-base">Suresh Kumar (Ops)</h3>
-                  <p className="text-xs text-[var(--color-ink-soft)]">Hinglish · Roman Script</p>
+                  <h3 className="font-bold text-sm">Ramesh Kulkarni</h3>
+                  <p className="text-xs text-[var(--color-muted)]">Vendor · Devanagari</p>
                 </div>
-                <span className="rounded bg-[var(--color-verified-wash)] px-2 py-0.5 text-xs font-semibold text-[var(--color-verified)]">
-                  WhatsApp (wa.me)
+                <span className="rounded bg-[var(--color-verified-wash)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-verified)]">
+                  WhatsApp
                 </span>
               </div>
 
               {/* Chat Bubble Presentation */}
-              <div className="mt-4 rounded-lg bg-[var(--color-paper-sunk)] p-4 border border-[var(--color-rule)]">
-                <p className="text-sm leading-relaxed text-[var(--color-ink)] font-sans">
-                  Suresh, Bhiwandi dispatch ab Friday nahi Monday subah deliver hoga. Unloading ke
-                  liye 3 logon ki team ready rakhna Monday morning. Main updates coordinate kar
-                  raha hoon.
+              <div className="mt-3.5 rounded-lg bg-[var(--color-surface-raised)] p-3 border border-[var(--color-line)]">
+                <p
+                  className="text-xs leading-relaxed text-[var(--color-ink)]"
+                  style={{ fontFamily: "'Noto Sans Devanagari', var(--font-sans)" }}
+                  lang="hi"
+                >
+                  नमस्ते रमेश जी, आज भिवंडी डिस्पैच में 250 कार्टन ही मिले हैं जबकि हमें 400 की ज़रूरत थी। कृपया बाकी 150 कार्टन परसों तक भिजवाना सुनिश्चित करें।
                 </p>
               </div>
 
-              <div className="mt-3 flex flex-wrap gap-1 text-[11px] text-[var(--color-ink-faint)]">
-                <span>Facts: f1, f4</span> · <span>Direct operational clarity</span>
+              <div className="mt-3 flex flex-wrap gap-1 text-[11px] text-[var(--color-muted)]">
+                <span>Facts: f1, f2, f3</span> · <span>0 invented</span>
               </div>
             </div>
 
-            <div className="mt-5 border-t border-[var(--color-rule)] pt-3">
+            <div className="mt-4 border-t border-[var(--color-line)] pt-3">
+              <a
+                href="https://wa.me/?text=नमस्ते%20रमेश%20जी..."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[#25D366] px-3 text-xs font-semibold text-white hover:opacity-90 transition active-press cursor-pointer"
+              >
+                <span>Send via WhatsApp (wa.me)</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </article>
+
+          {/* Card 3: Suresh (Warehouse Foreman - Hinglish WhatsApp) */}
+          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm hover-card-lift">
+            <div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-sm">Suresh Yadav</h3>
+                  <p className="text-xs text-[var(--color-muted)]">Warehouse · Hinglish</p>
+                </div>
+                <span className="rounded bg-[var(--color-verified-wash)] px-2 py-0.5 text-[11px] font-semibold text-[var(--color-verified)]">
+                  WhatsApp
+                </span>
+              </div>
+
+              {/* Chat Bubble Presentation */}
+              <div className="mt-3.5 rounded-lg bg-[var(--color-surface-raised)] p-3 border border-[var(--color-line)]">
+                <p className="text-xs leading-relaxed text-[var(--color-ink)] font-sans">
+                  Suresh, Bhiwandi dispatch ab Friday nahi Monday subah deliver hoga. Unloading ke liye 3 logon ki team ready rakhna Monday morning.
+                </p>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-1 text-[11px] text-[var(--color-muted)]">
+                <span>Facts: f4, f5</span> · <span>Team clear</span>
+              </div>
+            </div>
+
+            <div className="mt-4 border-t border-[var(--color-line)] pt-3">
               <a
                 href="https://wa.me/?text=Suresh%2C%20Bhiwandi..."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex w-full items-center justify-center gap-1.5 rounded-lg bg-[#25D366] px-3 py-2 text-xs font-bold text-white hover:opacity-90 transition"
+                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[#25D366] px-3 text-xs font-semibold text-white hover:opacity-90 transition active-press cursor-pointer"
               >
                 <span>Send via WhatsApp (wa.me)</span>
+                <span>↗</span>
+              </a>
+            </div>
+          </article>
+
+          {/* Card 4: Priya (Client Lead - Shielded Formal Email) */}
+          <article className="flex flex-col justify-between rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm hover-card-lift">
+            <div>
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="font-bold text-sm">Priya Nair</h3>
+                  <p className="text-xs text-[var(--color-muted)]">Client · English</p>
+                </div>
+                <span className="rounded bg-blue-50 dark:bg-blue-950/60 px-2 py-0.5 text-[11px] font-semibold text-blue-700 dark:text-blue-300">
+                  Email
+                </span>
+              </div>
+
+              {/* Email Envelope Presentation */}
+              <div className="mt-3.5 rounded-lg bg-[var(--color-surface-raised)] p-3 border border-[var(--color-line)] space-y-1.5">
+                <div className="text-[11px] font-semibold text-[var(--color-muted)]">
+                  Sub: Confirmed delivery schedule
+                </div>
+                <p className="text-xs leading-relaxed text-[var(--color-ink)]">
+                  Dear Priya,
+                  <br />
+                  <br />
+                  Please be advised that the delivery schedule for the retail order has been revised to Monday, 2 November. Tracking all milestones closely.
+                  <br />
+                  <br />
+                  Warm regards.
+                </p>
+              </div>
+
+              <div className="mt-3 flex items-center gap-1 text-[11px] font-semibold text-[var(--color-verified)]">
+                <span>🛡️ Shield verified: 0 excuses leaked</span>
+              </div>
+            </div>
+
+            <div className="mt-4 border-t border-[var(--color-line)] pt-3">
+              <a
+                href="mailto:priya@example.com?subject=Update&body=Dear%20Priya..."
+                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 text-xs font-semibold text-white hover:opacity-90 transition active-press cursor-pointer"
+              >
+                <span>Send via Email (mailto:)</span>
                 <span>↗</span>
               </a>
             </div>
@@ -604,7 +642,10 @@ export default function LandingPage() {
                 SHA-256 Tamper-Evident
               </span>
             </div>
-            <Link href="/log" className="text-xs font-semibold text-[var(--color-accent)] hover:underline">
+            <Link
+              href="/log"
+              className="inline-flex min-h-11 items-center px-2 text-xs font-semibold text-[var(--color-accent)] hover:underline"
+            >
               Inspect Update Log →
             </Link>
           </div>
@@ -720,20 +761,20 @@ export default function LandingPage() {
           <div className="font-semibold text-sm text-[var(--color-ink)]">
             SayOnce · No Hands Wispr Challenge Entry
           </div>
-          <div className="flex flex-wrap gap-4">
-            <Link href="/app" className="hover:underline">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
+            <Link href="/app" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
               Speak
             </Link>
-            <Link href="/people" className="hover:underline">
+            <Link href="/people" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
               People Book
             </Link>
-            <Link href="/log" className="hover:underline">
+            <Link href="/log" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
               Update Log
             </Link>
-            <Link href="/lab" className="hover:underline">
+            <Link href="/lab" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
               Quality Lab
             </Link>
-            <Link href="/proof" className="hover:underline">
+            <Link href="/proof" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
               Proof
             </Link>
           </div>

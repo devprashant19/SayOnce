@@ -1,76 +1,139 @@
 @import url("https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;500;600;700&display=swap");
 @import "tailwindcss";
 
-/*
- * SayOnce design tokens.
- *
- * Colour carries meaning only. Verified is green, a warning is amber, a block
- * is red, a lock is grey, and nothing else is coloured for decoration — a judge
- * glancing at a screen of cards should be able to read its state without
- * reading a word. Full rules in docs/08-UI-UX-RULES.md.
- */
-
 @theme {
-  --color-ink: oklch(0.21 0.014 258);
-  --color-ink-soft: oklch(0.44 0.012 258);
-  --color-ink-faint: oklch(0.62 0.01 258);
-  --color-paper: oklch(0.99 0.003 258);
-  --color-paper-sunk: oklch(0.965 0.005 258);
-  --color-rule: oklch(0.9 0.006 258);
+  --color-ground: #f8fafc;
+  --color-surface: #ffffff;
+  --color-surface-raised: #f1f5f9;
+  --color-paper: #ffffff;
+  --color-paper-sunk: #f1f5f9;
+  --color-ink: #0f172a;
+  --color-ink-soft: #475569;
+  --color-ink-faint: #94a3b8;
+  --color-muted: #475569;
+  --color-line: #e2e8f0;
+  --color-rule: #e2e8f0;
+  --color-accent: #2563eb;
+  --color-accent-wash: #eff6ff;
+  --color-accent-hover: #1d4ed8;
+  --color-verified: #059669;
+  --color-verified-wash: #ecfdf5;
+  --color-blocked: #e11d48;
+  --color-blocked-wash: #fff1f2;
+  --color-review: #d97706;
+  --color-warning: #d97706;
+  --color-warning-wash: #fffbeb;
+  --color-locked: #64748b;
 
-  --color-verified: oklch(0.56 0.13 155);
-  --color-verified-wash: oklch(0.96 0.04 155);
-  --color-warning: oklch(0.69 0.14 75);
-  --color-warning-wash: oklch(0.97 0.05 85);
-  --color-blocked: oklch(0.55 0.19 22);
-  --color-blocked-wash: oklch(0.96 0.04 22);
-  --color-locked: oklch(0.6 0.008 258);
+  --font-sans: var(--font-inter), system-ui, -apple-system, "Noto Sans Devanagari", sans-serif;
+  --font-serif: var(--font-serif), Georgia, serif;
+  --font-mono: var(--font-mono), "JetBrains Mono", "Noto Sans Devanagari", monospace;
 
-  --color-accent: oklch(0.47 0.14 262);
-  --color-accent-wash: oklch(0.96 0.025 262);
+  --radius-card: 12px;
+  --radius-control: 8px;
+  --radius-modal: 16px;
 
-  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans",
-    "Noto Sans Devanagari", sans-serif;
-  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+  --space-3xl: 64px;
+}
 
-  --radius-card: 0.625rem;
+:root {
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.07), 0 2px 4px -2px rgb(0 0 0 / 0.05);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.08), 0 4px 6px -4px rgb(0 0 0 / 0.04);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.04);
+}
+
+.dark,
+:root[data-theme="dark"] {
+  --color-ground: #080a0f;
+  --color-surface: #10141e;
+  --color-surface-raised: #182030;
+  --color-paper: #10141e;
+  --color-paper-sunk: #182030;
+  --color-ink: #f8fafc;
+  --color-ink-soft: #94a3b8;
+  --color-ink-faint: #64748b;
+  --color-muted: #94a3b8;
+  --color-line: #1f293d;
+  --color-rule: #1f293d;
+  --color-accent: #3b82f6;
+  --color-accent-wash: #1e293b;
+  --color-accent-hover: #60a5fa;
+  --color-verified: #34d399;
+  --color-verified-wash: #064e3b;
+  --color-blocked: #fb7185;
+  --color-blocked-wash: #4c0519;
+  --color-review: #fbbf24;
+  --color-warning: #fbbf24;
+  --color-warning-wash: #451a03;
+  --color-locked: #64748b;
+  --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.4);
+  --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.4), 0 2px 4px -2px rgb(0 0 0 / 0.3);
+  --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.5), 0 4px 6px -4px rgb(0 0 0 / 0.4);
+  --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.6), 0 8px 10px -6px rgb(0 0 0 / 0.5);
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --color-ink: oklch(0.95 0.004 258);
-    --color-ink-soft: oklch(0.76 0.01 258);
-    --color-ink-faint: oklch(0.58 0.01 258);
-    --color-paper: oklch(0.18 0.012 258);
-    --color-paper-sunk: oklch(0.22 0.014 258);
-    --color-rule: oklch(0.32 0.012 258);
-
-    --color-verified-wash: oklch(0.28 0.05 155);
-    --color-warning-wash: oklch(0.3 0.06 85);
-    --color-blocked-wash: oklch(0.29 0.07 22);
-    --color-accent: oklch(0.72 0.12 262);
-    --color-accent-wash: oklch(0.26 0.04 262);
+    --color-ground: #080a0f;
+    --color-surface: #10141e;
+    --color-surface-raised: #182030;
+    --color-paper: #10141e;
+    --color-paper-sunk: #182030;
+    --color-ink: #f8fafc;
+    --color-ink-soft: #94a3b8;
+    --color-ink-faint: #64748b;
+    --color-muted: #94a3b8;
+    --color-line: #1f293d;
+    --color-rule: #1f293d;
+    --color-accent: #3b82f6;
+    --color-accent-wash: #1e293b;
+    --color-accent-hover: #60a5fa;
+    --color-verified: #34d399;
+    --color-verified-wash: #064e3b;
+    --color-blocked: #fb7185;
+    --color-blocked-wash: #4c0519;
+    --color-review: #fbbf24;
+    --color-warning: #fbbf24;
+    --color-warning-wash: #451a03;
+    --color-locked: #64748b;
   }
 }
 
-:root[data-theme="dark"] {
-  --color-ink: oklch(0.95 0.004 258);
-  --color-ink-soft: oklch(0.76 0.01 258);
-  --color-ink-faint: oklch(0.58 0.01 258);
-  --color-paper: oklch(0.18 0.012 258);
-  --color-paper-sunk: oklch(0.22 0.014 258);
-  --color-rule: oklch(0.32 0.012 258);
-}
-
-html {
-  color-scheme: light dark;
-}
-
 body {
-  background: var(--color-paper);
+  background: var(--color-ground);
   color: var(--color-ink);
   font-family: var(--font-sans);
-  -webkit-text-size-adjust: 100%;
+  -webkit-font-smoothing: antialiased;
+  letter-spacing: -0.011em;
+}
+
+.font-serif-display {
+  font-family: var(--font-serif);
+}
+
+.font-mono-val {
+  font-family: var(--font-mono);
+  font-feature-settings: "tnum" on, "zero" on;
+}
+
+/* Theme cross-fade, applied only while switching. */
+html.theme-transition,
+html.theme-transition *,
+html.theme-transition *::before,
+html.theme-transition *::after {
+  transition:
+    background-color 250ms var(--ease),
+    border-color 250ms var(--ease),
+    color 200ms var(--ease),
+    box-shadow 250ms var(--ease) !important;
 }
 
 /* Focus must always be visible. Keyboard users include every judge who tabs. */
@@ -79,11 +142,31 @@ body {
   outline-offset: 2px;
 }
 
-/* One signature motion in the app: drafts fanning out after Fan out. */
-@keyframes fan-in {
+.active-press {
+  transition: transform 150ms var(--ease), box-shadow 150ms var(--ease);
+}
+.active-press:active {
+  transform: scale(0.975);
+}
+
+.hover-card-lift {
+  transition:
+    transform 220ms var(--ease),
+    box-shadow 220ms var(--ease),
+    border-color 220ms var(--ease);
+}
+.hover-card-lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-lg);
+}
+.hover-card-lift:active {
+  transform: translateY(0) scale(0.99);
+}
+
+@keyframes fade-in {
   from {
     opacity: 0;
-    transform: translateY(0.75rem) scale(0.985);
+    transform: translateY(6px);
   }
   to {
     opacity: 1;
@@ -91,12 +174,53 @@ body {
   }
 }
 
-.fan-in {
-  animation: fan-in 0.32s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+@keyframes slide-in-right {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
 }
 
-@keyframes pulse-wave {
-  0%, 100% {
+@keyframes badge-pop {
+  0% {
+    transform: scale(0.92);
+  }
+  50% {
+    transform: scale(1.06);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes check-pop {
+  0% {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.15);
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes wave {
+  0%,
+  100% {
     transform: scaleY(0.3);
   }
   50% {
@@ -104,19 +228,95 @@ body {
   }
 }
 
+@keyframes logo-in {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 240ms var(--ease) both;
+}
+.animate-slide-in-right {
+  animation: slide-in-right 300ms var(--ease) both;
+}
+.animate-badge-pop {
+  animation: badge-pop 200ms var(--ease) both;
+}
+.animate-check-pop {
+  animation: check-pop 180ms var(--ease) both;
+}
+.animate-shimmer {
+  animation: shimmer 1.5s ease-in-out infinite;
+}
 .wave-bar {
   transform-origin: center;
-  animation: pulse-wave 1.6s ease-in-out infinite;
+  animation: wave 1.6s ease-in-out infinite;
+}
+
+/* The fan-out: the one signature moment. */
+.stagger-children > * {
+  animation: fade-in 320ms var(--ease) both;
+}
+.stagger-children > *:nth-child(1) {
+  animation-delay: 0ms;
+}
+.stagger-children > *:nth-child(2) {
+  animation-delay: 60ms;
+}
+.stagger-children > *:nth-child(3) {
+  animation-delay: 120ms;
+}
+.stagger-children > *:nth-child(4) {
+  animation-delay: 180ms;
+}
+.stagger-children > *:nth-child(5) {
+  animation-delay: 240ms;
+}
+.stagger-children > *:nth-child(6) {
+  animation-delay: 300ms;
+}
+.stagger-children > *:nth-child(n + 7) {
+  animation-delay: 360ms;
+}
+
+.logo-origin {
+  animation: logo-in 260ms var(--ease) both;
+}
+.logo-fan {
+  animation: logo-in 260ms var(--ease) both;
+}
+.logo-fan-1 {
+  animation-delay: 70ms;
+}
+.logo-fan-2 {
+  animation-delay: 110ms;
+}
+.logo-fan-3 {
+  animation-delay: 150ms;
+}
+.logo-fan-4 {
+  animation-delay: 190ms;
+}
+.logo-fan-5 {
+  animation-delay: 230ms;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .fan-in {
-    animation: none;
-  }
   *,
   *::before,
   *::after {
-    transition-duration: 0.01ms !important;
     animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  .hover-card-lift:hover,
+  .active-press:active {
+    transform: none;
   }
 }

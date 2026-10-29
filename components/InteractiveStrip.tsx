@@ -119,7 +119,7 @@ export function InteractiveStrip() {
         </div>
         <Link
           href="/app"
-          className="text-xs font-semibold text-[var(--color-accent)] hover:underline"
+          className="inline-flex min-h-11 items-center px-2 text-xs font-semibold text-[var(--color-accent)] hover:underline"
         >
           Open full Speak app →
         </Link>
@@ -134,9 +134,9 @@ export function InteractiveStrip() {
               key={preset.id}
               type="button"
               onClick={() => handleSelectPreset(preset)}
-              className={`rounded-full px-3.5 py-1.5 text-xs font-medium transition-colors ${
+              className={`inline-flex min-h-11 items-center rounded-full px-4 text-xs font-medium transition-colors cursor-pointer active-press ${
                 isSelected
-                  ? "bg-[var(--color-accent)] text-white shadow-sm"
+                  ? "bg-[var(--color-accent)] text-white shadow-sm font-semibold"
                   : "border border-[var(--color-rule)] bg-[var(--color-paper)] text-[var(--color-ink)] hover:bg-[var(--color-paper-sunk)]"
               }`}
             >
@@ -170,7 +170,7 @@ export function InteractiveStrip() {
             type="button"
             onClick={() => void runFanout(spokenText, { id: "", label: "custom", project: "", contactSet: "india", spokenText })}
             disabled={loading || !spokenText.trim()}
-            className="rounded bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold text-white transition-opacity disabled:opacity-50"
+            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--color-accent)] px-5 text-sm font-semibold text-white transition-opacity disabled:opacity-50 cursor-pointer active-press"
           >
             {loading ? "Fanning out…" : "Fan out update"}
           </button>
@@ -309,7 +309,7 @@ export function InteractiveStrip() {
                             href={target.href}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 rounded bg-[var(--color-ink)] px-2.5 py-1 text-xs font-semibold text-[var(--color-paper)] hover:opacity-90"
+                            className="inline-flex min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-ink)] px-4 text-xs font-semibold text-[var(--color-paper)] hover:opacity-90 active-press cursor-pointer"
                           >
                             <span>{target.label}</span>
                             <span>↗</span>
