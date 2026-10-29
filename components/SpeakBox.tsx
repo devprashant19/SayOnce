@@ -65,6 +65,7 @@ export function SpeakBox({ value, onChange, onSubmit, disabled, label }: SpeakBo
           }
         }}
         placeholder="Hold your Wispr key and talk…"
+        style={{ viewTransitionName: "speak-box" }}
         className="mt-3 w-full resize-none rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-4 text-base leading-relaxed outline-none placeholder:text-[var(--color-ink-faint)] disabled:opacity-60"
       />
     </div>

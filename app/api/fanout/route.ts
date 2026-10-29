@@ -40,6 +40,7 @@ const RequestBody = z.object({
   spokenText: z.string().min(1).max(8000),
   project: z.string().max(120).default(""),
   contactSet: z.string().default("india"),
+  demoId: z.string().optional(),
   /** The golden set pins this so relative dates grade deterministically. */
   spokenOnIso: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   timeZone: z.string().default("Asia/Kolkata"),
@@ -74,7 +75,7 @@ export async function POST(request: Request) {
 
   // Phase 6: Instant demo mode cache lookup
   // If text matches a committed sample update, serve pre-verified pipeline results instantly (<50ms)
-  const cachedDemo = getCachedDemoResult(body.spokenText);
+  const cachedDemo = (body.demoId ? getCachedDemoResult(body.demoId) : null) || getCachedDemoResult(body.spokenText);
   if (cachedDemo) {
     const updateId = crypto.randomUUID();
     const at = new Date().toISOString();
