@@ -96,7 +96,7 @@ export default function PeoplePage() {
 
     // Validate phone for whatsapp, email for email
     if (formData.channel === "whatsapp" && (!formData.phone || !/^\+[1-9]\d{6,14}$/.test(formData.phone))) {
-      setError("A valid E.164 phone number (e.g. +919800000001) is required for WhatsApp.");
+      setError("A valid E.164 phone number (e.g. +919000000099) is required for WhatsApp.");
       setSaving(false);
       return;
     }
@@ -195,7 +195,7 @@ export default function PeoplePage() {
           id="voice-entry"
           value={dictatedText}
           onChange={(e) => setDictatedText(e.target.value)}
-          placeholder='e.g. "Ramesh, our packaging vendor, speaks Hinglish, WhatsApp, plus 91 98 double zero double zero triple zero one, only cares about quantities and dates, never tell him about pricing."'
+          placeholder='e.g. "Ramesh, our packaging vendor, speaks Hinglish, WhatsApp, plus 91 90 double zero double zero double zero nine nine, only cares about quantities and dates, never tell him about pricing."'
           rows={3}
           className="mt-3 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-3 text-sm leading-relaxed outline-none"
         />
@@ -336,7 +336,7 @@ export default function PeoplePage() {
                   type="text"
                   value={formData.phone ?? ""}
                   onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                  placeholder="+919800000001"
+                  placeholder="+919000000099"
                   className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none font-mono"
                 />
               </div>
@@ -349,7 +349,7 @@ export default function PeoplePage() {
                   type="email"
                   value={formData.email ?? ""}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                  placeholder="ramesh@vendor.example"
+                  placeholder="ramesh@sayonce.example"
                   className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 py-2 text-sm outline-none"
                 />
               </div>
