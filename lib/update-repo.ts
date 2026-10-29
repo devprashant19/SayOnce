@@ -139,9 +139,9 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
             sourceSpanEnd: f.sourceSpan.end,
             blockedFor: f.privacy.blockedFor,
             blockedReason: f.privacy.reason,
-            commitmentOwner: null,
-            commitmentDue: null,
-            commitmentStatus: null,
+            commitmentOwner: f.type === "commitment" ? (f.values.names[0] ?? "Speaker") : null,
+            commitmentDue: f.type === "commitment" ? (f.values.datesIso[0] ?? null) : null,
+            commitmentStatus: f.type === "commitment" ? "open" : null,
           })),
         );
       }
@@ -218,9 +218,9 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
       sourceSpanEnd: f.sourceSpan.end,
       blockedFor: f.privacy.blockedFor,
       blockedReason: f.privacy.reason,
-      commitmentOwner: null,
-      commitmentDue: null,
-      commitmentStatus: null,
+      commitmentOwner: f.type === "commitment" ? (f.values.names[0] ?? "Speaker") : null,
+      commitmentDue: f.type === "commitment" ? (f.values.datesIso[0] ?? null) : null,
+      commitmentStatus: f.type === "commitment" ? "open" : null,
     });
   }
   writeJsonFile(FACTS_FILE, factsList);
@@ -556,4 +556,336 @@ export async function getUpdateTrail(updateId: string): Promise<TrailEntry[]> {
 
   const trailList = readJsonFile<TrailEntry>(TRAIL_FILE);
   return trailList.filter((t) => t.updateId === updateId);
+}
+
+export async function appendCustomTrailEntry(params: {
+  updateId: string;
+  actor: "user" | "ai" | "system";
+  type: TrailEntryType;
+  payload: unknown;
+}): Promise<TrailEntry> {
+  const atIso = new Date().toISOString();
+  if (env.hasDatabase) {
+    try {
+      const database = db();
+      const existing = await database
+        .select()
+        .from(schema.trailEntries)
+        .where(eq(schema.trailEntries.updateId, params.updateId))
+        .orderBy(schema.trailEntries.seq);
+
+      const last = existing[existing.length - 1];
+      const prevHash = last?.hash ?? "0".repeat(64);
+      const nextSeq = (last?.seq ?? 0) + 1;
+
+      const newEntry = appendEntry(
+        {
+          updateId: params.updateId,
+          seq: nextSeq,
+          at: atIso,
+          actor: params.actor,
+          type: params.type,
+          payload: params.payload,
+        },
+        prevHash,
+      );
+
+      await database.insert(schema.trailEntries).values({
+        id: `${params.updateId}-${newEntry.seq}`,
+        updateId: params.updateId,
+        seq: newEntry.seq,
+        at: new Date(newEntry.at),
+        actor: newEntry.actor,
+        type: newEntry.type,
+        payloadJson: newEntry.payload,
+        prevHash: newEntry.prevHash,
+        hash: newEntry.hash,
+      });
+
+      return newEntry;
+    } catch (err) {
+      console.warn("DB appendCustomTrailEntry failed, using store fallback:", err);
+    }
+  }
+
+  const trailList = readJsonFile<TrailEntry>(TRAIL_FILE);
+  const updateTrail = trailList.filter((t) => t.updateId === params.updateId);
+  const last = updateTrail[updateTrail.length - 1];
+  const prevHash = last?.hash ?? "0".repeat(64);
+  const nextSeq = (last?.seq ?? 0) + 1;
+
+  const newEntry = appendEntry(
+    {
+      updateId: params.updateId,
+      seq: nextSeq,
+      at: atIso,
+      actor: params.actor,
+      type: params.type,
+      payload: params.payload,
+    },
+    prevHash,
+  );
+
+  trailList.push(newEntry);
+  writeJsonFile(TRAIL_FILE, trailList);
+  return newEntry;
+}
+
+export interface UpdateLogRow {
+  id: string;
+  dataset: string;
+  createdAt: string;
+  spokenOn: string;
+  timeZone: string;
+  project: string;
+  rawText: string;
+  summary: string;
+  decisions: string[];
+  elapsedSeconds: number | null;
+  messages: Array<{
+    id: string;
+    contactId: string;
+    channel: string;
+    subject: string | null;
+    body: string;
+    usedFactIds: string[];
+    sent: boolean;
+    sentAt: string | null;
+    checkOk: boolean | null;
+    overridden: boolean;
+  }>;
+  facts: Array<{
+    id: string;
+    text: string;
+    type: string;
+    values: { numbers: string[]; datesIso: string[]; names: string[] };
+    sourceSpan: { start: number; end: number };
+    blockedFor: string[];
+    commitmentOwner: string | null;
+    commitmentDue: string | null;
+    commitmentStatus: string | null;
+  }>;
+}
+
+export async function getAllUpdates(dataset?: string): Promise<UpdateLogRow[]> {
+  const chosenDataset = dataset ?? REAL_DATASET;
+
+  if (env.hasDatabase) {
+    try {
+      const database = db();
+      const updateRows = await database
+        .select()
+        .from(schema.updates)
+        .where(eq(schema.updates.dataset, chosenDataset));
+
+      const allFacts = await database.select().from(schema.facts);
+      const allMessages = await database.select().from(schema.messages);
+
+      const factsByUpdate = new Map<string, typeof allFacts>();
+      for (const f of allFacts) {
+        const list = factsByUpdate.get(f.updateId) ?? [];
+        list.push(f);
+        factsByUpdate.set(f.updateId, list);
+      }
+
+      const msgsByUpdate = new Map<string, typeof allMessages>();
+      for (const m of allMessages) {
+        const list = msgsByUpdate.get(m.updateId) ?? [];
+        list.push(m);
+        msgsByUpdate.set(m.updateId, list);
+      }
+
+      const rows: UpdateLogRow[] = updateRows.map((u) => {
+        const uFacts = factsByUpdate.get(u.id) ?? [];
+        const uMsgs = msgsByUpdate.get(u.id) ?? [];
+        return {
+          id: u.id,
+          dataset: u.dataset,
+          createdAt: u.createdAt.toISOString(),
+          spokenOn: u.spokenOn,
+          timeZone: u.timeZone,
+          project: u.project,
+          rawText: u.rawText,
+          summary: u.summary,
+          decisions: u.decisions,
+          elapsedSeconds: u.elapsedSeconds,
+          messages: uMsgs.map((m) => ({
+            id: m.id,
+            contactId: m.contactId,
+            channel: m.channel,
+            subject: m.subject,
+            body: m.body,
+            usedFactIds: m.usedFactIds,
+            sent: m.sent,
+            sentAt: m.sentAt ? m.sentAt.toISOString() : null,
+            checkOk: m.checkOk,
+            overridden: m.overridden,
+          })),
+          facts: uFacts.map((f) => ({
+            id: f.id,
+            text: f.text,
+            type: f.type,
+            values: f.values,
+            sourceSpan: { start: f.sourceSpanStart, end: f.sourceSpanEnd },
+            blockedFor: f.blockedFor,
+            commitmentOwner: f.commitmentOwner,
+            commitmentDue: f.commitmentDue,
+            commitmentStatus: f.commitmentStatus,
+          })),
+        };
+      });
+
+      return rows.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+    } catch (err) {
+      console.warn("DB getAllUpdates failed, falling back to local store:", err);
+    }
+  }
+
+  const updatesList = readJsonFile<StoredUpdate>(UPDATES_FILE);
+  const factsList = readJsonFile<StoredFact>(FACTS_FILE);
+  const messagesList = readJsonFile<StoredMessage>(MESSAGES_FILE);
+
+  const factsByUpdate = new Map<string, StoredFact[]>();
+  for (const f of factsList) {
+    const list = factsByUpdate.get(f.updateId) ?? [];
+    list.push(f);
+    factsByUpdate.set(f.updateId, list);
+  }
+
+  const msgsByUpdate = new Map<string, StoredMessage[]>();
+  for (const m of messagesList) {
+    const list = msgsByUpdate.get(m.updateId) ?? [];
+    list.push(m);
+    msgsByUpdate.set(m.updateId, list);
+  }
+
+  const results: UpdateLogRow[] = updatesList.map((u) => {
+    const uFacts = factsByUpdate.get(u.id) ?? [];
+    const uMsgs = msgsByUpdate.get(u.id) ?? [];
+    return {
+      id: u.id,
+      dataset: u.dataset,
+      createdAt: u.createdAt,
+      spokenOn: u.spokenOn,
+      timeZone: u.timeZone,
+      project: u.project,
+      rawText: u.rawText,
+      summary: u.summary,
+      decisions: u.decisions,
+      elapsedSeconds: u.elapsedSeconds,
+      messages: uMsgs.map((m) => ({
+        id: m.id,
+        contactId: m.contactId,
+        channel: m.channel,
+        subject: m.subject,
+        body: m.body,
+        usedFactIds: m.usedFactIds,
+        sent: m.sent,
+        sentAt: m.sentAt,
+        checkOk: m.checkOk,
+        overridden: m.overridden,
+      })),
+      facts: uFacts.map((f) => ({
+        id: f.id,
+        text: f.text,
+        type: f.type,
+        values: f.values,
+        sourceSpan: { start: f.sourceSpanStart, end: f.sourceSpanEnd },
+        blockedFor: f.blockedFor,
+        commitmentOwner: f.commitmentOwner ?? null,
+        commitmentDue: f.commitmentDue ?? null,
+        commitmentStatus: f.commitmentStatus ?? null,
+      })),
+    };
+  });
+
+  return results.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+}
+
+export async function getPastFactsForProject(
+  project: string,
+  days = 30,
+): Promise<
+  Array<{
+    factId: string;
+    updateId: string;
+    spokenOn: string;
+    text: string;
+    type: string;
+    values: { numbers: string[]; datesIso: string[]; names: string[] };
+    recipientIds: string[];
+  }>
+> {
+  const updates = await getAllUpdates();
+  const cutoff = Date.now() - days * 24 * 60 * 60 * 1000;
+
+  const relevant = updates.filter(
+    (u) =>
+      u.project.toLowerCase() === project.toLowerCase() &&
+      new Date(u.createdAt).getTime() >= cutoff,
+  );
+
+  const results: Array<{
+    factId: string;
+    updateId: string;
+    spokenOn: string;
+    text: string;
+    type: string;
+    values: { numbers: string[]; datesIso: string[]; names: string[] };
+    recipientIds: string[];
+  }> = [];
+
+  for (const u of relevant) {
+    for (const f of u.facts) {
+      // Find which recipients were sent or drafted this fact
+      const recipientIds = u.messages
+        .filter((m) => m.usedFactIds.includes(f.id))
+        .map((m) => m.contactId);
+
+      results.push({
+        factId: f.id,
+        updateId: u.id,
+        spokenOn: u.spokenOn,
+        text: f.text,
+        type: f.type,
+        values: f.values,
+        recipientIds,
+      });
+    }
+  }
+
+  return results;
+}
+
+export async function getFrequentContactsForProject(
+  project: string,
+  limitUpdates = 5,
+): Promise<Array<{ contactId: string; timesSeen: number; totalRecent: number }>> {
+  const updates = await getAllUpdates();
+  const projectUpdates = updates
+    .filter((u) => u.project.toLowerCase() === project.toLowerCase())
+    .slice(0, limitUpdates);
+
+  if (projectUpdates.length === 0) return [];
+
+  const counts = new Map<string, number>();
+  for (const u of projectUpdates) {
+    const contactsInUpdate = new Set(u.messages.map((m) => m.contactId));
+    for (const cid of contactsInUpdate) {
+      counts.set(cid, (counts.get(cid) ?? 0) + 1);
+    }
+  }
+
+  const results: Array<{ contactId: string; timesSeen: number; totalRecent: number }> = [];
+  for (const [contactId, timesSeen] of counts.entries()) {
+    if (timesSeen >= 3) {
+      results.push({
+        contactId,
+        timesSeen,
+        totalRecent: projectUpdates.length,
+      });
+    }
+  }
+
+  return results;
 }

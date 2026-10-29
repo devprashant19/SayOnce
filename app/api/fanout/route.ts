@@ -10,7 +10,14 @@ import { voiceReturn } from "@/lib/voice-return";
 import { Contact, type Draft, type Fact } from "@/lib/types";
 import { env } from "@/lib/env";
 import { loadContactSet } from "@/lib/contact-sets";
-import { saveFanoutRecord } from "@/lib/update-repo";
+import { listContacts } from "@/lib/contact-repo";
+import {
+  saveFanoutRecord,
+  getPastFactsForProject,
+  getFrequentContactsForProject,
+} from "@/lib/update-repo";
+import { REAL_DATASET } from "@/lib/db";
+import { detectContradictions, type ContradictionAlert } from "@/lib/consistency";
 import { composeOne } from "@/lib/ai/compose";
 
 /**
@@ -35,6 +42,7 @@ const RequestBody = z.object({
   /** The golden set pins this so relative dates grade deterministically. */
   spokenOnIso: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   timeZone: z.string().default("Asia/Kolkata"),
+  elapsedSeconds: z.number().int().min(0).optional(),
 });
 
 export interface FanoutCard {
@@ -65,9 +73,19 @@ export async function POST(request: Request) {
 
   let contacts: Contact[];
   try {
-    contacts = loadContactSet(body.contactSet);
+    const dataset = body.contactSet === "freelance" ? REAL_DATASET : body.contactSet;
+    const stored = await listContacts(dataset);
+    if (stored.length > 0) {
+      contacts = stored;
+    } else {
+      contacts = loadContactSet(body.contactSet);
+    }
   } catch {
-    return NextResponse.json({ error: `No contact set called "${body.contactSet}".` }, { status: 400 });
+    try {
+      contacts = loadContactSet(body.contactSet);
+    } catch {
+      return NextResponse.json({ error: `No contact set called "${body.contactSet}".` }, { status: 400 });
+    }
   }
 
   const updateId = crypto.randomUUID();
@@ -300,17 +318,59 @@ export async function POST(request: Request) {
 
   const trail = buildChain(trailInputs);
 
+  // Consistency Guard: Compare against past facts for this project in last 30 days
+  const contradictions: ContradictionAlert[] = [];
+  if (body.project) {
+    try {
+      const pastFacts = await getPastFactsForProject(body.project, 30);
+      for (const card of cards) {
+        if (!card.draft) continue;
+        const found = detectContradictions({
+          currentFacts: facts,
+          pastFacts,
+          recipientId: card.contact.id,
+          recipientName: card.contact.name,
+          project: body.project,
+        });
+        contradictions.push(...found);
+      }
+    } catch (err) {
+      console.warn("Consistency check skipped:", err);
+    }
+  }
+
+  // "Who did I forget?": Check if a frequent contact for this project was omitted
+  let whoDidIForget: Array<{ contactId: string; name: string; timesSeen: number; totalRecent: number }> = [];
+  if (body.project) {
+    try {
+      const frequent = await getFrequentContactsForProject(body.project, 5);
+      const chosenIds = new Set(
+        cards.filter((c) => c.draft !== null).map((c) => c.contact.id),
+      );
+      const contactMap = new Map(contacts.map((c) => [c.id, c.name]));
+      whoDidIForget = frequent
+        .filter((f) => !chosenIds.has(f.contactId))
+        .map((f) => ({
+          ...f,
+          name: contactMap.get(f.contactId) ?? f.contactId,
+        }));
+    } catch (err) {
+      console.warn("Frequent contacts check skipped:", err);
+    }
+  }
+
   // Persist update, facts, messages and trail
   try {
     await saveFanoutRecord({
       updateId,
-      dataset: body.contactSet === "freelance" ? "real" : body.contactSet,
+      dataset: body.contactSet === "freelance" ? REAL_DATASET : body.contactSet,
       spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
       timeZone: body.timeZone,
       project: body.project,
       rawText: scrubbed.text,
       summary,
       decisions,
+      elapsedSeconds: body.elapsedSeconds ?? null,
       facts,
       messages: cards
         .filter((c) => c.draft !== null)
@@ -341,12 +401,14 @@ export async function POST(request: Request) {
     facts,
     cards,
     routing: routeOutput.value,
+    contradictions,
+    whoDidIForget,
     voiceReturn: voiceReturn({
       spokenText: scrubbed.text,
       drafts: composed.drafts,
       languagesByContactId: Object.fromEntries(contacts.map((c) => [c.id, c.language])),
       baselineMinutesPerUpdate: env.baselineMinutes,
-      actualSeconds: null,
+      actualSeconds: body.elapsedSeconds ?? null,
     }),
     trail,
     trailVerdict: verifyChain(trail),
