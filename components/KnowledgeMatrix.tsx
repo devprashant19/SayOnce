@@ -57,7 +57,12 @@ export function KnowledgeMatrix({
         </div>
       </div>
 
-      <div className="relative overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)]">
+      <div
+        tabIndex={0}
+        role="region"
+        aria-label="Knowledge matrix, scrolls horizontally"
+        className="relative overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)]"
+      >
         <table className="w-full min-w-[500px] border-collapse text-left text-xs">
           <thead>
             <tr className="border-b border-[var(--color-rule)] bg-[var(--color-paper-sunk)]">

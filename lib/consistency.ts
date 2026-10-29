@@ -85,6 +85,16 @@ function identifyTopic(textA: string, textB: string): string | null {
   return null;
 }
 
+/**
+ * Two statements of the same thing, ignoring spacing, case and a trailing
+ * stop. Restating a fact is not contradicting it.
+ */
+function sameStatement(a: string, b: string): boolean {
+  const normalise = (text: string) =>
+    text.trim().toLowerCase().replace(/\s+/g, " ").replace(/[.,;:!?]+$/, "");
+  return normalise(a) === normalise(b);
+}
+
 export function detectContradictions(params: {
   currentFacts: Fact[];
   pastFacts: PastFactEntry[];
@@ -103,6 +113,10 @@ export function detectContradictions(params: {
     for (const past of recipientPastFacts) {
       // Do not compare against same fact
       if (current.id === past.factId) continue;
+      // Nor against an identical restatement of it. Every prepared fan-out is
+      // persisted like a real update, so running the same sample twice would
+      // otherwise raise an alert for every fact against its own earlier copy.
+      if (sameStatement(current.text, past.text)) continue;
 
       const topic = identifyTopic(current.text, past.text);
       if (!topic) continue;

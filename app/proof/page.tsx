@@ -216,7 +216,12 @@ export default async function ProofPage() {
           </p>
         ) : (
           <>
-            <div className="overflow-x-auto">
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Quality Lab metrics table, scrolls horizontally"
+              className="overflow-x-auto"
+            >
               <table className="w-full min-w-[32rem] border-collapse text-sm">
                 <caption className="sr-only">
                   Quality Lab metrics against their targets

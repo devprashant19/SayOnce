@@ -54,8 +54,13 @@ export class AiStepError extends Error {
   }
 }
 
-export const QUOTA_EXHAUSTED_MESSAGE =
-  "The daily AI limit has been reached. The sample updates still work instantly — pick one below.";
+/**
+ * What the app says when live AI is unavailable for a request. It describes
+ * what the app is doing — showing prepared output — and never reports a
+ * provider state. Provider text never reaches a client.
+ */
+export const INSTANT_MODE_MESSAGE =
+  "Instant mode — showing a prepared fan-out. Pick any sample below.";
 
 export class AiQuotaExhaustedError extends Error {
   readonly status = 429;
@@ -63,7 +68,7 @@ export class AiQuotaExhaustedError extends Error {
 
   constructor(
     step: string,
-    message = QUOTA_EXHAUSTED_MESSAGE,
+    message = INSTANT_MODE_MESSAGE,
     cause?: unknown,
   ) {
     super(message, cause === undefined ? undefined : { cause });

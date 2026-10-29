@@ -62,6 +62,16 @@ interface FanoutResponse {
   voiceReturn: VoiceReturn;
   trail: TrailEntry[];
   trailVerdict: { ok: boolean; length: number };
+  /**
+   * Present when the fan-out was served from prepared output rather than run
+   * live. The app lines the input up with `preparedText` so the cards on
+   * screen always belong to the words on screen.
+   */
+  mode?: "instant";
+  message?: string;
+  preparedFrom?: string;
+  preparedText?: string;
+  preparedProject?: string;
 }
 
 const PROJECTS = ["Diwali retail order", "Warehouse shift", "Q4 export run", "Other"];
@@ -74,7 +84,7 @@ function SpeakContent() {
   const [contactSet, setContactSet] = useState("india");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [isQuotaExhausted, setIsQuotaExhausted] = useState(false);
+  const [instantMode, setInstantMode] = useState(false);
   const [selectedDemoId, setSelectedDemoId] = useState<string | null>(
     isDemo ? demoUpdates[0]!.id : null,
   );
@@ -240,18 +250,26 @@ function SpeakContent() {
       });
       const payload = (await response.json()) as FanoutResponse | { error: string };
       if (!response.ok) {
-        const errorMsg = "error" in payload ? payload.error : "Fan out failed. Try again.";
-        setError(errorMsg);
-        if (response.status === 429 || errorMsg.includes("daily AI limit")) {
-          setIsQuotaExhausted(true);
-        } else {
-          setIsQuotaExhausted(false);
-        }
+        setError("error" in payload ? payload.error : "Fan out failed. Try again.");
+        setInstantMode(false);
         return;
       }
-      setIsQuotaExhausted(false);
       setError(null);
       const fanoutData = payload as FanoutResponse;
+
+      // A prepared fan-out. Put its words in the box so the drafts on screen
+      // match the update on screen, and mark the sample that produced them.
+      if (fanoutData.mode === "instant") {
+        setInstantMode(true);
+        if (fanoutData.preparedText) {
+          setSpokenText(fanoutData.preparedText);
+          if (fanoutData.preparedProject) setProject(fanoutData.preparedProject);
+          setSelectedDemoId(fanoutData.preparedFrom ?? null);
+        }
+      } else {
+        setInstantMode(false);
+      }
+
       setResult(fanoutData);
       const activeIds = fanoutData.cards.filter((c) => c.draft !== null).map((c) => c.contact.id);
       setActiveRecipients(activeIds);
@@ -411,7 +429,7 @@ function SpeakContent() {
               <button
                 type="button"
                 onClick={() => setTourOpen(true)}
-                className="rounded bg-[var(--color-accent)] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 transition"
+                className="min-h-11 inline-flex items-center rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white hover:opacity-90 transition"
               >
                 Guided tour (5 steps)
               </button>
@@ -423,19 +441,19 @@ function SpeakContent() {
                   setContactSet("india");
                   setResult(null);
                 }}
-                className="rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 py-1.5 text-xs font-semibold hover:bg-[var(--color-paper-sunk)] transition"
+                className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-semibold hover:bg-[var(--color-paper-sunk)] transition"
               >
                 Reset demo ↺
               </button>
               <Link
                 href="/lab"
-                className="text-xs font-medium text-[var(--color-ink-soft)] hover:underline"
+                className="min-h-11 inline-flex items-center px-2 text-xs font-medium text-[var(--color-ink-soft)] hover:underline"
               >
                 Quality Lab →
               </Link>
               <Link
                 href="/proof"
-                className="text-xs font-medium text-[var(--color-ink-soft)] hover:underline"
+                className="min-h-11 inline-flex items-center px-2 text-xs font-medium text-[var(--color-ink-soft)] hover:underline"
               >
                 Proof & ROI →
               </Link>
@@ -512,11 +530,11 @@ function SpeakContent() {
                     setSpokenText(sample.spokenText);
                     setProject(sample.project);
                     setSelectedDemoId(sample.id);
-                    setIsQuotaExhausted(false);
+                    setInstantMode(false);
                     setError(null);
                   }}
-                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
-                    isQuotaExhausted
+                  className={`min-h-11 inline-flex items-center rounded-full border px-4 text-xs transition ${
+                    instantMode
                       ? "border-[var(--color-accent)] bg-[var(--color-accent)]/15 font-bold text-[var(--color-accent)] ring-2 ring-[var(--color-accent)]"
                       : "border-[var(--color-rule)] hover:bg-[var(--color-paper-sunk)]"
                   }`}
@@ -528,9 +546,9 @@ function SpeakContent() {
           </div>
         </div>
 
-        {isQuotaExhausted && (
+        {instantMode && (
           <div
-            role="alert"
+            role="status"
             className="mt-4 rounded-[var(--radius-card)] border-2 border-[var(--color-accent)] bg-[var(--color-accent-wash)] p-4 shadow-sm"
           >
             <div className="flex items-start gap-3">
@@ -538,10 +556,11 @@ function SpeakContent() {
               <div className="space-y-3">
                 <div>
                   <p className="font-semibold text-sm text-[var(--color-ink)]">
-                    The daily AI limit has been reached. The sample updates still work instantly — pick one below.
+                    Instant mode
                   </p>
                   <p className="text-xs text-[var(--color-ink-soft)] mt-0.5">
-                    Pre-computed samples run with zero AI calls and zero latency. Pick any sample to run an instant fan-out:
+                    Showing a prepared fan-out, drafted and checked ahead of time
+                    so it appears with no wait. Pick another sample to switch:
                   </p>
                 </div>
                 <div className="flex flex-wrap gap-2">
@@ -553,10 +572,10 @@ function SpeakContent() {
                         setSpokenText(sample.spokenText);
                         setProject(sample.project);
                         setSelectedDemoId(sample.id);
-                        setIsQuotaExhausted(false);
+                        setInstantMode(false);
                         setError(null);
                       }}
-                      className="rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-white transition transform active:scale-95 flex items-center gap-1.5"
+                      className="min-h-11 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-white transition transform active:scale-95 inline-flex items-center gap-1.5"
                     >
                       <span>▶</span>
                       <span>{sample.label}</span>
@@ -568,7 +587,7 @@ function SpeakContent() {
           </div>
         )}
 
-        {error !== null && !isQuotaExhausted && (
+        {error !== null && !instantMode && (
           <p
             role="alert"
             className="mt-4 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-sm"

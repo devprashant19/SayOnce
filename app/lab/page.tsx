@@ -150,7 +150,7 @@ export default function LabPage() {
               key={g.id}
               type="button"
               onClick={() => setSelectedGroup(g.id)}
-              className={`rounded px-3 py-1.5 text-xs font-medium transition-colors ${
+              className={`min-h-11 inline-flex items-center rounded px-4 text-xs font-medium transition-colors ${
                 selectedGroup === g.id
                   ? "bg-[var(--color-ink)] text-white"
                   : "border border-[var(--color-rule)] hover:bg-[var(--color-paper-sunk)]"
@@ -166,7 +166,7 @@ export default function LabPage() {
             type="button"
             disabled={running}
             onClick={() => triggerRun(selectedGroup)}
-            className="min-h-10 rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50"
+            className="min-h-11 rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50"
           >
             {running
               ? "Running Quality Suite…"
@@ -291,7 +291,12 @@ export default function LabPage() {
       <section className="space-y-3">
         <h2 className="text-sm font-semibold tracking-tight">Golden Cases ({filteredCases.length})</h2>
 
-        <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)]">
+        <div
+          tabIndex={0}
+          role="region"
+          aria-label="Golden cases table, scrolls horizontally"
+          className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)]"
+        >
           <table className="w-full text-left text-xs">
             <thead className="border-b border-[var(--color-rule)] bg-[var(--color-paper-sunk)] text-[var(--color-ink-soft)]">
               <tr>
@@ -342,7 +347,7 @@ export default function LabPage() {
                         <button
                           type="button"
                           onClick={() => setSelectedCaseId(isSelected ? null : c.id)}
-                          className="rounded border border-[var(--color-rule)] px-2 py-1 hover:bg-[var(--color-paper-sunk)]"
+                          className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] px-3 hover:bg-[var(--color-paper-sunk)]"
                         >
                           {isSelected ? "Hide" : "Inspect"}
                         </button>
@@ -350,7 +355,7 @@ export default function LabPage() {
                           type="button"
                           disabled={running}
                           onClick={() => triggerRun(undefined, c.id)}
-                          className="rounded bg-[var(--color-ink)] text-white px-2 py-1 font-medium hover:opacity-90 disabled:opacity-50"
+                          className="min-h-11 inline-flex items-center rounded bg-[var(--color-ink)] text-white px-3 font-medium hover:opacity-90 disabled:opacity-50"
                         >
                           Run
                         </button>

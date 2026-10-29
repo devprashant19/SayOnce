@@ -435,13 +435,13 @@ export function DraftCard(props: DraftCardProps) {
                     value={feedbackInput}
                     onChange={(e) => setFeedbackInput(e.target.value)}
                     placeholder={`e.g. Too formal, keep under three lines…`}
-                    className="flex-1 min-h-9 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
+                    className="flex-1 min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
                   />
                   <button
                     type="button"
                     onClick={handleParseFeedback}
                     disabled={parsingFeedback || !feedbackInput.trim()}
-                    className="min-h-9 rounded bg-[var(--color-ink)] px-3 font-semibold text-white hover:opacity-90 disabled:opacity-50"
+                    className="min-h-11 rounded bg-[var(--color-ink)] px-3 font-semibold text-white hover:opacity-90 disabled:opacity-50"
                   >
                     {parsingFeedback ? "Analyzing…" : "Propose change"}
                   </button>

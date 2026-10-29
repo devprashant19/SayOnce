@@ -274,4 +274,36 @@ describe("Consistency Guard", () => {
     });
     expect(fa5.length).toBe(0);
   });
+
+  it("does not flag a fact against an identical restatement of itself", () => {
+    // Every prepared fan-out is persisted like a real update, so pressing Fan
+    // out twice on the same sample used to raise an alert per fact against its
+    // own earlier copy. Restating a fact is not contradicting it.
+    const past: PastFactEntry = {
+      factId: "f_past_same",
+      updateId: "u_earlier_run",
+      spokenOn: "2026-10-30",
+      text: "Delivery moves to Monday 2 November.",
+      type: "date",
+      values: { numbers: [], datesIso: ["2026-11-02"], names: [] },
+      recipientIds: ["f_client"],
+    };
+    const current: Fact = {
+      id: "f_curr_same",
+      // Same statement, different id, incidental spacing and case.
+      text: "delivery moves to  Monday 2 November",
+      type: "date",
+      values: { numbers: [], datesIso: ["2026-11-02"], names: [] },
+      sourceSpan: { start: 0, end: 36 },
+      privacy: { blockedFor: [], reason: "" },
+    };
+    expect(
+      detectContradictions({
+        currentFacts: [current],
+        pastFacts: [past],
+        recipientId: recipient.id,
+        recipientName: recipient.name,
+      }),
+    ).toEqual([]);
+  });
 });

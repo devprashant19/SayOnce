@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { InteractiveStrip } from "@/components/InteractiveStrip";
+import { landingSample } from "@/lib/landing-stats";
+import { AUTOMATED_TEST_COUNT } from "@/lib/evidence";
 
 /**
  * SayOnce Animated Landing Page (Phase 7).
@@ -17,6 +19,10 @@ import { InteractiveStrip } from "@/components/InteractiveStrip";
  */
 
 export default function LandingPage() {
+  // Computed from the prepared sample in data/demo. If it is ever missing the
+  // band is dropped rather than filled with plausible-looking numbers.
+  const sample = landingSample();
+
   return (
     <div className="space-y-24 py-6 sm:py-10">
       {/* =========================================================================
@@ -29,13 +35,13 @@ export default function LandingPage() {
             Ek Baar Bolo · Wispr Flow Voice Input
           </span>
           <span className="rounded-full border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 py-1 text-xs text-[var(--color-ink-soft)]">
-            183 automated tests · 0 invented facts
+            {AUTOMATED_TEST_COUNT} automated tests · 0 invented facts
           </span>
         </div>
 
         <h1
           id="hero-heading"
-          className="text-4xl font-bold tracking-tight sm:text-6xl sm:leading-[1.1]"
+          className="font-serif-display text-4xl font-semibold tracking-[-0.02em] sm:text-6xl sm:leading-[1.05]"
         >
           Say it once.
           <br />
@@ -119,7 +125,7 @@ export default function LandingPage() {
               chahiye unloading ke liye.”
             </blockquote>
             <div className="mt-3 flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[var(--color-rule)] text-xs text-[var(--color-ink-soft)]">
-              <span>Hinglish voice input · 58 words spoken in 38 seconds</span>
+              <span>Hinglish voice input · one dictation, no edits</span>
               <span className="font-medium text-[var(--color-verified)]">
                 ✓ Strikethrough removes speech hesitation automatically
               </span>
@@ -136,7 +142,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 1 · Precision Decomposition
           </span>
-          <h2 id="extract-heading" className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 id="extract-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             The sentence breaks apart. Facts lift out.
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -239,7 +245,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 2 · Knowledge Partitioning
           </span>
-          <h2 id="route-heading" className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 id="route-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             Who needs to know — and what is shielded
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -365,7 +371,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 3 · The Signature Moment
           </span>
-          <h2 id="compose-heading" className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 id="compose-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             What they heard: one update, four tailored versions
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -561,7 +567,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 4 · Pure Deterministic Verification
           </span>
-          <h2 id="verify-heading" className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 id="verify-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             Final authority belongs to code, not the AI
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -621,7 +627,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 5 · Cryptographic Memory & ROI
           </span>
-          <h2 id="trust-heading" className="mt-1 text-2xl font-bold tracking-tight sm:text-3xl">
+          <h2 id="trust-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             The Trust Trail & The Voice Return
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -677,31 +683,32 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* The Voice Return Numbers */}
+        {/* The Voice Return Numbers — arithmetic over the prepared sample. */}
+        {sample && (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {[
             {
-              label: "Words Spoken",
-              value: "58",
-              sub: "38 seconds of dictation",
-              sample: false,
-            },
-            {
-              label: "Words Delivered",
-              value: "284",
-              sub: "Across 4 recipients in 3 languages",
-              sample: false,
-            },
-            {
-              label: "Voice Amplification",
-              value: "4.9×",
-              sub: "Output multiplier per spoken word",
+              label: "Words spoken",
+              value: String(sample.spokenWords),
+              sub: "One Hinglish dictation",
               sample: true,
             },
             {
-              label: "Time Saved",
-              value: "~14 min",
-              sub: "Per update vs. typing 4 messages",
+              label: "Words delivered",
+              value: String(sample.deliveredWords),
+              sub: `Across ${sample.recipients} tailored messages`,
+              sample: true,
+            },
+            {
+              label: "Languages and scripts",
+              value: String(sample.languages),
+              sub: "Each message in its reader's own",
+              sample: true,
+            },
+            {
+              label: "Facts withheld",
+              value: String(sample.withheld),
+              sub: "Never entered the blocked reader's prompt",
               sample: true,
             },
           ].map((stat) => (
@@ -722,13 +729,14 @@ export default function LandingPage() {
             </div>
           ))}
         </div>
+        )}
       </section>
 
       {/* =========================================================================
           HONEST CLOSE & CALL TO ACTION
          ========================================================================= */}
       <section className="rounded-2xl border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-8 sm:p-12 text-center space-y-6">
-        <h2 className="text-3xl font-bold tracking-tight sm:text-4xl max-w-xl mx-auto">
+        <h2 className="font-serif-display text-3xl font-semibold tracking-[-0.015em] sm:text-4xl max-w-xl mx-auto">
           Say it once. Save your team hours every single week.
         </h2>
         <p className="max-w-xl mx-auto text-sm sm:text-base text-[var(--color-ink-soft)]">
@@ -781,7 +789,8 @@ export default function LandingPage() {
         </div>
         <p>
           Built for <em>No Hands: The Wispr Challenge</em> by WeMakeDevs and Wispr Flow.
-          All numbers verified against the 183 automated test suite and cryptographic audit trail.
+          Figures on this page are computed from the prepared sample above. Behaviour is
+          covered by {AUTOMATED_TEST_COUNT} automated tests and a cryptographic audit trail.
         </p>
       </footer>
     </div>

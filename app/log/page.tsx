@@ -229,7 +229,7 @@ export default function LogPage() {
         <button
           type="button"
           onClick={() => setTab("updates")}
-          className={`pb-2.5 font-medium transition-colors border-b-2 -mb-px ${
+          className={`min-h-11 inline-flex items-center pb-2.5 font-medium transition-colors border-b-2 -mb-px ${
             tab === "updates"
               ? "border-[var(--color-ink)] text-[var(--color-ink)]"
               : "border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
@@ -240,7 +240,7 @@ export default function LogPage() {
         <button
           type="button"
           onClick={() => setTab("commitments")}
-          className={`pb-2.5 font-medium transition-colors border-b-2 -mb-px ${
+          className={`min-h-11 inline-flex items-center pb-2.5 font-medium transition-colors border-b-2 -mb-px ${
             tab === "commitments"
               ? "border-[var(--color-ink)] text-[var(--color-ink)]"
               : "border-transparent text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
@@ -260,12 +260,12 @@ export default function LogPage() {
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 placeholder="Search raw text, summary, decisions…"
-                className="min-h-9 flex-1 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-xs text-[var(--color-ink)]"
+                className="min-h-11 flex-1 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-xs text-[var(--color-ink)]"
               />
               <select
                 value={selectedProject}
                 onChange={(e) => setSelectedProject(e.target.value)}
-                className="min-h-9 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
+                className="min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
               >
                 <option value="all">All Projects</option>
                 {projects.map((p) => (
@@ -277,7 +277,7 @@ export default function LogPage() {
               <select
                 value={selectedContact}
                 onChange={(e) => setSelectedContact(e.target.value)}
-                className="min-h-9 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
+                className="min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-2.5 text-xs text-[var(--color-ink)]"
               >
                 <option value="all">All Recipients</option>
                 {contacts.map((c) => (
@@ -292,7 +292,7 @@ export default function LogPage() {
               type="button"
               onClick={handleExportCsv}
               disabled={filteredUpdates.length === 0}
-              className="min-h-9 rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 font-semibold text-[var(--color-ink)] hover:bg-[var(--color-paper)] disabled:opacity-50"
+              className="min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-3 font-semibold text-[var(--color-ink)] hover:bg-[var(--color-paper)] disabled:opacity-50"
             >
               Export CSV ↓
             </button>
@@ -308,7 +308,12 @@ export default function LogPage() {
               No updates match the selected filters.
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] shadow-sm">
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Update log table, scrolls horizontally"
+              className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] shadow-sm"
+            >
               <table className="w-full text-left text-xs">
                 <thead className="border-b border-[var(--color-rule)] bg-[var(--color-paper-sunk)] font-semibold text-[var(--color-ink)]">
                   <tr>
@@ -393,14 +398,14 @@ export default function LogPage() {
                           <button
                             type="button"
                             onClick={() => setExpandedId(isExpanded ? null : u.id)}
-                            className="rounded px-2 py-1 text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+                            className="min-h-11 inline-flex items-center rounded px-2 text-xs text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
                           >
                             {isExpanded ? "Less ▲" : "Details ▼"}
                           </button>
                           <button
                             type="button"
                             onClick={() => handleOpenTrail(u.id)}
-                            className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 py-1 text-xs font-medium hover:bg-[var(--color-paper)]"
+                            className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 text-xs font-medium hover:bg-[var(--color-paper)]"
                           >
                             Trust trail ⛓️
                           </button>
@@ -426,7 +431,12 @@ export default function LogPage() {
               No commitments found in past updates.
             </div>
           ) : (
-            <div className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] shadow-sm">
+            <div
+              tabIndex={0}
+              role="region"
+              aria-label="Commitments table, scrolls horizontally"
+              className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] shadow-sm"
+            >
               <table className="w-full text-left text-xs">
                 <thead className="border-b border-[var(--color-rule)] bg-[var(--color-paper-sunk)] font-semibold text-[var(--color-ink)]">
                   <tr>

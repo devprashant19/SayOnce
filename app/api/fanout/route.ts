@@ -19,8 +19,12 @@ import {
 import { REAL_DATASET } from "@/lib/db";
 import { detectContradictions, type ContradictionAlert } from "@/lib/consistency";
 import { composeOne } from "@/lib/ai/compose";
-import { isQuotaExhaustedError, QUOTA_EXHAUSTED_MESSAGE } from "@/lib/ai/call";
-import { getCachedDemoResult } from "@/lib/demo-cache";
+import { isQuotaExhaustedError, INSTANT_MODE_MESSAGE } from "@/lib/ai/call";
+import {
+  getCachedDemoResult,
+  getPreparedFallback,
+  type CachedFanoutResult,
+} from "@/lib/demo-cache";
 import { checkDemoAiAllowance, recordDemoAiUsage } from "@/lib/demo-session";
 
 /**
@@ -64,21 +68,17 @@ export interface FanoutCard {
   sentAt?: string | null;
 }
 
-export async function POST(request: Request) {
-  let body: z.infer<typeof RequestBody>;
-  try {
-    body = RequestBody.parse(await request.json());
-  } catch {
-    return NextResponse.json(
-      { error: "Send a spoken update of at least one character." },
-      { status: 400 },
-    );
-  }
-
-  // Phase 6: Instant demo mode cache lookup
-  // If text matches a committed sample update, serve pre-verified pipeline results instantly (<50ms)
-  const cachedDemo = (body.demoId ? getCachedDemoResult(body.demoId) : null) || getCachedDemoResult(body.spokenText);
-  if (cachedDemo) {
+/**
+ * Serve a prepared fan-out: rebuild the hash chain and message ids fresh so
+ * the trail is genuinely this run's, persist it like any other update, and
+ * return it. Used both when the caller picked a sample and when live AI is
+ * unavailable and the app drops into instant mode.
+ */
+async function servePrepared(
+  body: z.infer<typeof RequestBody>,
+  cachedDemo: CachedFanoutResult,
+  extra: Record<string, unknown> = {},
+) {
     const updateId = crypto.randomUUID();
     const at = new Date().toISOString();
     const trailInputs: TrailEntryInput[] = (cachedDemo.trail ?? []).map((t, idx) => ({
@@ -137,7 +137,51 @@ export async function POST(request: Request) {
       trail: freshTrail,
       trailVerdict: verifyChain(freshTrail),
       cached: true,
+      ...extra,
     });
+  
+}
+
+/**
+ * Live AI could not serve this request. Instead of surfacing a failure, switch
+ * to instant mode and return a prepared fan-out so the screen fills with real,
+ * verified output. The payload states that it is prepared; it never reports a
+ * provider state and never carries provider text.
+ */
+async function instantModeResponse(body: z.infer<typeof RequestBody>) {
+  const fallback = getPreparedFallback(body.contactSet);
+  if (!fallback) {
+    return NextResponse.json({
+      mode: "instant",
+      cards: [],
+      message: INSTANT_MODE_MESSAGE,
+    });
+  }
+  return servePrepared(body, fallback.result, {
+    mode: "instant",
+    preparedFrom: fallback.id,
+    preparedText: fallback.result.spokenText,
+    preparedProject: fallback.result.project ?? "",
+    message: INSTANT_MODE_MESSAGE,
+  });
+}
+
+export async function POST(request: Request) {
+  let body: z.infer<typeof RequestBody>;
+  try {
+    body = RequestBody.parse(await request.json());
+  } catch {
+    return NextResponse.json(
+      { error: "Send a spoken update of at least one character." },
+      { status: 400 },
+    );
+  }
+
+  // Phase 6: Instant demo mode cache lookup
+  // If text matches a committed sample update, serve pre-verified pipeline results instantly (<50ms)
+  const cachedDemo = (body.demoId ? getCachedDemoResult(body.demoId) : null) || getCachedDemoResult(body.spokenText);
+  if (cachedDemo) {
+    return servePrepared(body, cachedDemo);
   }
 
   const isDemo = body.contactSet !== "freelance";
@@ -214,16 +258,11 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("FANOUT ERROR:", error);
-    if (isQuotaExhaustedError(error)) {
-      return NextResponse.json(
-        { error: QUOTA_EXHAUSTED_MESSAGE },
-        { status: 429 },
-      );
-    }
-    return NextResponse.json(
-      { error: "Could not read that update. Try saying it again." },
-      { status: 502 },
-    );
+    // Any failure of a live AI step drops into instant mode rather than
+    // showing a dead end: a wrong key, a withdrawn model, a network blip and a
+    // provider limit all look the same to the person using this. The cause is
+    // logged above for us; what they see is prepared output that works.
+    return instantModeResponse(body);
   }
 
   if (facts.length === 0) {
@@ -246,10 +285,7 @@ export async function POST(request: Request) {
   } catch (error) {
     console.error("ROUTE ERROR:", error);
     if (isQuotaExhaustedError(error)) {
-      return NextResponse.json(
-        { error: QUOTA_EXHAUSTED_MESSAGE },
-        { status: 429 },
-      );
+      return instantModeResponse(body);
     }
     routeOutput = {
       value: {
@@ -316,16 +352,11 @@ export async function POST(request: Request) {
     composed = await composeAll(includedAssignments);
   } catch (error) {
     console.error("COMPOSE ERROR:", error);
-    if (isQuotaExhaustedError(error)) {
-      return NextResponse.json(
-        { error: QUOTA_EXHAUSTED_MESSAGE },
-        { status: 429 },
-      );
-    }
-    return NextResponse.json(
-      { error: "Could not compose drafts. Try saying it again." },
-      { status: 502 },
-    );
+    // Any failure of a live AI step drops into instant mode rather than
+    // showing a dead end: a wrong key, a withdrawn model, a network blip and a
+    // provider limit all look the same to the person using this. The cause is
+    // logged above for us; what they see is prepared output that works.
+    return instantModeResponse(body);
   }
   if (isDemo && demoSessionId) {
     recordDemoAiUsage(demoSessionId);

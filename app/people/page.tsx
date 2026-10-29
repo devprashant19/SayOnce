@@ -205,7 +205,7 @@ export default function PeoplePage() {
             type="button"
             onClick={handleVoiceParse}
             disabled={parsing || !dictatedText.trim()}
-            className="rounded bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold text-white disabled:opacity-60"
+            className="min-h-11 inline-flex items-center rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white disabled:opacity-60"
           >
             {parsing ? "Parsing dictation…" : "Fill form from speech"}
           </button>
@@ -217,7 +217,7 @@ export default function PeoplePage() {
               setUnclearFields([]);
               setShowForm(true);
             }}
-            className="rounded border border-[var(--color-rule)] px-4 py-2 text-xs font-medium hover:bg-[var(--color-paper-sunk)]"
+            className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] px-4 text-xs font-medium hover:bg-[var(--color-paper-sunk)]"
           >
             Add manually
           </button>
@@ -410,7 +410,7 @@ export default function PeoplePage() {
               id="dataset"
               value={dataset}
               onChange={(e) => setDataset(e.target.value)}
-              className="rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 py-1.5 text-sm"
+              className="min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm"
             >
               <option value="real">My Working Contacts (real)</option>
               <option value="india">Demo: Indian Team</option>
@@ -493,7 +493,7 @@ export default function PeoplePage() {
                   <button
                     type="button"
                     onClick={() => handleEdit(contact)}
-                    className="text-xs font-medium text-[var(--color-ink)] hover:underline"
+                    className="min-h-11 inline-flex items-center px-2 text-xs font-medium text-[var(--color-ink)] hover:underline"
                   >
                     Edit
                   </button>
@@ -501,7 +501,7 @@ export default function PeoplePage() {
                   <button
                     type="button"
                     onClick={() => handleArchive(contact.id)}
-                    className="text-xs font-medium text-[var(--color-blocked)] hover:underline"
+                    className="min-h-11 inline-flex items-center px-2 text-xs font-medium text-[var(--color-blocked)] hover:underline"
                   >
                     Archive
                   </button>

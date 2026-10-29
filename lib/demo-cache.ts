@@ -5,6 +5,7 @@ import type { FanoutCard } from "@/app/api/fanout/route";
 import type { Fact } from "./types";
 import type { TrailEntry } from "./trail";
 import type { VoiceReturn } from "./voice-return";
+import demoUpdates from "@/data/demo/updates.json";
 
 export interface CachedFanoutResult {
   updateId: string;
@@ -63,3 +64,27 @@ export function getCachedDemoResult(keyOrText: string): CachedFanoutResult | nul
   return null;
 }
 
+
+interface DemoUpdateMeta {
+  id: string;
+  contactSet: string;
+  spokenText: string;
+}
+
+/**
+ * The prepared fan-out to show when live AI is unavailable for a request.
+ * Prefers a sample built for the roster the caller asked for, so the cards on
+ * screen belong to the people on screen; falls back to any prepared sample.
+ */
+export function getPreparedFallback(
+  contactSet: string,
+): { id: string; result: CachedFanoutResult } | null {
+  const all = demoUpdates as DemoUpdateMeta[];
+  const preferred = all.filter((u) => u.contactSet === contactSet);
+  for (const update of [...preferred, ...all]) {
+    const result =
+      getCachedDemoResult(update.id) ?? getCachedDemoResult(update.spokenText);
+    if (result) return { id: update.id, result };
+  }
+  return null;
+}

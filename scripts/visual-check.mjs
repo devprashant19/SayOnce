@@ -116,10 +116,31 @@ const AUDIT = () => {
 
   const all = [...document.querySelectorAll("body *")].filter(visible);
 
+  /**
+   * A wide data table inside a deliberate horizontal scroll region is not a
+   * layout defect — it is the standard way to show a ledger on a phone. So an
+   * element only counts as overflowing if no ancestor scrolls it horizontally.
+   * The ancestor must itself fit the viewport, otherwise it is the thing that
+   * is broken and we still want to hear about it. Check 1 above independently
+   * catches the case where the *page* ends up scrolling sideways, so this
+   * cannot hide a genuine escape.
+   */
+  const inHorizontalScroller = (el) => {
+    for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+      const ox = getComputedStyle(p).overflowX;
+      if (ox !== "auto" && ox !== "scroll") continue;
+      if (p.scrollWidth <= p.clientWidth + 1) continue;
+      const pr = p.getBoundingClientRect();
+      if (pr.right <= vw + 2 && pr.left >= -2) return true;
+    }
+    return false;
+  };
+
   // --- 2. a box sticks out past the viewport ------------------------------
   for (const el of all) {
     const r = el.getBoundingClientRect();
     if (getComputedStyle(el).position === "fixed") continue;
+    if (inHorizontalScroller(el)) continue;
     if (r.right > vw + 2) {
       problems.push({
         kind: "element-overflow",
@@ -148,19 +169,34 @@ const AUDIT = () => {
   });
 
   const area = (r) => Math.max(0, r.width) * Math.max(0, r.height);
+
+  /**
+   * An inline element that wraps across lines has a bounding box covering
+   * every line it touches — a box that includes whitespace it does not
+   * actually occupy, and usually the element that follows it. Comparing those
+   * boxes invents overlaps. getClientRects() gives one box per line, which is
+   * what the reader actually sees, so compare line boxes instead.
+   */
+  const lineBoxes = (el) =>
+    [...el.getClientRects()].filter((r) => r.width > 1 && r.height > 1);
+
+  const boxes = leafText.map(lineBoxes);
   for (let i = 0; i < leafText.length; i += 1) {
     for (let j = i + 1; j < leafText.length; j += 1) {
-      const a = leafText[i].getBoundingClientRect();
-      const b = leafText[j].getBoundingClientRect();
-      const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left);
-      const oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
-      if (ox <= 1 || oy <= 1) continue;
-      const overlap = ox * oy;
-      const smaller = Math.min(area(a), area(b));
-      if (smaller > 0 && overlap / smaller > 0.35) {
+      let worst = 0;
+      for (const a of boxes[i]) {
+        for (const b of boxes[j]) {
+          const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+          const oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+          if (ox <= 1 || oy <= 1) continue;
+          const smaller = Math.min(area(a), area(b));
+          if (smaller > 0) worst = Math.max(worst, (ox * oy) / smaller);
+        }
+      }
+      if (worst > 0.35) {
         problems.push({
           kind: "text-overlap",
-          detail: `${describe(leafText[i])} overlaps ${describe(leafText[j])} by ${Math.round((overlap / smaller) * 100)}%`,
+          detail: `${describe(leafText[i])} overlaps ${describe(leafText[j])} by ${Math.round(worst * 100)}%`,
         });
       }
     }
