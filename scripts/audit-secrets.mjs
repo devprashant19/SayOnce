@@ -24,6 +24,7 @@ const SKIP_DIR_NAMES = new Set(["node_modules", ".git", "cache", "types"]);
 /** Demo numbers and addresses are deliberately fake and are allowed through. */
 const ALLOWED = [
   /\+9190000000\d{1,2}/,
+  /\+12025550\d{3}/, // Fictional US 555 demo range used in tests and send-test page
   /\+52550000000\d/,
   /\+551190000000\d/,
   /\+63900000000\d/,
@@ -31,7 +32,7 @@ const ALLOWED = [
   /@example\.com/,
   /@co\.com/,
   /brian\.m\.carlson@gmail\.com/, // Bundled pg package maintainer in Next.js server chunks
-  /postgresql:\/\/\$\{e\(d\.user\)\}:\$\{e\(d\.password\)\}@/, // Bundled pg-connection-string template
+  /postgresql:\/\/\$\{[a-z]\([a-z]\.user\)\}:\$\{[a-z]\([a-z]\.password\)\}@/, // Bundled pg-connection-string template in compiled chunks
 ];
 
 const RULES = [
@@ -55,6 +56,9 @@ const RULE_EXEMPT = [
   // This script holds the demo-number patterns in its own allowlist, so it
   // matches its own rule. It is never deployed.
   { rule: "phone number", path: /(?:^|[\\/])audit-secrets\.mjs$/ },
+  // Compiled upstream vendor chunks from node_modules (e.g. @neondatabase/serverless) contain minified numerical constants
+  { rule: "phone number", path: /(?:^|[\\/])vendor-chunks[\\/]/ },
+  { rule: "Neon/Postgres URL with password", path: /(?:^|[\\/])vendor-chunks[\\/]/ },
 ];
 
 function walk(dir, out = []) {

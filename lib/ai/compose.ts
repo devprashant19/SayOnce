@@ -59,7 +59,7 @@ export async function composeAll(inputs: ComposeOneInput[]): Promise<ComposeAllR
   const settled = await Promise.allSettled(
     inputs.map(async (input, idx) => {
       if (idx > 0) {
-        await new Promise((r) => setTimeout(r, idx * 350));
+        await new Promise((r) => setTimeout(r, idx * 600));
       }
       return composeOne(input);
     }),

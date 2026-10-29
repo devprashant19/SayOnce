@@ -10,6 +10,7 @@ import { voiceReturn } from "@/lib/voice-return";
 import { Contact, type Draft, type Fact } from "@/lib/types";
 import { env } from "@/lib/env";
 import { loadContactSet } from "@/lib/contact-sets";
+import { saveFanoutRecord } from "@/lib/update-repo";
 
 /**
  * Fan out: one spoken update -> one checked draft per person.
@@ -36,11 +37,14 @@ const RequestBody = z.object({
 });
 
 export interface FanoutCard {
+  messageId: string;
   contact: Contact;
   draft: Draft | null;
   check: CheckOutcome | null;
   /** Why there is no draft, when draft is null. */
   error: string | null;
+  sent?: boolean;
+  sentAt?: string | null;
 }
 
 export async function POST(request: Request) {
@@ -201,22 +205,29 @@ export async function POST(request: Request) {
   });
 
   const cards: FanoutCard[] = assignments.map((assignment) => {
+    const messageId = crypto.randomUUID();
     if (!assignment.isIncluded) {
       return {
+        messageId,
         contact: assignment.contact,
         draft: null,
         check: null,
         error: null,
+        sent: false,
+        sentAt: null,
       };
     }
     const draft = composed.drafts.find((d) => d.contactId === assignment.contact.id) ?? null;
     if (!draft) {
       const failure = composed.failures.find((f) => f.contactId === assignment.contact.id);
       return {
+        messageId,
         contact: assignment.contact,
         draft: null,
         check: null,
         error: failure?.message ?? "No draft was produced.",
+        sent: false,
+        sentAt: null,
       };
     }
     const check = checkDraft({
@@ -225,7 +236,15 @@ export async function POST(request: Request) {
       allowedFacts: assignment.facts,
       allFacts: facts,
     });
-    return { contact: assignment.contact, draft, check, error: null };
+    return {
+      messageId,
+      contact: assignment.contact,
+      draft,
+      check,
+      error: null,
+      sent: false,
+      sentAt: null,
+    };
   });
 
   note({
@@ -241,6 +260,37 @@ export async function POST(request: Request) {
   });
 
   const trail = buildChain(trailInputs);
+
+  // Persist update, facts, messages and trail
+  try {
+    await saveFanoutRecord({
+      updateId,
+      dataset: body.contactSet === "freelance" ? "real" : body.contactSet,
+      spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
+      timeZone: body.timeZone,
+      project: body.project,
+      rawText: scrubbed.text,
+      summary,
+      decisions,
+      facts,
+      messages: cards
+        .filter((c) => c.draft !== null)
+        .map((c) => ({
+          id: c.messageId,
+          contactId: c.contact.id,
+          channel: c.draft!.channel,
+          subject: c.draft!.subject,
+          body: c.draft!.body,
+          usedFactIds: c.draft!.usedFactIds,
+          sentences: c.draft!.sentences,
+          checkOk: c.check?.ok ?? null,
+          checkFailures: c.check?.failures ?? [],
+        })),
+      trail,
+    });
+  } catch (err) {
+    console.warn("Failed to persist fanout record:", err);
+  }
 
   return NextResponse.json({
     updateId,

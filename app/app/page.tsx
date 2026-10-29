@@ -5,6 +5,7 @@ import { SpeakBox } from "@/components/SpeakBox";
 import { DraftCard } from "@/components/DraftCard";
 import { FactList } from "@/components/FactList";
 import { KnowledgeMatrix } from "@/components/KnowledgeMatrix";
+import { SendGuidedQueue, type QueueItem } from "@/components/SendGuidedQueue";
 import { Badge } from "@/components/Badge";
 import { sendTargetFor } from "@/lib/links";
 import { CONTACT_SET_LABELS } from "@/lib/contact-sets";
@@ -14,10 +15,13 @@ import type { VoiceReturn } from "@/lib/voice-return";
 import demoUpdates from "@/data/demo/updates.json";
 
 interface Card {
+  messageId: string;
   contact: Contact;
   draft: Draft | null;
   check: CheckOutcome | null;
   error: string | null;
+  sent?: boolean;
+  sentAt?: string | null;
 }
 
 interface FanoutResponse {
@@ -52,6 +56,7 @@ export default function SpeakPage() {
   const [result, setResult] = useState<FanoutResponse | null>(null);
   const [highlight, setHighlight] = useState<string[] | null>(null);
   const [activeRecipients, setActiveRecipients] = useState<string[]>([]);
+  const [showQueue, setShowQueue] = useState(false);
 
   const fanOut = useCallback(async () => {
     if (spokenText.trim().length === 0) {
@@ -83,7 +88,67 @@ export default function SpeakPage() {
     }
   }, [spokenText, project, contactSet]);
 
+  const handleToggleSent = useCallback(
+    async (messageId: string, nextSent: boolean) => {
+      if (!result) return;
+      const card = result.cards.find((c) => c.messageId === messageId);
+      if (!card || !card.draft) return;
+
+      try {
+        const response = await fetch(`/api/messages/${messageId}/sent`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            updateId: result.updateId,
+            contactId: card.contact.id,
+            channel: card.draft.channel,
+            sent: nextSent,
+          }),
+        });
+
+        if (response.ok) {
+          const payload = await response.json();
+          setResult((prev) => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              cards: prev.cards.map((c) =>
+                c.messageId === messageId
+                  ? { ...c, sent: nextSent, sentAt: payload.sentAt }
+                  : c,
+              ),
+              trailVerdict: payload.trailVerdict ?? prev.trailVerdict,
+            };
+          });
+        }
+      } catch (err) {
+        console.warn("Could not record sent status:", err);
+      }
+    },
+    [result],
+  );
+
   const samples = demoUpdates.filter((u) => u.contactSet === contactSet);
+
+  const sendableQueueItems: QueueItem[] = result
+    ? result.cards
+        .filter(
+          (c) =>
+            activeRecipients.includes(c.contact.id) &&
+            c.draft !== null &&
+            c.check?.ok === true,
+        )
+        .map((c) => ({
+          messageId: c.messageId,
+          contact: c.contact,
+          draft: c.draft!,
+          check: c.check,
+          target: sendTargetFor(c.draft!, c.contact),
+          isSent: c.sent ?? false,
+          sentAt: c.sentAt ?? null,
+        }))
+        .filter((q) => q.target.href !== null)
+    : [];
 
   return (
     <div className="space-y-8">
@@ -232,10 +297,22 @@ export default function SpeakPage() {
           )}
 
           <section className="space-y-3">
-            <h2 className="text-lg font-semibold">
-              {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length}{" "}
-              {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length === 1 ? "message" : "messages"}
-            </h2>
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <h2 className="text-lg font-semibold">
+                {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length}{" "}
+                {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length === 1 ? "message" : "messages"}
+              </h2>
+              {sendableQueueItems.length > 0 && (
+                <button
+                  type="button"
+                  onClick={() => setShowQueue(true)}
+                  className="rounded bg-[var(--color-ink)] px-3.5 py-1.5 text-xs font-semibold text-white shadow-sm hover:opacity-90"
+                >
+                  Send all ({sendableQueueItems.filter((q) => !q.isSent).length} pending) · Guided queue →
+                </button>
+              )}
+            </div>
+
             {result.cards
               .filter((card) => activeRecipients.includes(card.contact.id) && (card.draft !== null || card.error !== null))
               .map((card, index) => {
@@ -247,6 +324,8 @@ export default function SpeakPage() {
                   <DraftCard
                     key={card.contact.id}
                     index={index}
+                    messageId={card.messageId}
+                    updateId={result.updateId}
                     contact={card.contact}
                     draft={card.draft}
                     check={card.check}
@@ -254,11 +333,23 @@ export default function SpeakPage() {
                     sendHref={target?.href ?? null}
                     sendLabel={target?.label ?? "Send"}
                     sendBlockedReason={target?.blockedReason ?? null}
+                    sent={card.sent}
+                    sentAt={card.sentAt}
+                    onToggleSent={handleToggleSent}
                     onHoverSentence={setHighlight}
                   />
                 );
               })}
           </section>
+
+          {showQueue && result && (
+            <SendGuidedQueue
+              items={sendableQueueItems}
+              updateId={result.updateId}
+              onClose={() => setShowQueue(false)}
+              onToggleSent={handleToggleSent}
+            />
+          )}
         </>
       )}
     </div>
