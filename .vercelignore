@@ -1,0 +1,27 @@
+# Nothing in this list may ever reach the deployed bundle.
+SPEC.md
+SPEC.template.md
+data/golden/golden-set.json
+data/golden/*.private.json
+data/real/
+ROLLBACK.md
+docs/
+tests/
+drizzle/meta/
+.env
+.env.*
+!.env.example
+.claude/
+.cursor/
+AGENTS.md
+AGENTS.local.md
+CLAUDE.md
+SKILL.md
+GLOSSARY.md
+CONSTRAINTS.md
+DESIGN.md
+decisions/
+BUILD-PROMPT.md
+coverage/
+playwright-report/
+test-results/

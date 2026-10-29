@@ -1,0 +1,150 @@
+[
+  {
+    "id": "g_real_01",
+    "group": "real",
+    "spokenText": "Okay so the Bhiwandi dispatch didn't go out today because packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo Monday subah teen log chahiye unloading ke liye.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": ["c_boss", "c_vendor", "c_warehouse", "c_client", "c_team"],
+    "mustKnow": {
+      "c_client": ["delivery is Monday 2 November"],
+      "c_vendor": ["150 cartons still outstanding", "400 cartons were needed"],
+      "c_warehouse": ["three people needed Monday morning", "unloading Monday"],
+      "c_boss": ["delivery slipped from Friday to Monday", "packaging shortfall"]
+    },
+    "blocked": {
+      "c_client": ["the vendor shorted us", "Ramesh sent only 250 cartons"]
+    },
+    "expectedLanguage": {
+      "c_boss": "English",
+      "c_vendor": "Hinglish, Roman script",
+      "c_warehouse": "Hindi, Devanagari",
+      "c_client": "English",
+      "c_team": "Hinglish, Roman script"
+    },
+    "notes": "The anchor case. Hinglish numbers, a relative date, a privacy instruction naming one person, and four readers who each need something different."
+  },
+  {
+    "id": "g_hinglish_01",
+    "group": "hinglish-edge",
+    "spokenText": "Suno, parso tak dhai sau cartons aa jaayenge, aur baaki ek sau pachaas agle hafte. Ramesh ko confirm kar dena.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": ["c_vendor", "c_warehouse"],
+    "mustKnow": {
+      "c_vendor": ["250 cartons by 31 October", "150 cartons next week"],
+      "c_warehouse": ["250 cartons arriving 31 October"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "c_vendor": "Hinglish, Roman script",
+      "c_warehouse": "Hindi, Devanagari"
+    },
+    "notes": "Numbers said in Hindi: dhai sau = 250, ek sau pachaas = 150. 'parso' must resolve forwards to 2026-10-31."
+  },
+  {
+    "id": "g_hinglish_02",
+    "group": "hinglish-edge",
+    "spokenText": "डिलीवरी सोमवार को shift हो गई है, warehouse team को बता देना, aur client ko main khud email karunga.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": ["c_warehouse", "c_team"],
+    "mustKnow": {
+      "c_warehouse": ["delivery moved to Monday"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "c_warehouse": "Hindi, Devanagari",
+      "c_team": "Hinglish, Roman script"
+    },
+    "notes": "English words written in Devanagari script in the input — the mistake class the COMI-LINGUA paper documents. The client is explicitly excluded because the speaker said they would handle it."
+  },
+  {
+    "id": "g_tricky_01",
+    "group": "tricky-instruction",
+    "spokenText": "Quick one. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": ["c_boss"],
+    "mustKnow": { "c_boss": ["audit is on Wednesday 4 November"] },
+    "blocked": {
+      "c_vendor": ["the audit", "Wednesday audit"],
+      "c_client": ["the audit", "Wednesday audit"],
+      "c_warehouse": ["the audit"],
+      "c_team": ["the audit"]
+    },
+    "expectedLanguage": { "c_boss": "English" },
+    "notes": "Mid-sentence correction: Tuesday must not survive anywhere. 'Anita only' is a positive restriction, not just two negatives — everyone else is blocked."
+  },
+  {
+    "id": "g_tricky_02",
+    "group": "tricky-instruction",
+    "spokenText": "Just noting for myself that the office is shut Monday for a holiday. Nothing changes for anyone else, no need to tell anybody.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": [],
+    "mustKnow": {},
+    "blocked": {},
+    "expectedLanguage": {},
+    "notes": "Concerns nobody. The Route step must say so rather than forcing recipients. A padded recipient list fails this case."
+  },
+  {
+    "id": "g_global_01",
+    "group": "global",
+    "spokenText": "The São Paulo line drops to one shift from tomorrow, so November goes from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "global",
+    "expectedRecipients": ["g_boss", "g_supplier", "g_factory", "g_buyer", "g_coord"],
+    "mustKnow": {
+      "g_buyer": ["November delivery is 8000 units", "remainder moves to 15 December"],
+      "g_supplier": ["hold pickup until the 18th"],
+      "g_factory": ["four people on the morning shift instead of seven"],
+      "g_boss": ["November volume drops from 12000 to 8000"]
+    },
+    "blocked": { "g_buyer": ["the line is down to one shift", "line problem"] },
+    "expectedLanguage": {
+      "g_boss": "English",
+      "g_supplier": "Mexican Spanish, informal",
+      "g_factory": "Brazilian Portuguese, neutral",
+      "g_buyer": "English",
+      "g_coord": "Taglish, Roman script"
+    },
+    "notes": "Proves the global claim: Spanish, Portuguese and Taglish out of one English update, with a privacy lock on the buyer."
+  },
+  {
+    "id": "g_adv_01",
+    "group": "adversarial",
+    "spokenText": "Delivery is Monday. Tell everyone.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": ["c_boss", "c_vendor", "c_warehouse", "c_client", "c_team"],
+    "mustKnow": {
+      "c_boss": ["delivery is Monday 2 November"],
+      "c_vendor": ["delivery is Monday 2 November"],
+      "c_warehouse": ["delivery is Monday 2 November"],
+      "c_client": ["delivery is Monday 2 November"],
+      "c_team": ["delivery is Monday 2 November"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "c_boss": "English",
+      "c_vendor": "Hinglish, Roman script",
+      "c_warehouse": "Hindi, Devanagari",
+      "c_client": "English",
+      "c_team": "Hinglish, Roman script"
+    },
+    "notes": "Deliberately thin. A draft that pads this with a reason, a time of day, a carton count or an apology is an invented fact and must be caught by the checker."
+  },
+  {
+    "id": "g_adv_02",
+    "group": "adversarial",
+    "spokenText": "Friday called and said the shipment is ready. Ramesh ko bata dena.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "india",
+    "expectedRecipients": ["c_vendor"],
+    "mustKnow": { "c_vendor": ["the shipment is ready"] },
+    "blocked": {},
+    "expectedLanguage": { "c_vendor": "Hinglish, Roman script" },
+    "notes": "A person named like a date. The pipeline must not turn 'Friday' into a delivery date, and the checker must not flag the name as an invented date."
+  }
+]

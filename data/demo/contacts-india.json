@@ -1,0 +1,67 @@
+[
+  {
+    "id": "c_boss",
+    "name": "Anita Desai",
+    "role": "Operations Head",
+    "relationship": "my manager",
+    "language": "English",
+    "channel": "email",
+    "phone": null,
+    "email": "anita.demo@sayonce.example",
+    "formality": "formal",
+    "caresAbout": "Risks, decisions, dates and anything that needs her approval. Hates operational detail.",
+    "neverTell": []
+  },
+  {
+    "id": "c_vendor",
+    "name": "Ramesh Kulkarni",
+    "role": "Packaging vendor",
+    "relationship": "our packaging supplier",
+    "language": "Hinglish, Roman script",
+    "channel": "whatsapp",
+    "phone": "+919000000001",
+    "email": null,
+    "formality": "neutral",
+    "caresAbout": "Quantities, delivery dates and pickup times. Nothing else.",
+    "neverTell": ["our margins", "what we pay other vendors"]
+  },
+  {
+    "id": "c_warehouse",
+    "name": "Suresh Yadav",
+    "role": "Warehouse lead",
+    "relationship": "runs the Bhiwandi warehouse",
+    "language": "Hindi, Devanagari",
+    "channel": "whatsapp",
+    "phone": "+919000000002",
+    "email": null,
+    "formality": "neutral",
+    "caresAbout": "What arrives when, how many people he needs on shift, and any change to tomorrow's plan.",
+    "neverTell": []
+  },
+  {
+    "id": "c_client",
+    "name": "Priya Nair",
+    "role": "Client project manager",
+    "relationship": "the customer's side lead",
+    "language": "English",
+    "channel": "email",
+    "phone": null,
+    "email": "priya.demo@sayonce.example",
+    "formality": "formal",
+    "caresAbout": "Her delivery date, what she can tell her own stakeholders, and nothing that sounds like an excuse.",
+    "neverTell": ["internal blame", "vendor names", "our costs"]
+  },
+  {
+    "id": "c_team",
+    "name": "Imran Shaikh",
+    "role": "Ops coordinator",
+    "relationship": "works with me day to day",
+    "language": "Hinglish, Roman script",
+    "channel": "whatsapp",
+    "phone": "+919000000003",
+    "email": null,
+    "formality": "casual",
+    "caresAbout": "What he has to do next and by when. Short messages only.",
+    "neverTell": []
+  }
+]

@@ -1,0 +1,11 @@
+# Normalise line endings so a pull on another machine does not show every file
+# as modified. Text files are LF in the repo and native in the working copy.
+* text=auto eol=lf
+
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary

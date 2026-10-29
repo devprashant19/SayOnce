@@ -1,0 +1,42 @@
+[
+  {
+    "id": "demo_in_1",
+    "contactSet": "india",
+    "project": "Diwali retail order",
+    "label": "Delivery slipped, client needs telling",
+    "spokenText": "Okay so the Bhiwandi dispatch, um, the truck didn't leave today because the packaging came short. Ramesh ne sirf dhai sau cartons bheje, we needed four hundred. So delivery Friday nahi hogi, now it's Monday. Priya ko bata dena ki delivery Monday hai, but don't tell her the vendor shorted us, just say revised schedule. Suresh ko bolo ki Monday subah teen log chahiye unloading ke liye. And Ramesh se confirm karo baaki ek sau pachaas cartons parso tak aa jaayein. Anita ko main khud batata hoon ki client ko inform kar diya.",
+    "spokenOnIso": "2026-10-29"
+  },
+  {
+    "id": "demo_in_2",
+    "contactSet": "india",
+    "project": "Diwali retail order",
+    "label": "Correction mid-sentence, one person only",
+    "spokenText": "Quick update. The audit is on Tuesday, no wait, Wednesday. Anita only for now, I don't want the vendor or the client knowing we're being audited. I'll need last quarter's dispatch records by Wednesday morning, Imran can pull those.",
+    "spokenOnIso": "2026-10-29"
+  },
+  {
+    "id": "demo_in_3",
+    "contactSet": "india",
+    "project": "Warehouse shift",
+    "label": "Good news, short fan-out",
+    "spokenText": "Achha news. Suresh ki team ne aaj ka backlog clear kar diya, four hundred cartons out. Kal ka target wahi rakhte hain. Ramesh ko thank you bol dena, uske extra truck se hua hai. Anita ko bas ye bata dena ki backlog clear hai.",
+    "spokenOnIso": "2026-10-29"
+  },
+  {
+    "id": "demo_gl_1",
+    "contactSet": "global",
+    "project": "Q4 export run",
+    "label": "Spanish, Portuguese and Taglish in one fan-out",
+    "spokenText": "Right, the São Paulo line is down to one shift from tomorrow, so the November run drops from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucía should hold the pickup until the eighteenth. João needs four people instead of seven on the morning shift. Jomar, reconfirm the freight booking for the eighteenth.",
+    "spokenOnIso": "2026-10-29"
+  },
+  {
+    "id": "demo_gl_2",
+    "contactSet": "global",
+    "project": "Q4 export run",
+    "label": "Concerns almost nobody",
+    "spokenText": "Just noting for myself that the Manila office is closed on Monday for a public holiday, so Jomar won't be reachable. Nothing changes for anyone else.",
+    "spokenOnIso": "2026-10-29"
+  }
+]

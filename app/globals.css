@@ -1,0 +1,107 @@
+@import "tailwindcss";
+
+/*
+ * SayOnce design tokens.
+ *
+ * Colour carries meaning only. Verified is green, a warning is amber, a block
+ * is red, a lock is grey, and nothing else is coloured for decoration — a judge
+ * glancing at a screen of cards should be able to read its state without
+ * reading a word. Full rules in docs/08-UI-UX-RULES.md.
+ */
+
+@theme {
+  --color-ink: oklch(0.21 0.014 258);
+  --color-ink-soft: oklch(0.44 0.012 258);
+  --color-ink-faint: oklch(0.62 0.01 258);
+  --color-paper: oklch(0.99 0.003 258);
+  --color-paper-sunk: oklch(0.965 0.005 258);
+  --color-rule: oklch(0.9 0.006 258);
+
+  --color-verified: oklch(0.56 0.13 155);
+  --color-verified-wash: oklch(0.96 0.04 155);
+  --color-warning: oklch(0.69 0.14 75);
+  --color-warning-wash: oklch(0.97 0.05 85);
+  --color-blocked: oklch(0.55 0.19 22);
+  --color-blocked-wash: oklch(0.96 0.04 22);
+  --color-locked: oklch(0.6 0.008 258);
+
+  --color-accent: oklch(0.47 0.14 262);
+  --color-accent-wash: oklch(0.96 0.025 262);
+
+  --font-sans: ui-sans-serif, system-ui, "Segoe UI", Roboto, "Noto Sans",
+    "Noto Sans Devanagari", sans-serif;
+  --font-mono: ui-monospace, "Cascadia Code", "Source Code Pro", monospace;
+
+  --radius-card: 0.625rem;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --color-ink: oklch(0.95 0.004 258);
+    --color-ink-soft: oklch(0.76 0.01 258);
+    --color-ink-faint: oklch(0.58 0.01 258);
+    --color-paper: oklch(0.18 0.012 258);
+    --color-paper-sunk: oklch(0.22 0.014 258);
+    --color-rule: oklch(0.32 0.012 258);
+
+    --color-verified-wash: oklch(0.28 0.05 155);
+    --color-warning-wash: oklch(0.3 0.06 85);
+    --color-blocked-wash: oklch(0.29 0.07 22);
+    --color-accent: oklch(0.72 0.12 262);
+    --color-accent-wash: oklch(0.26 0.04 262);
+  }
+}
+
+:root[data-theme="dark"] {
+  --color-ink: oklch(0.95 0.004 258);
+  --color-ink-soft: oklch(0.76 0.01 258);
+  --color-ink-faint: oklch(0.58 0.01 258);
+  --color-paper: oklch(0.18 0.012 258);
+  --color-paper-sunk: oklch(0.22 0.014 258);
+  --color-rule: oklch(0.32 0.012 258);
+}
+
+html {
+  color-scheme: light dark;
+}
+
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+  font-family: var(--font-sans);
+  -webkit-text-size-adjust: 100%;
+}
+
+/* Focus must always be visible. Keyboard users include every judge who tabs. */
+:focus-visible {
+  outline: 2px solid var(--color-accent);
+  outline-offset: 2px;
+}
+
+/* One signature motion in the app: drafts fanning out after Fan out. */
+@keyframes fan-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+.fan-in {
+  animation: fan-in 0.32s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fan-in {
+    animation: none;
+  }
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+  }
+}

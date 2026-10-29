@@ -1,0 +1,4 @@
+# The real golden set carries real names, real phone numbers and real project
+# details. It stays on this machine: never committed, never deployed.
+golden-set.json
+*.private.json

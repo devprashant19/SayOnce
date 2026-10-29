@@ -1,0 +1,67 @@
+[
+  {
+    "id": "g_boss",
+    "name": "Daniel Okafor",
+    "role": "Regional Director",
+    "relationship": "my manager",
+    "language": "English",
+    "channel": "email",
+    "phone": null,
+    "email": "daniel.demo@sayonce.example",
+    "formality": "formal",
+    "caresAbout": "Commercial risk, decisions taken, and what he needs to escalate.",
+    "neverTell": []
+  },
+  {
+    "id": "g_supplier",
+    "name": "Lucía Hernández",
+    "role": "Supplier account manager",
+    "relationship": "our Mexico City supplier",
+    "language": "Mexican Spanish, informal",
+    "channel": "whatsapp",
+    "phone": "+525500000001",
+    "email": null,
+    "formality": "casual",
+    "caresAbout": "Volumes, pickup windows and payment dates.",
+    "neverTell": ["our margins"]
+  },
+  {
+    "id": "g_factory",
+    "name": "João Ribeiro",
+    "role": "Factory floor manager",
+    "relationship": "runs the São Paulo line",
+    "language": "Brazilian Portuguese, neutral",
+    "channel": "whatsapp",
+    "phone": "+5511900000001",
+    "email": null,
+    "formality": "neutral",
+    "caresAbout": "Line schedule changes and headcount for the next shift.",
+    "neverTell": []
+  },
+  {
+    "id": "g_buyer",
+    "name": "Maria Santos",
+    "role": "Buyer",
+    "relationship": "the customer's purchasing lead",
+    "language": "English",
+    "channel": "email",
+    "phone": null,
+    "email": "maria.demo@sayonce.example",
+    "formality": "formal",
+    "caresAbout": "Her delivery date and the revised quantity. Nothing internal.",
+    "neverTell": ["internal blame", "supplier names", "our costs"]
+  },
+  {
+    "id": "g_coord",
+    "name": "Jomar Reyes",
+    "role": "Logistics coordinator",
+    "relationship": "works with me day to day, based in Manila",
+    "language": "Taglish, Roman script",
+    "channel": "whatsapp",
+    "phone": "+639000000001",
+    "email": null,
+    "formality": "casual",
+    "caresAbout": "His next action and the deadline. Keep it to three lines.",
+    "neverTell": []
+  }
+]
