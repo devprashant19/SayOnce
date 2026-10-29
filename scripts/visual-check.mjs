@@ -180,9 +180,25 @@ const AUDIT = () => {
   const lineBoxes = (el) =>
     [...el.getClientRects()].filter((r) => r.width > 1 && r.height > 1);
 
+  const getFixedRoot = (el) => {
+    let cur = el;
+    while (cur && cur !== document.body && cur !== document.documentElement) {
+      const s = getComputedStyle(cur);
+      if (s.position === "fixed") return cur;
+      cur = cur.parentElement;
+    }
+    return null;
+  };
+
   const boxes = leafText.map(lineBoxes);
   for (let i = 0; i < leafText.length; i += 1) {
+    const rootI = getFixedRoot(leafText[i]);
     for (let j = i + 1; j < leafText.length; j += 1) {
+      const rootJ = getFixedRoot(leafText[j]);
+      // Elements in separate fixed layers (or between a floating overlay and the static
+      // document behind it) are distinct visual planes, not layout text overlaps.
+      if (rootI !== rootJ) continue;
+
       let worst = 0;
       for (const a of boxes[i]) {
         for (const b of boxes[j]) {

@@ -99,6 +99,7 @@ function SpeakContent() {
 
   useEffect(() => {
     if (isDemo) {
+      setTourOpen(true);
       setSpokenText((prev) => (prev ? prev : demoUpdates[0]!.spokenText));
       setProject((prev) => (prev ? prev : demoUpdates[0]!.project));
       fetch("/api/demo/session")
@@ -418,15 +419,15 @@ function SpeakContent() {
         </div>
 
         {isDemo && (
-          <div className="mt-3 rounded-xl border-2 border-[var(--color-accent)] bg-[var(--color-accent-wash)] p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
-            <div className="flex items-center gap-2">
-              <span className="text-xl">🎯</span>
+          <div className="mt-3 rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-accent-wash)] px-4 py-3 shadow-xs flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2.5">
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-accent)] text-white text-[10px] font-bold">●</span>
               <div>
-                <p className="text-sm font-bold text-[var(--color-ink)]">
+                <p className="text-xs font-semibold text-[var(--color-ink)]">
                   Demo mode. Press Fan out, or replace the text with your own.
                 </p>
-                <p className="text-xs text-[var(--color-ink-soft)]">
-                  Pre-cached sample updates run instantly with zero AI latency. Real contacts are hidden in demo mode.
+                <p className="text-[11px] text-[var(--color-ink-soft)]">
+                  Pre-cached sample updates run instantly with zero AI latency.
                 </p>
               </div>
             </div>
@@ -434,7 +435,7 @@ function SpeakContent() {
               <button
                 type="button"
                 onClick={() => setTourOpen(true)}
-                className="min-h-11 inline-flex items-center rounded bg-[var(--color-accent)] px-4 text-xs font-semibold text-white hover:opacity-90 active-press transition"
+                className="min-h-11 inline-flex items-center rounded-lg bg-[var(--color-accent)] px-3.5 text-xs font-semibold text-white hover:opacity-90 active-press transition"
               >
                 Guided tour (5 steps)
               </button>
@@ -444,9 +445,12 @@ function SpeakContent() {
                   setSpokenText(demoUpdates[0]!.spokenText);
                   setProject(demoUpdates[0]!.project);
                   setContactSet("india");
+                  setSelectedDemoId(demoUpdates[0]!.id);
                   setResult(null);
+                  setHighlight(null);
+                  setTourOpen(true);
                 }}
-                className="min-h-11 inline-flex items-center rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-4 text-xs font-semibold hover:bg-[var(--color-paper-sunk)] active-press transition"
+                className="min-h-11 inline-flex items-center rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-xs font-semibold text-[var(--color-ink)] hover:bg-[var(--color-paper-sunk)] active-press transition"
               >
                 Reset demo ↺
               </button>
@@ -501,22 +505,44 @@ function SpeakContent() {
                 </select>
               </div>
 
-              <div className="flex-1 min-w-[120px]">
-                <label htmlFor="contact-set" className="block text-xs font-medium text-[var(--color-ink-soft)]">
-                  Contacts
-                </label>
-                <select
-                  id="contact-set"
-                  value={contactSet}
-                  onChange={(event) => setContactSet(event.target.value)}
-                  className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm text-[var(--color-ink)]"
+              <div className="flex-1 min-w-[200px]">
+                <span className="block text-xs font-medium text-[var(--color-ink-soft)] mb-1">
+                  Contacts roster
+                </span>
+                <div
+                  role="radiogroup"
+                  aria-label="Contacts roster"
+                  className="inline-flex w-full items-center rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-0.5"
                 >
-                  {Object.entries(CONTACT_SET_LABELS).map(([value, label]) => (
-                    <option key={value} value={value}>
-                      {label}
-                    </option>
-                  ))}
-                </select>
+                  {Object.entries(CONTACT_SET_LABELS).map(([value, label]) => {
+                    const isSelected = contactSet === value;
+                    return (
+                      <button
+                        key={value}
+                        type="button"
+                        role="radio"
+                        aria-checked={isSelected}
+                        onClick={() => {
+                          setContactSet(value);
+                          const matchingSample = demoUpdates.find((u) => u.contactSet === value);
+                          if (matchingSample && isDemo) {
+                            setSpokenText(matchingSample.spokenText);
+                            setProject(matchingSample.project);
+                            setSelectedDemoId(matchingSample.id);
+                            setResult(null);
+                          }
+                        }}
+                        className={`flex-1 min-h-11 inline-flex items-center justify-center rounded-md px-3 text-xs transition ${
+                          isSelected
+                            ? "bg-[var(--color-paper)] font-semibold text-[var(--color-ink)] shadow-xs"
+                            : "font-medium text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+                        }`}
+                      >
+                        {label}
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
               <button
@@ -879,6 +905,8 @@ function SpeakContent() {
       <GuidedTour
         isOpen={tourOpen}
         onClose={() => setTourOpen(false)}
+        hasResult={result !== null}
+        onEnsureResult={fanOut}
       />
     </div>
   );
