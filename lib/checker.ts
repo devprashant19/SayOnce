@@ -120,9 +120,10 @@ const NOT_A_NAME = new Set([
   "monday", "tuesday", "wednesday", "thursday", "friday", "saturday", "sunday",
   "january", "february", "march", "april", "may", "june", "july", "august",
   "september", "october", "november", "december",
-  "hi", "hello", "dear", "thanks", "thank", "regards", "update", "please",
+  "hi", "hello", "dear", "thanks", "thank", "regards", "regarding", "update", "please",
   "subject", "re", "fwd", "ok", "okay", "note", "sir", "madam", "ji",
   "best", "cheers", "sincerely", "warmly", "team", "project",
+  "hope", "also", "fyi", "as", "per", "attn", "cc", "bcc",
   "i", "we", "you", "the", "a", "an", "and", "but", "so", "it", "this", "that",
 ]);
 
@@ -145,7 +146,10 @@ function namesIn(text: string): Set<string> {
 }
 
 function startsSentence(text: string, index: number): boolean {
-  const before = text.slice(0, index).replace(/["'(\[\s]+$/, "");
+  const prefix = text.slice(0, index);
+  // If the word starts on a new line (with optional indentation or opening quotes), it starts a line
+  if (/(?:^|\n)[^\S\r\n]*["'(\[]*$/.test(prefix)) return true;
+  const before = prefix.replace(/["'(\[\s]+$/, "");
   return before.length === 0 || /[.!?:;\n]$/.test(before);
 }
 
