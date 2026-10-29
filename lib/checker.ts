@@ -135,7 +135,7 @@ const NOT_A_NAME = new Set([
   "hi", "hello", "dear", "thanks", "thank", "regards", "regarding", "update", "please",
   "subject", "re", "fwd", "ok", "okay", "note", "sir", "madam", "ji",
   "best", "cheers", "sincerely", "warmly", "team", "project",
-  "hope", "also", "fyi", "as", "per", "attn", "cc", "bcc",
+  "hope", "also", "fyi", "as", "per", "attn", "cc", "bcc", "due", "your", "name",
   "i", "we", "you", "the", "a", "an", "and", "but", "so", "it", "this", "that",
 ]);
 

@@ -126,7 +126,7 @@ export async function aiCall<T extends z.ZodType>(
           String(error).includes("503") ||
           String(error).includes("UNAVAILABLE") ||
           String(error).includes("high demand");
-        const delayMs = isUnavailable ? 5000 : 2000;
+        const delayMs = isUnavailable ? 8000 : 2000;
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
     }
