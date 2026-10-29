@@ -73,7 +73,9 @@ export async function aiCall<T extends z.ZodType>(
         contents:
           attempt === 0
             ? user
-            : `${user}\n\nYour previous response could not be used:\n${describe(lastError)}\n\nReturn only JSON matching the required schema, with no commentary.`,
+            : lastRawText
+              ? `${user}\n\nYour previous response could not be used:\n${describe(lastError)}\n\nReturn only JSON matching the required schema, with no commentary.`
+              : user,
         config: {
           systemInstruction: system,
           temperature,
@@ -117,6 +119,16 @@ export async function aiCall<T extends z.ZodType>(
       };
     } catch (error) {
       lastError = error;
+      if (attempt === 0) {
+        const isUnavailable =
+          (error as { status?: number })?.status === 503 ||
+          (error as { status?: number })?.status === 429 ||
+          String(error).includes("503") ||
+          String(error).includes("UNAVAILABLE") ||
+          String(error).includes("high demand");
+        const delayMs = isUnavailable ? 5000 : 2000;
+        await new Promise((resolve) => setTimeout(resolve, delayMs));
+      }
     }
   }
 

@@ -308,7 +308,11 @@ const MONTHS = [
 function sameDay(a: string, b: string): boolean {
   const left = toIso(a);
   const right = toIso(b);
-  return left !== null && left === right;
+  if (left === null || right === null) return false;
+  if (left === right) return true;
+  if (left.startsWith("--") && right.endsWith(left.slice(1))) return true;
+  if (right.startsWith("--") && left.endsWith(right.slice(1))) return true;
+  return false;
 }
 
 function toIso(value: string): string | null {
