@@ -79,7 +79,12 @@ export const env = {
     return optionalNumber("DEMO_DAILY_AI_CAP", 400);
   },
   get demoSessionSecret(): string {
-    return required("DEMO_SESSION_SECRET", "Phase D needs it; 32+ random bytes, base64.");
+    const val = process.env.DEMO_SESSION_SECRET;
+    if (val && val.trim().length > 0) return val;
+    if (process.env.NODE_ENV === "production") {
+      return required("DEMO_SESSION_SECRET", "Phase D needs it; 32+ random bytes, base64.");
+    }
+    return "sayonce_dev_demo_session_secret_32bytes_min_fallback_key=";
   },
   /** Null until a real baseline has been measured. Never faked. */
   get baselineMinutes(): number | null {
