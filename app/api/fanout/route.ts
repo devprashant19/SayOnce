@@ -11,6 +11,7 @@ import { Contact, type Draft, type Fact } from "@/lib/types";
 import { env } from "@/lib/env";
 import { loadContactSet } from "@/lib/contact-sets";
 import { saveFanoutRecord } from "@/lib/update-repo";
+import { composeOne } from "@/lib/ai/compose";
 
 /**
  * Fan out: one spoken update -> one checked draft per person.
@@ -43,6 +44,10 @@ export interface FanoutCard {
   check: CheckOutcome | null;
   /** Why there is no draft, when draft is null. */
   error: string | null;
+  toneScore?: number | null;
+  verifyIssues?: string[];
+  regenerated?: boolean;
+  overridden?: boolean;
   sent?: boolean;
   sentAt?: string | null;
 }
@@ -204,48 +209,82 @@ export async function POST(request: Request) {
     },
   });
 
-  const cards: FanoutCard[] = assignments.map((assignment) => {
-    const messageId = crypto.randomUUID();
-    if (!assignment.isIncluded) {
+  const cards: FanoutCard[] = await Promise.all(
+    assignments.map(async (assignment) => {
+      const messageId = crypto.randomUUID();
+      if (!assignment.isIncluded) {
+        return {
+          messageId,
+          contact: assignment.contact,
+          draft: null,
+          check: null,
+          error: null,
+          sent: false,
+          sentAt: null,
+        };
+      }
+      const draft = composed.drafts.find((d) => d.contactId === assignment.contact.id) ?? null;
+      if (!draft) {
+        const failure = composed.failures.find((f) => f.contactId === assignment.contact.id);
+        return {
+          messageId,
+          contact: assignment.contact,
+          draft: null,
+          check: null,
+          error: failure?.message ?? "No draft was produced.",
+          sent: false,
+          sentAt: null,
+        };
+      }
+
+      let currentDraft = draft;
+      let check = checkDraft({
+        draft: currentDraft,
+        contact: assignment.contact,
+        allowedFacts: assignment.facts,
+        allFacts: facts,
+      });
+
+      let regenerated = false;
+      // Regeneration loop: run ONCE if deterministic check failed
+      if (!check.ok) {
+        try {
+          const feedback = check.failures.map((f) => f.message);
+          const regen = await composeOne({
+            contact: assignment.contact,
+            facts: assignment.facts,
+            project: body.project,
+            learnedRules: [
+              `CORRECTION FOR PREVIOUS DRAFT: The draft was rejected with these errors: ${feedback.join("; ")}. You MUST fix them.`,
+            ],
+          });
+          const reCheck = checkDraft({
+            draft: regen.value,
+            contact: assignment.contact,
+            allowedFacts: assignment.facts,
+            allFacts: facts,
+          });
+          currentDraft = regen.value;
+          check = reCheck;
+          regenerated = true;
+        } catch {
+          // If regen fails, keep original draft and failures
+        }
+      }
+
       return {
         messageId,
         contact: assignment.contact,
-        draft: null,
-        check: null,
+        draft: currentDraft,
+        check,
         error: null,
+        regenerated,
+        overridden: false,
         sent: false,
         sentAt: null,
       };
-    }
-    const draft = composed.drafts.find((d) => d.contactId === assignment.contact.id) ?? null;
-    if (!draft) {
-      const failure = composed.failures.find((f) => f.contactId === assignment.contact.id);
-      return {
-        messageId,
-        contact: assignment.contact,
-        draft: null,
-        check: null,
-        error: failure?.message ?? "No draft was produced.",
-        sent: false,
-        sentAt: null,
-      };
-    }
-    const check = checkDraft({
-      draft,
-      contact: assignment.contact,
-      allowedFacts: assignment.facts,
-      allFacts: facts,
-    });
-    return {
-      messageId,
-      contact: assignment.contact,
-      draft,
-      check,
-      error: null,
-      sent: false,
-      sentAt: null,
-    };
-  });
+    }),
+  );
 
   note({
     actor: "system",

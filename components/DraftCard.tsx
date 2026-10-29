@@ -26,9 +26,12 @@ export interface DraftCardProps {
   sendBlockedReason: string | null;
   sent?: boolean;
   sentAt?: string | null;
+  overridden?: boolean;
   onToggleSent?: (messageId: string, nextSent: boolean) => void | Promise<void>;
+  onOverride?: (messageId: string) => void | Promise<void>;
   /** Highlights the spoken words a sentence came from. */
   onHoverSentence?: (factIds: string[] | null) => void;
+  activeFactIds?: string[] | null;
   index: number;
 }
 
@@ -38,9 +41,10 @@ export function DraftCard(props: DraftCardProps) {
   const [body, setBody] = useState(draft?.body ?? "");
   const [isSent, setIsSent] = useState(props.sent ?? false);
   const [sentAt, setSentAt] = useState(props.sentAt ?? null);
+  const [isOverridden, setIsOverridden] = useState(props.overridden ?? false);
 
   const failed = check !== null && !check.ok;
-  const sendable = draft !== null && !failed && props.sendHref !== null;
+  const sendable = draft !== null && (!failed || isOverridden) && props.sendHref !== null;
 
   async function copy() {
     await navigator.clipboard.writeText(
@@ -66,6 +70,12 @@ export function DraftCard(props: DraftCardProps) {
     const nextSentAt = nextSent ? new Date().toISOString() : null;
     setSentAt(nextSentAt);
     await props.onToggleSent(props.messageId, nextSent);
+  }
+
+  async function handleOverride() {
+    if (!props.messageId || !props.onOverride) return;
+    setIsOverridden(true);
+    await props.onOverride(props.messageId);
   }
 
   function formatSentTime(iso: string | null): string {
@@ -104,7 +114,8 @@ export function DraftCard(props: DraftCardProps) {
               Facts verified
             </Badge>
           )}
-          {failed && <Badge tone="blocked">Needs your eyes</Badge>}
+          {failed && !isOverridden && <Badge tone="blocked">Needs your eyes</Badge>}
+          {failed && isOverridden && <Badge tone="neutral">Overridden</Badge>}
         </div>
       </header>
 
@@ -115,16 +126,33 @@ export function DraftCard(props: DraftCardProps) {
       )}
 
       {failed && (
-        <div className="mt-3 rounded border border-[var(--color-blocked)]/40 bg-[var(--color-blocked-wash)] p-3 text-sm">
-          <p className="font-medium">
-            This draft is held back until you fix or override it:
-          </p>
-          <ul className="mt-1.5 list-disc space-y-1 pl-5">
+        <div className="mt-3 rounded border border-[var(--color-blocked)]/40 bg-[var(--color-blocked-wash)] p-3 text-sm space-y-2">
+          <div className="flex flex-wrap items-center justify-between gap-2">
+            <p className="font-medium text-[var(--color-blocked)]">
+              This draft is held back until you fix or override it:
+            </p>
+            {isOverridden ? (
+              <span className="text-xs font-semibold text-[var(--color-ink-soft)]">
+                ✓ Overridden by speaker
+              </span>
+            ) : (
+              props.messageId && props.onOverride && (
+                <button
+                  type="button"
+                  onClick={handleOverride}
+                  className="rounded border border-[var(--color-blocked)]/60 bg-[var(--color-paper)] px-2.5 py-1 text-xs font-semibold text-[var(--color-blocked)] hover:bg-[var(--color-blocked-wash)]"
+                >
+                  Override and enable send
+                </button>
+              )
+            )}
+          </div>
+          <ul className="list-disc space-y-1 pl-5">
             {check.failures.map((failure, i) => (
               <li key={`${failure.code}-${i}`}>
                 {failure.message}
                 {failure.evidence && (
-                  <span className="ml-1 line-through decoration-[var(--color-blocked)]">
+                  <span className="ml-1 line-through decoration-[var(--color-blocked)] font-medium">
                     {failure.evidence}
                   </span>
                 )}
@@ -156,27 +184,37 @@ export function DraftCard(props: DraftCardProps) {
 
           {draft.sentences.length > 0 && props.onHoverSentence && (
             <p className="mt-2 text-xs text-[var(--color-ink-faint)]">
-              Hover a sentence below to see the words it came from.
+              Hover or tap a sentence below to see the words it came from.
             </p>
           )}
           {draft.sentences.length > 0 && props.onHoverSentence && (
             <ul className="mt-1 space-y-0.5 text-xs">
-              {draft.sentences.map((sentence, i) => (
-                <li
-                  key={i}
-                  onMouseEnter={() => props.onHoverSentence?.(sentence.factIds)}
-                  onMouseLeave={() => props.onHoverSentence?.(null)}
-                  onFocus={() => props.onHoverSentence?.(sentence.factIds)}
-                  onBlur={() => props.onHoverSentence?.(null)}
-                  tabIndex={0}
-                  className="cursor-default rounded px-1 py-0.5 text-[var(--color-ink-soft)] hover:bg-[var(--color-accent-wash)] focus:bg-[var(--color-accent-wash)]"
-                >
-                  {sentence.sentence}
-                  {sentence.factIds.length === 0 && (
-                    <span className="ml-1 text-[var(--color-ink-faint)]">(no fact)</span>
-                  )}
-                </li>
-              ))}
+              {draft.sentences.map((sentence, i) => {
+                const isSentenceActive =
+                  props.activeFactIds &&
+                  sentence.factIds.some((id) => props.activeFactIds!.includes(id));
+                return (
+                  <li
+                    key={i}
+                    onMouseEnter={() => props.onHoverSentence?.(sentence.factIds)}
+                    onMouseLeave={() => props.onHoverSentence?.(null)}
+                    onFocus={() => props.onHoverSentence?.(sentence.factIds)}
+                    onBlur={() => props.onHoverSentence?.(null)}
+                    onClick={() => props.onHoverSentence?.(sentence.factIds)}
+                    tabIndex={0}
+                    className={`cursor-default rounded px-1.5 py-0.5 transition-colors ${
+                      isSentenceActive
+                        ? "bg-[var(--color-accent-wash)] font-medium text-[var(--color-ink)]"
+                        : "text-[var(--color-ink-soft)] hover:bg-[var(--color-accent-wash)] focus:bg-[var(--color-accent-wash)]"
+                    }`}
+                  >
+                    {sentence.sentence}
+                    {sentence.factIds.length === 0 && (
+                      <span className="ml-1 text-[var(--color-ink-faint)]">(no fact)</span>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           )}
 

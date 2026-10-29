@@ -408,6 +408,128 @@ export async function markMessageSent(params: {
   };
 }
 
+export async function overrideMessage(params: {
+  messageId: string;
+  updateId: string;
+  contactId: string;
+  reason?: string;
+}): Promise<{ success: boolean; messageId: string; overridden: boolean; trailVerdict: TrailVerdict }> {
+  const atIso = new Date().toISOString();
+  const reason = params.reason ?? "Speaker override";
+
+  if (env.hasDatabase) {
+    try {
+      const database = db();
+      await database
+        .update(schema.messages)
+        .set({ overridden: true })
+        .where(eq(schema.messages.id, params.messageId));
+
+      const existingEntries = await database
+        .select()
+        .from(schema.trailEntries)
+        .where(eq(schema.trailEntries.updateId, params.updateId))
+        .orderBy(schema.trailEntries.seq);
+
+      const lastEntry = existingEntries[existingEntries.length - 1];
+      const prevHash = lastEntry?.hash ?? "0".repeat(64);
+      const nextSeq = (lastEntry?.seq ?? 0) + 1;
+
+      const overrideEntry = appendEntry(
+        {
+          updateId: params.updateId,
+          seq: nextSeq,
+          at: atIso,
+          actor: "user",
+          type: "override",
+          payload: {
+            messageId: params.messageId,
+            contactId: params.contactId,
+            reason,
+          },
+        },
+        prevHash,
+      );
+
+      await database.insert(schema.trailEntries).values({
+        id: `${params.updateId}-${overrideEntry.seq}`,
+        updateId: params.updateId,
+        seq: overrideEntry.seq,
+        at: new Date(overrideEntry.at),
+        actor: overrideEntry.actor,
+        type: overrideEntry.type,
+        payloadJson: overrideEntry.payload,
+        prevHash: overrideEntry.prevHash,
+        hash: overrideEntry.hash,
+      });
+
+      const allEntries: TrailEntry[] = [
+        ...existingEntries.map((e) => ({
+          updateId: e.updateId,
+          seq: e.seq,
+          at: e.at.toISOString(),
+          actor: e.actor as "user" | "ai" | "system",
+          type: e.type as TrailEntryType,
+          payload: e.payloadJson,
+          prevHash: e.prevHash,
+          hash: e.hash,
+        })),
+        overrideEntry,
+      ];
+
+      return {
+        success: true,
+        messageId: params.messageId,
+        overridden: true,
+        trailVerdict: verifyChain(allEntries),
+      };
+    } catch (error) {
+      console.warn("Database overrideMessage failed, using local store:", error);
+    }
+  }
+
+  // Local JSON fallback
+  const messagesList = readJsonFile<StoredMessage>(MESSAGES_FILE);
+  const msgIdx = messagesList.findIndex((m) => m.id === params.messageId);
+  if (msgIdx !== -1) {
+    messagesList[msgIdx]!.overridden = true;
+    writeJsonFile(MESSAGES_FILE, messagesList);
+  }
+
+  const trailList = readJsonFile<TrailEntry>(TRAIL_FILE);
+  const updateTrail = trailList.filter((t) => t.updateId === params.updateId);
+  const lastEntry = updateTrail[updateTrail.length - 1];
+  const prevHash = lastEntry?.hash ?? "0".repeat(64);
+  const nextSeq = (lastEntry?.seq ?? 0) + 1;
+
+  const overrideEntry = appendEntry(
+    {
+      updateId: params.updateId,
+      seq: nextSeq,
+      at: atIso,
+      actor: "user",
+      type: "override",
+      payload: {
+        messageId: params.messageId,
+        contactId: params.contactId,
+        reason,
+      },
+    },
+    prevHash,
+  );
+
+  trailList.push(overrideEntry);
+  writeJsonFile(TRAIL_FILE, trailList);
+  updateTrail.push(overrideEntry);
+
+  return {
+    success: true,
+    messageId: params.messageId,
+    overridden: true,
+    trailVerdict: verifyChain(updateTrail),
+  };
+}
+
 export async function getUpdateTrail(updateId: string): Promise<TrailEntry[]> {
   if (env.hasDatabase) {
     try {

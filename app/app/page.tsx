@@ -5,6 +5,8 @@ import { SpeakBox } from "@/components/SpeakBox";
 import { DraftCard } from "@/components/DraftCard";
 import { FactList } from "@/components/FactList";
 import { KnowledgeMatrix } from "@/components/KnowledgeMatrix";
+import { PrivacyPanel } from "@/components/PrivacyPanel";
+import { TrustTrailViewer } from "@/components/TrustTrailViewer";
 import { SendGuidedQueue, type QueueItem } from "@/components/SendGuidedQueue";
 import { Badge } from "@/components/Badge";
 import { sendTargetFor } from "@/lib/links";
@@ -12,6 +14,7 @@ import { CONTACT_SET_LABELS } from "@/lib/contact-sets";
 import type { Contact, Draft, Fact } from "@/lib/types";
 import type { CheckOutcome } from "@/lib/checker";
 import type { VoiceReturn } from "@/lib/voice-return";
+import type { TrailEntry } from "@/lib/trail";
 import demoUpdates from "@/data/demo/updates.json";
 
 interface Card {
@@ -20,6 +23,7 @@ interface Card {
   draft: Draft | null;
   check: CheckOutcome | null;
   error: string | null;
+  overridden?: boolean;
   sent?: boolean;
   sentAt?: string | null;
 }
@@ -42,6 +46,7 @@ interface FanoutResponse {
     }>;
   };
   voiceReturn: VoiceReturn;
+  trail: TrailEntry[];
   trailVerdict: { ok: boolean; length: number };
 }
 
@@ -123,6 +128,43 @@ export default function SpeakPage() {
         }
       } catch (err) {
         console.warn("Could not record sent status:", err);
+      }
+    },
+    [result],
+  );
+
+  const handleOverride = useCallback(
+    async (messageId: string) => {
+      if (!result) return;
+      const card = result.cards.find((c) => c.messageId === messageId);
+      if (!card) return;
+
+      try {
+        const response = await fetch(`/api/messages/${messageId}/override`, {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            updateId: result.updateId,
+            contactId: card.contact.id,
+            reason: "Speaker override",
+          }),
+        });
+
+        if (response.ok) {
+          const payload = await response.json();
+          setResult((prev) => {
+            if (!prev) return null;
+            return {
+              ...prev,
+              cards: prev.cards.map((c) =>
+                c.messageId === messageId ? { ...c, overridden: true } : c,
+              ),
+              trailVerdict: payload.trailVerdict ?? prev.trailVerdict,
+            };
+          });
+        }
+      } catch (err) {
+        console.warn("Override failed:", err);
       }
     },
     [result],
@@ -335,12 +377,25 @@ export default function SpeakPage() {
                     sendBlockedReason={target?.blockedReason ?? null}
                     sent={card.sent}
                     sentAt={card.sentAt}
+                    overridden={card.overridden}
                     onToggleSent={handleToggleSent}
+                    onOverride={handleOverride}
                     onHoverSentence={setHighlight}
+                    activeFactIds={highlight}
                   />
                 );
               })}
           </section>
+
+          <PrivacyPanel
+            facts={result.facts}
+            contacts={result.cards.map((c) => c.contact)}
+          />
+
+          <TrustTrailViewer
+            entries={result.trail}
+            updateId={result.updateId}
+          />
 
           {showQueue && result && (
             <SendGuidedQueue
