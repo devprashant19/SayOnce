@@ -21,7 +21,8 @@
     "test:live": "vitest run --config vitest.live.config.ts",
     "smoke:ai": "node --env-file=.env.local scripts/smoke-ai.mjs",
     "check": "npm run typecheck && npm run lint && npm run test",
-    "visual": "node scripts/visual-check.mjs"
+    "visual": "node scripts/visual-check.mjs",
+    "verify:cached": "vitest run tests/cached-path-zero-ai.test.ts --reporter=verbose"
   },
   "dependencies": {
     "@google/genai": "^2.32.0",

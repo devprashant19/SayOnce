@@ -54,6 +54,51 @@ export class AiStepError extends Error {
   }
 }
 
+export const QUOTA_EXHAUSTED_MESSAGE =
+  "The daily AI limit has been reached. The sample updates still work instantly — pick one below.";
+
+export class AiQuotaExhaustedError extends Error {
+  readonly status = 429;
+  readonly step: string;
+
+  constructor(
+    step: string,
+    message = QUOTA_EXHAUSTED_MESSAGE,
+    cause?: unknown,
+  ) {
+    super(message, cause === undefined ? undefined : { cause });
+    this.name = "AiQuotaExhaustedError";
+    this.step = step;
+  }
+}
+
+export function isQuotaExhaustedError(error: unknown): boolean {
+  if (error instanceof AiQuotaExhaustedError) return true;
+  if (!error) return false;
+  const status =
+    (error as { status?: number; statusCode?: number })?.status ??
+    (error as { statusCode?: number })?.statusCode;
+  if (status === 429) return true;
+  const msg = error instanceof Error ? error.message : String(error);
+  return (
+    msg.includes("429") ||
+    msg.includes("RESOURCE_EXHAUSTED") ||
+    msg.includes("ResourceExhausted") ||
+    /quota/i.test(msg) ||
+    /rate limit/i.test(msg)
+  );
+}
+
+let aiCallCounter = 0;
+
+export function getAiCallCount(): number {
+  return aiCallCounter;
+}
+
+export function resetAiCallCount(): void {
+  aiCallCounter = 0;
+}
+
 export async function aiCall<T extends z.ZodType>(
   options: AiCallOptions<T>,
 ): Promise<AiCallResult<z.infer<T>>> {
@@ -68,6 +113,7 @@ export async function aiCall<T extends z.ZodType>(
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
     try {
+      aiCallCounter += 1;
       const response = await gemini().models.generateContent({
         model: env.model,
         contents:
@@ -119,10 +165,12 @@ export async function aiCall<T extends z.ZodType>(
       };
     } catch (error) {
       lastError = error;
+      if (isQuotaExhaustedError(error)) {
+        throw new AiQuotaExhaustedError(step, undefined, error);
+      }
       if (attempt === 0) {
         const isUnavailable =
           (error as { status?: number })?.status === 503 ||
-          (error as { status?: number })?.status === 429 ||
           String(error).includes("503") ||
           String(error).includes("UNAVAILABLE") ||
           String(error).includes("high demand");
@@ -130,6 +178,10 @@ export async function aiCall<T extends z.ZodType>(
         await new Promise((resolve) => setTimeout(resolve, delayMs));
       }
     }
+  }
+
+  if (isQuotaExhaustedError(lastError)) {
+    throw new AiQuotaExhaustedError(step, undefined, lastError);
   }
 
   throw new AiStepError(

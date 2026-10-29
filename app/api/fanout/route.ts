@@ -19,6 +19,7 @@ import {
 import { REAL_DATASET } from "@/lib/db";
 import { detectContradictions, type ContradictionAlert } from "@/lib/consistency";
 import { composeOne } from "@/lib/ai/compose";
+import { isQuotaExhaustedError, QUOTA_EXHAUSTED_MESSAGE } from "@/lib/ai/call";
 import { getCachedDemoResult } from "@/lib/demo-cache";
 import { checkDemoAiAllowance, recordDemoAiUsage } from "@/lib/demo-session";
 
@@ -213,13 +214,14 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("FANOUT ERROR:", error);
+    if (isQuotaExhaustedError(error)) {
+      return NextResponse.json(
+        { error: QUOTA_EXHAUSTED_MESSAGE },
+        { status: 429 },
+      );
+    }
     return NextResponse.json(
-      {
-        error:
-          error instanceof Error
-            ? error.message
-            : "Could not read that update. Try saying it again.",
-      },
+      { error: "Could not read that update. Try saying it again." },
       { status: 502 },
     );
   }
@@ -243,6 +245,12 @@ export async function POST(request: Request) {
     });
   } catch (error) {
     console.error("ROUTE ERROR:", error);
+    if (isQuotaExhaustedError(error)) {
+      return NextResponse.json(
+        { error: QUOTA_EXHAUSTED_MESSAGE },
+        { status: 429 },
+      );
+    }
     routeOutput = {
       value: {
         concernsNobody: false,
@@ -303,7 +311,22 @@ export async function POST(request: Request) {
   });
 
   const includedAssignments = assignments.filter((a) => a.isIncluded);
-  const composed = await composeAll(includedAssignments);
+  let composed: Awaited<ReturnType<typeof composeAll>>;
+  try {
+    composed = await composeAll(includedAssignments);
+  } catch (error) {
+    console.error("COMPOSE ERROR:", error);
+    if (isQuotaExhaustedError(error)) {
+      return NextResponse.json(
+        { error: QUOTA_EXHAUSTED_MESSAGE },
+        { status: 429 },
+      );
+    }
+    return NextResponse.json(
+      { error: "Could not compose drafts. Try saying it again." },
+      { status: 502 },
+    );
+  }
   if (isDemo && demoSessionId) {
     recordDemoAiUsage(demoSessionId);
   }

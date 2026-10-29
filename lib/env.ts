@@ -52,7 +52,7 @@ export const env = {
   },
   /** One fixed model for every AI step, so accuracy scores stay comparable. */
   get model(): string {
-    return process.env.SAYONCE_MODEL ?? "gemini-2.5-flash";
+    return process.env.SAYONCE_MODEL ?? "gemini-2.5-flash-lite";
   },
   /**
    * Low rather than zero for the pipeline: extraction and composition need a

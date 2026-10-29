@@ -1,6 +1,6 @@
 import "server-only";
 import { z } from "zod";
-import { aiCall } from "./call";
+import { aiCall, isQuotaExhaustedError } from "./call";
 import { COMPOSE_SYSTEM, composeUser } from "./prompts/compose";
 import { Draft, type Contact, type Fact } from "../types";
 
@@ -77,6 +77,9 @@ export async function composeAll(inputs: ComposeOneInput[]): Promise<ComposeAllR
       inputTokens += outcome.value.usage.inputTokens;
       outputTokens += outcome.value.usage.outputTokens;
     } else {
+      if (isQuotaExhaustedError(outcome.reason)) {
+        throw outcome.reason;
+      }
       failures.push({
         contactId,
         message:

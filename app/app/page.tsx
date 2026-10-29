@@ -74,6 +74,10 @@ function SpeakContent() {
   const [contactSet, setContactSet] = useState("india");
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isQuotaExhausted, setIsQuotaExhausted] = useState(false);
+  const [selectedDemoId, setSelectedDemoId] = useState<string | null>(
+    isDemo ? demoUpdates[0]!.id : null,
+  );
   const [result, setResult] = useState<FanoutResponse | null>(null);
   const [highlight, setHighlight] = useState<string[] | null>(null);
   const [activeRecipients, setActiveRecipients] = useState<string[]>([]);
@@ -226,13 +230,27 @@ function SpeakContent() {
       const response = await fetch("/api/fanout", {
         method: "POST",
         headers,
-        body: JSON.stringify({ spokenText, project, contactSet, elapsedSeconds }),
+        body: JSON.stringify({
+          spokenText,
+          project,
+          contactSet,
+          elapsedSeconds,
+          ...(selectedDemoId ? { demoId: selectedDemoId } : {}),
+        }),
       });
       const payload = (await response.json()) as FanoutResponse | { error: string };
       if (!response.ok) {
-        setError("error" in payload ? payload.error : "Fan out failed. Try again.");
+        const errorMsg = "error" in payload ? payload.error : "Fan out failed. Try again.";
+        setError(errorMsg);
+        if (response.status === 429 || errorMsg.includes("daily AI limit")) {
+          setIsQuotaExhausted(true);
+        } else {
+          setIsQuotaExhausted(false);
+        }
         return;
       }
+      setIsQuotaExhausted(false);
+      setError(null);
       const fanoutData = payload as FanoutResponse;
       setResult(fanoutData);
       const activeIds = fanoutData.cards.filter((c) => c.draft !== null).map((c) => c.contact.id);
@@ -242,7 +260,7 @@ function SpeakContent() {
     } finally {
       setBusy(false);
     }
-  }, [spokenText, project, contactSet, mountTime, sessionToken]);
+  }, [spokenText, project, contactSet, mountTime, sessionToken, selectedDemoId]);
 
   const handleToggleSent = useCallback(
     async (messageId: string, nextSent: boolean) => {
@@ -428,7 +446,10 @@ function SpeakContent() {
         <div id="fanout-controls" className="mt-6 space-y-4">
           <SpeakBox
             value={spokenText}
-            onChange={setSpokenText}
+            onChange={(val) => {
+              setSpokenText(val);
+              setSelectedDemoId(null);
+            }}
             onSubmit={fanOut}
             disabled={busy}
           />
@@ -490,8 +511,15 @@ function SpeakContent() {
                   onClick={() => {
                     setSpokenText(sample.spokenText);
                     setProject(sample.project);
+                    setSelectedDemoId(sample.id);
+                    setIsQuotaExhausted(false);
+                    setError(null);
                   }}
-                  className="rounded-full border border-[var(--color-rule)] px-3 py-1.5 text-xs hover:bg-[var(--color-paper-sunk)]"
+                  className={`rounded-full border px-3 py-1.5 text-xs transition ${
+                    isQuotaExhausted
+                      ? "border-[var(--color-accent)] bg-[var(--color-accent)]/15 font-bold text-[var(--color-accent)] ring-2 ring-[var(--color-accent)]"
+                      : "border-[var(--color-rule)] hover:bg-[var(--color-paper-sunk)]"
+                  }`}
                 >
                   {sample.label}
                 </button>
@@ -500,7 +528,47 @@ function SpeakContent() {
           </div>
         </div>
 
-        {error !== null && (
+        {isQuotaExhausted && (
+          <div
+            role="alert"
+            className="mt-4 rounded-[var(--radius-card)] border-2 border-[var(--color-accent)] bg-[var(--color-accent-wash)] p-4 shadow-sm"
+          >
+            <div className="flex items-start gap-3">
+              <span className="text-xl">⚡</span>
+              <div className="space-y-3">
+                <div>
+                  <p className="font-semibold text-sm text-[var(--color-ink)]">
+                    The daily AI limit has been reached. The sample updates still work instantly — pick one below.
+                  </p>
+                  <p className="text-xs text-[var(--color-ink-soft)] mt-0.5">
+                    Pre-computed samples run with zero AI calls and zero latency. Pick any sample to run an instant fan-out:
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {samples.map((sample) => (
+                    <button
+                      key={sample.id}
+                      type="button"
+                      onClick={() => {
+                        setSpokenText(sample.spokenText);
+                        setProject(sample.project);
+                        setSelectedDemoId(sample.id);
+                        setIsQuotaExhausted(false);
+                        setError(null);
+                      }}
+                      className="rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-3.5 py-1.5 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-white transition transform active:scale-95 flex items-center gap-1.5"
+                    >
+                      <span>▶</span>
+                      <span>{sample.label}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {error !== null && !isQuotaExhausted && (
           <p
             role="alert"
             className="mt-4 rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-3 text-sm"

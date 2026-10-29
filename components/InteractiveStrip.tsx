@@ -83,7 +83,8 @@ export function InteractiveStrip() {
 
       if (!res.ok) {
         const body = await res.json().catch(() => ({}));
-        throw new Error(body.error ?? `Fan-out failed: HTTP ${res.status}`);
+        setError(body.error ?? `Fan-out failed: HTTP ${res.status}`);
+        return;
       }
 
       const data: FanoutResponse = await res.json();
