@@ -1,6 +1,8 @@
 "use client";
 
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState, useEffect, Suspense } from "react";
+import { useSearchParams } from "next/navigation";
+import Link from "next/link";
 import { SpeakBox } from "@/components/SpeakBox";
 import { DraftCard } from "@/components/DraftCard";
 import { FactList } from "@/components/FactList";
@@ -10,6 +12,7 @@ import { TrustTrailViewer } from "@/components/TrustTrailViewer";
 import { ContradictionBanner } from "@/components/ContradictionBanner";
 import { SendGuidedQueue, type QueueItem } from "@/components/SendGuidedQueue";
 import { CommandBar } from "@/components/CommandBar";
+import { GuidedTour } from "@/components/GuidedTour";
 import { Badge } from "@/components/Badge";
 import { sendTargetFor } from "@/lib/links";
 import { CONTACT_SET_LABELS } from "@/lib/contact-sets";
@@ -63,7 +66,9 @@ interface FanoutResponse {
 
 const PROJECTS = ["Diwali retail order", "Warehouse shift", "Q4 export run", "Other"];
 
-export default function SpeakPage() {
+function SpeakContent() {
+  const searchParams = useSearchParams();
+  const isDemo = searchParams.get("demo") === "1" || searchParams.get("demo") === "true";
   const [spokenText, setSpokenText] = useState("");
   const [project, setProject] = useState(PROJECTS[0]!);
   const [contactSet, setContactSet] = useState("india");
@@ -75,6 +80,21 @@ export default function SpeakPage() {
   const [showQueue, setShowQueue] = useState(false);
   const [mountTime] = useState(() => Date.now());
   const [commandBarOpen, setCommandBarOpen] = useState(false);
+  const [tourOpen, setTourOpen] = useState(false);
+  const [sessionToken, setSessionToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (isDemo) {
+      setSpokenText((prev) => (prev ? prev : demoUpdates[0]!.spokenText));
+      setProject((prev) => (prev ? prev : demoUpdates[0]!.project));
+      fetch("/api/demo/session")
+        .then((r) => r.json())
+        .then((d) => {
+          if (d?.token) setSessionToken(d.token);
+        })
+        .catch(() => {});
+    }
+  }, [isDemo]);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -199,9 +219,13 @@ export default function SpeakPage() {
     setResult(null);
     try {
       const elapsedSeconds = Math.max(1, Math.round((Date.now() - mountTime) / 1000));
+      const headers: Record<string, string> = { "content-type": "application/json" };
+      if (sessionToken) {
+        headers["x-demo-session-token"] = sessionToken;
+      }
       const response = await fetch("/api/fanout", {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers,
         body: JSON.stringify({ spokenText, project, contactSet, elapsedSeconds }),
       });
       const payload = (await response.json()) as FanoutResponse | { error: string };
@@ -218,7 +242,7 @@ export default function SpeakPage() {
     } finally {
       setBusy(false);
     }
-  }, [spokenText, project, contactSet, mountTime]);
+  }, [spokenText, project, contactSet, mountTime, sessionToken]);
 
   const handleToggleSent = useCallback(
     async (messageId: string, nextSent: boolean) => {
@@ -352,7 +376,56 @@ export default function SpeakPage() {
           </div>
         </div>
 
-        <div className="mt-6 space-y-4">
+        {isDemo && (
+          <div className="mt-3 rounded-xl border-2 border-[var(--color-accent)] bg-[var(--color-accent-wash)] p-4 shadow-sm flex flex-wrap items-center justify-between gap-3">
+            <div className="flex items-center gap-2">
+              <span className="text-xl">🎯</span>
+              <div>
+                <p className="text-sm font-bold text-[var(--color-ink)]">
+                  Demo mode. Press Fan out, or replace the text with your own.
+                </p>
+                <p className="text-xs text-[var(--color-ink-soft)]">
+                  Pre-cached sample updates run instantly with zero AI latency. Real contacts are hidden in demo mode.
+                </p>
+              </div>
+            </div>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setTourOpen(true)}
+                className="rounded bg-[var(--color-accent)] px-3 py-1.5 text-xs font-semibold text-white hover:opacity-90 transition"
+              >
+                Guided tour (5 steps)
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setSpokenText(demoUpdates[0]!.spokenText);
+                  setProject(demoUpdates[0]!.project);
+                  setContactSet("india");
+                  setResult(null);
+                }}
+                className="rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 py-1.5 text-xs font-semibold hover:bg-[var(--color-paper-sunk)] transition"
+              >
+                Reset demo ↺
+              </button>
+              <Link
+                href="/lab"
+                className="text-xs font-medium text-[var(--color-ink-soft)] hover:underline"
+              >
+                Quality Lab →
+              </Link>
+              <Link
+                href="/proof"
+                className="text-xs font-medium text-[var(--color-ink-soft)] hover:underline"
+              >
+                Proof & ROI →
+              </Link>
+            </div>
+          </div>
+        )}
+
+        <div id="fanout-controls" className="mt-6 space-y-4">
           <SpeakBox
             value={spokenText}
             onChange={setSpokenText}
@@ -477,20 +550,22 @@ export default function SpeakPage() {
             highlightFactIds={highlight}
           />
 
-          <KnowledgeMatrix
-            facts={result.facts}
-            contacts={result.cards.map((c) => c.contact)}
-            cards={result.cards}
-            activeContactIds={activeRecipients}
-            onToggleContact={(id) => {
-              setActiveRecipients((prev) =>
-                prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-              );
-            }}
-            onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
-          />
+          <div id="knowledge-matrix-section">
+            <KnowledgeMatrix
+              facts={result.facts}
+              contacts={result.cards.map((c) => c.contact)}
+              cards={result.cards}
+              activeContactIds={activeRecipients}
+              onToggleContact={(id) => {
+                setActiveRecipients((prev) =>
+                  prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+                );
+              }}
+              onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
+            />
+          </div>
 
-          <section className="flex flex-wrap items-center gap-2 text-sm">
+          <section id="trail-badge-section" className="flex flex-wrap items-center gap-2 text-sm">
             <Badge tone={result.trailVerdict.ok ? "verified" : "blocked"}>
               Trust trail {result.trailVerdict.ok ? "intact" : "broken"} ·{" "}
               {result.trailVerdict.length} entries
@@ -552,7 +627,7 @@ export default function SpeakPage() {
             </div>
           )}
 
-          <section className="space-y-3">
+          <section id="drafts-section" className="space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <h2 className="text-lg font-semibold">
                 {result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length}{" "}
@@ -603,15 +678,19 @@ export default function SpeakPage() {
               })}
           </section>
 
-          <PrivacyPanel
-            facts={result.facts}
-            contacts={result.cards.map((c) => c.contact)}
-          />
+          <div id="privacy-shield-section">
+            <PrivacyPanel
+              facts={result.facts}
+              contacts={result.cards.map((c) => c.contact)}
+            />
+          </div>
 
-          <TrustTrailViewer
-            entries={result.trail}
-            updateId={result.updateId}
-          />
+          <div id="trail-section">
+            <TrustTrailViewer
+              entries={result.trail}
+              updateId={result.updateId}
+            />
+          </div>
 
           {showQueue && result && (
             <SendGuidedQueue
@@ -629,6 +708,19 @@ export default function SpeakPage() {
         onClose={() => setCommandBarOpen(false)}
         onExecute={handleExecuteCommand}
       />
+
+      <GuidedTour
+        isOpen={tourOpen}
+        onClose={() => setTourOpen(false)}
+      />
     </div>
+  );
+}
+
+export default function SpeakPage() {
+  return (
+    <Suspense fallback={<div className="p-8 text-sm text-[var(--color-ink-soft)]">Loading SayOnce Speak…</div>}>
+      <SpeakContent />
+    </Suspense>
   );
 }

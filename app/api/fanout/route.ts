@@ -20,6 +20,7 @@ import { REAL_DATASET } from "@/lib/db";
 import { detectContradictions, type ContradictionAlert } from "@/lib/consistency";
 import { composeOne } from "@/lib/ai/compose";
 import { getCachedDemoResult } from "@/lib/demo-cache";
+import { checkDemoAiAllowance, recordDemoAiUsage } from "@/lib/demo-session";
 
 /**
  * Fan out: one spoken update -> one checked draft per person.
@@ -136,6 +137,24 @@ export async function POST(request: Request) {
       trailVerdict: verifyChain(freshTrail),
       cached: true,
     });
+  }
+
+  const isDemo = body.contactSet !== "freelance";
+  let demoSessionId: string | undefined;
+
+  if (isDemo) {
+    const cookieHeader = request.headers.get("cookie") ?? "";
+    const match = cookieHeader.match(/sayonce_demo_token=([^;]+)/);
+    const sessionToken = request.headers.get("x-demo-session-token") || (match ? match[1] : null);
+
+    const allowance = checkDemoAiAllowance(sessionToken);
+    if (!allowance.allowed) {
+      return NextResponse.json(
+        { error: allowance.message, isCapped: true },
+        { status: allowance.status },
+      );
+    }
+    demoSessionId = allowance.sessionId;
   }
 
   let contacts: Contact[];
@@ -285,6 +304,9 @@ export async function POST(request: Request) {
 
   const includedAssignments = assignments.filter((a) => a.isIncluded);
   const composed = await composeAll(includedAssignments);
+  if (isDemo && demoSessionId) {
+    recordDemoAiUsage(demoSessionId);
+  }
   note({
     actor: "ai",
     type: "composed",
@@ -430,7 +452,9 @@ export async function POST(request: Request) {
   try {
     await saveFanoutRecord({
       updateId,
-      dataset: body.contactSet === "freelance" ? REAL_DATASET : body.contactSet,
+      dataset: isDemo
+        ? (demoSessionId ? `demo_${demoSessionId}` : body.contactSet)
+        : REAL_DATASET,
       spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
       timeZone: body.timeZone,
       project: body.project,
