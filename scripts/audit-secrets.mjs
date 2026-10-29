@@ -23,7 +23,7 @@ const SKIP_DIR_NAMES = new Set(["node_modules", ".git", "cache", "types"]);
 
 /** Demo numbers and addresses are deliberately fake and are allowed through. */
 const ALLOWED = [
-  /\+91900000000\d/,
+  /\+9190000000\d{1,2}/,
   /\+52550000000\d/,
   /\+551190000000\d/,
   /\+63900000000\d/,

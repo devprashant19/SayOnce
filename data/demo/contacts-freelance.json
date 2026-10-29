@@ -1,0 +1,67 @@
+[
+  {
+    "id": "f_client",
+    "name": "Meera Raghavan",
+    "role": "Client product lead",
+    "relationship": "the client who signs off my invoices",
+    "language": "English",
+    "channel": "email",
+    "phone": null,
+    "email": "meera.demo@sayonce.example",
+    "formality": "formal",
+    "caresAbout": "Dates she can commit to her own stakeholders, scope changes, and anything that affects the launch. Does not want to hear about tooling or internal blame.",
+    "neverTell": ["which subcontractor caused a delay", "what I pay other people", "that I am working on other projects this week"]
+  },
+  {
+    "id": "f_designer",
+    "name": "Kabir Sethi",
+    "role": "UI designer",
+    "relationship": "designer on this project, works freelance like me",
+    "language": "Hinglish, Roman script",
+    "channel": "whatsapp",
+    "phone": "+919000000011",
+    "email": null,
+    "formality": "casual",
+    "caresAbout": "Which screens changed, what he has to redraw, and by when. Three lines maximum.",
+    "neverTell": ["client budget", "what the backend contractor is paid"]
+  },
+  {
+    "id": "f_backend",
+    "name": "Devendra Pawar",
+    "role": "Backend contractor",
+    "relationship": "builds the API for me, prefers Hindi",
+    "language": "Hindi, Devanagari",
+    "channel": "whatsapp",
+    "phone": "+919000000012",
+    "email": null,
+    "formality": "neutral",
+    "caresAbout": "Endpoint changes, payload shape, deploy windows and anything that blocks him.",
+    "neverTell": ["client budget", "design opinions that are not decisions"]
+  },
+  {
+    "id": "f_qa",
+    "name": "Anjali Menon",
+    "role": "QA tester",
+    "relationship": "tests each build before I hand it over",
+    "language": "English",
+    "channel": "whatsapp",
+    "phone": "+919000000013",
+    "email": null,
+    "formality": "neutral",
+    "caresAbout": "What is ready to test, what is knowingly broken, and the build number. Hates being asked to test something half-done.",
+    "neverTell": ["client budget"]
+  },
+  {
+    "id": "f_agency",
+    "name": "Rohan Bhatt",
+    "role": "Agency project manager",
+    "relationship": "subcontracts work to me and bills the client separately",
+    "language": "English",
+    "channel": "email",
+    "phone": null,
+    "email": "rohan.demo@sayonce.example",
+    "formality": "formal",
+    "caresAbout": "Whether I will hit the milestone date, my invoice timing, and risks he has to flag upward.",
+    "neverTell": ["that I talk to the client directly", "my rate with other agencies"]
+  }
+]

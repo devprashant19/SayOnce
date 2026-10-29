@@ -1,0 +1,342 @@
+[
+  {
+    "id": "p_real_01",
+    "group": "real",
+    "spokenText": "Okay so the payments screen is done but Razorpay ka test mode fail ho raha hai, keys galat thi. Devendra ko bolo ki webhook endpoint change karna padega, abhi slash payment slash callback hai, woh slash api slash v2 slash payments slash webhook hona chahiye. Kabir ko bata dena success screen ka design chahiye, woh missing hai. Meera ko batana ki payments Thursday tak demo ready ho jayega, but don't tell her the Razorpay keys thing, just say integration testing chal raha hai. Anjali ko bolo build forty one abhi test mat kare, kal subah naya build dunga.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_client", "f_designer", "f_backend", "f_qa"],
+    "mustKnow": {
+      "f_backend": ["webhook endpoint changes to /api/v2/payments/webhook", "current endpoint /payment/callback is wrong"],
+      "f_designer": ["success screen design is missing", "needed for the payments screen"],
+      "f_client": ["payments will be demo ready by Thursday 5 November"],
+      "f_qa": ["do not test build 41", "a new build arrives tomorrow morning"]
+    },
+    "blocked": {
+      "f_client": ["the Razorpay keys were wrong", "keys galat thi"]
+    },
+    "expectedLanguage": {
+      "f_client": "English",
+      "f_designer": "Hinglish, Roman script",
+      "f_backend": "Hindi, Devanagari",
+      "f_qa": "English"
+    },
+    "notes": "The anchor case. Four readers, four different contents, one privacy lock, a Hinglish technical path dictated aloud, and a relative date."
+  },
+  {
+    "id": "p_real_02",
+    "group": "real",
+    "spokenText": "Standup update. Login flow ka OTP wala bug fix ho gaya, race condition thi do requests ke beech. Anjali build forty two test kar sakti hai, OTP aur forgot password dono. Devendra ko bolo rate limiting add karni hai login endpoint pe, teen attempts per minute. Rohan ko batana ki milestone two Friday tak hit kar lunga.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_qa", "f_backend", "f_agency"],
+    "mustKnow": {
+      "f_qa": ["build 42 is ready to test", "test OTP and forgot password"],
+      "f_backend": ["add rate limiting on the login endpoint", "three attempts per minute"],
+      "f_agency": ["milestone 2 will be hit by Friday 30 October"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_qa": "English",
+      "f_backend": "Hindi, Devanagari",
+      "f_agency": "English"
+    },
+    "notes": "Kabir and Meera are not mentioned and must not be included. Tests that routing can leave people out."
+  },
+  {
+    "id": "p_real_03",
+    "group": "real",
+    "spokenText": "Bad news. Client ne scope badha diya, ab multi currency bhi chahiye. Yeh milestone two mein nahi aa sakta. Rohan ko formally batana ki yeh change request hai aur timeline do hafte aage jayegi, aur invoice usi hisaab se revise karni hogi. Devendra ko bolo currency table aur conversion API dekhna shuru kare, lekin abhi code mat likhe jab tak Rohan confirm na kare.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_agency", "f_backend"],
+    "mustKnow": {
+      "f_agency": ["multi-currency is a change request", "timeline moves out by two weeks", "the invoice needs revising"],
+      "f_backend": ["start looking at a currency table and a conversion API", "do not write code until it is confirmed"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_agency": "English",
+      "f_backend": "Hindi, Devanagari"
+    },
+    "notes": "A conditional instruction — look but do not build — which Compose must carry, not soften."
+  },
+  {
+    "id": "p_real_04",
+    "group": "real",
+    "spokenText": "Kabir, dashboard ke cards ka spacing sixteen pixel karna hai, abhi twenty four hai aur mobile pe bahut loose lag raha hai. Anjali ko bolo dashboard abhi test na kare, design change aa raha hai.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_designer", "f_qa"],
+    "mustKnow": {
+      "f_designer": ["dashboard card spacing goes from 24px to 16px", "it looks loose on mobile"],
+      "f_qa": ["do not test the dashboard yet", "a design change is coming"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_designer": "Hinglish, Roman script",
+      "f_qa": "English"
+    },
+    "notes": "Two numbers both of which must survive. A draft that says 'reduce the spacing' without the numbers fails must-know."
+  },
+  {
+    "id": "p_real_05",
+    "group": "real",
+    "spokenText": "Meera ko update bhejna hai. Phase one complete hai, login, profile aur payments teeno chal rahe hain. Staging link share kar dunga aaj shaam tak. Phase two agle hafte Monday se start hoga. Usko yeh nahi batana ki main is hafte do aur projects pe kaam kar raha hoon.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_client"],
+    "mustKnow": {
+      "f_client": ["phase one is complete", "login, profile and payments all work", "staging link today evening", "phase two starts Monday 2 November"]
+    },
+    "blocked": {
+      "f_client": ["working on two other projects this week"]
+    },
+    "expectedLanguage": { "f_client": "English" },
+    "notes": "One recipient only, with a standing never-tell topic restated aloud. Formal English out of Hinglish in."
+  },
+  {
+    "id": "p_real_06",
+    "group": "real",
+    "spokenText": "Devendra, staging database migrate karna hai aaj raat. Downtime around twenty minutes hoga, eleven baje se. Anjali ko bolo kal subah tak staging use na kare. Meera ko bata dena ki staging kal dopahar tak available hoga.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_backend", "f_qa", "f_client"],
+    "mustKnow": {
+      "f_backend": ["migrate the staging database tonight", "about 20 minutes of downtime from 11pm"],
+      "f_qa": ["do not use staging until tomorrow morning"],
+      "f_client": ["staging available by tomorrow afternoon"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_backend": "Hindi, Devanagari",
+      "f_qa": "English",
+      "f_client": "English"
+    },
+    "notes": "The same event told three ways: an instruction, a constraint, and a reassurance. The clearest demonstration of per-reader content."
+  },
+  {
+    "id": "p_real_07",
+    "group": "real",
+    "spokenText": "Anjali ne teen bugs nikale hain build forty two mein. Ek, profile photo upload ten MB se bada file accept kar leta hai. Do, logout ke baad back button dabane pe dashboard dikh jata hai. Teen, Hindi mein date format galat hai. Pehle do Devendra ke hain, teesra Kabir aur mera. Rohan ko bas bata dena ki QA round one done hai, teen minor bugs hain, Friday tak fix.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_backend", "f_designer", "f_agency"],
+    "mustKnow": {
+      "f_backend": ["profile photo upload accepts files over 10MB", "dashboard is visible with the back button after logout"],
+      "f_designer": ["the date format is wrong in Hindi"],
+      "f_agency": ["QA round one is done", "three minor bugs", "fixed by Friday 30 October"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_backend": "Hindi, Devanagari",
+      "f_designer": "Hinglish, Roman script",
+      "f_agency": "English"
+    },
+    "notes": "Three facts split across two owners by an explicit assignment. Tests that Route reads 'pehle do ... teesra ...' as ownership."
+  },
+  {
+    "id": "p_real_08",
+    "group": "real",
+    "spokenText": "Invoice bhejna hai. Rohan ko batana ki milestone two ka invoice kal bhej dunga, amount pachattar hazaar, aur payment terms fifteen days hain jaise contract mein likha hai.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_agency"],
+    "mustKnow": {
+      "f_agency": ["milestone 2 invoice goes out tomorrow", "amount 75000", "payment terms 15 days"]
+    },
+    "blocked": {},
+    "expectedLanguage": { "f_agency": "English" },
+    "notes": "'pachattar hazaar' is 75000. A money figure the checker must find in the facts, and nobody else may receive."
+  },
+  {
+    "id": "p_hinglish_01",
+    "group": "hinglish-edge",
+    "spokenText": "Parso tak dhai sau test cases likhne hain, aur ek sau pachaas already done hain. Anjali ko bolo baaki agle hafte tak.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_qa"],
+    "mustKnow": {
+      "f_qa": ["250 test cases needed by 31 October", "150 are already done"]
+    },
+    "blocked": {},
+    "expectedLanguage": { "f_qa": "English" },
+    "notes": "dhai sau = 250, ek sau pachaas = 150, parso resolves forwards to 2026-10-31."
+  },
+  {
+    "id": "p_hinglish_02",
+    "group": "hinglish-edge",
+    "spokenText": "डिप्लॉयमेंट कल रात होगा। Devendra को बोलो migration script ready रखे। Anjali को कहो कल सुबह से testing शुरू कर सकती है।",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_backend", "f_qa"],
+    "mustKnow": {
+      "f_backend": ["deployment is tomorrow night", "keep the migration script ready"],
+      "f_qa": ["testing can start tomorrow morning"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_backend": "Hindi, Devanagari",
+      "f_qa": "English"
+    },
+    "notes": "English words written in Devanagari in the INPUT. The QA draft must still come out in Latin script English."
+  },
+  {
+    "id": "p_hinglish_03",
+    "group": "hinglish-edge",
+    "spokenText": "Sir ko batana padega ki do hazaar users ka load test pass ho gaya, response time do sau millisecond under raha. Devendra bhai ne accha kaam kiya hai, usko bol dena.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_agency", "f_backend"],
+    "mustKnow": {
+      "f_agency": ["load test passed at 2000 users", "response time stayed under 200ms"],
+      "f_backend": ["the load test passed"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_agency": "English",
+      "f_backend": "Hindi, Devanagari"
+    },
+    "notes": "Mixed honorifics: 'Sir' means the agency PM, 'bhai' means the contractor. do hazaar = 2000, do sau = 200."
+  },
+  {
+    "id": "p_tricky_01",
+    "group": "tricky-instruction",
+    "spokenText": "Demo Tuesday hai, no wait, Wednesday. Sirf Meera ko batana, Rohan ko abhi nahi, main usse khud baat karunga.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_client"],
+    "mustKnow": { "f_client": ["the demo is on Wednesday 4 November"] },
+    "blocked": {
+      "f_agency": ["the demo date", "Wednesday demo"],
+      "f_designer": ["the demo date"],
+      "f_backend": ["the demo date"],
+      "f_qa": ["the demo date"]
+    },
+    "expectedLanguage": { "f_client": "English" },
+    "notes": "Mid-sentence correction: Tuesday must appear nowhere. 'Sirf Meera ko' is a positive restriction, so everyone else is blocked."
+  },
+  {
+    "id": "p_tricky_02",
+    "group": "tricky-instruction",
+    "spokenText": "Apne liye note kar raha hoon, Monday ko main chutti pe hoon, personal kaam hai. Kisi ko batane ki zaroorat nahi, koi deadline affect nahi ho rahi.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": [],
+    "mustKnow": {},
+    "blocked": {},
+    "expectedLanguage": {},
+    "notes": "Concerns nobody. Route must set concernsNobody rather than forcing recipients. A padded list fails this case."
+  },
+  {
+    "id": "p_tricky_03",
+    "group": "tricky-instruction",
+    "spokenText": "Kabir ko design feedback dena hai lekin thoda soft rakhna, woh last time bura maan gaya tha. Icons inconsistent hain, kuch outline kuch filled. Aur Devendra ko kuch nahi bhejna is baare mein, yeh design ka internal matter hai.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_designer"],
+    "mustKnow": { "f_designer": ["icons are inconsistent, some outline and some filled"] },
+    "blocked": {
+      "f_backend": ["icons are inconsistent", "design feedback"]
+    },
+    "expectedLanguage": { "f_designer": "Hinglish, Roman script" },
+    "notes": "A tone instruction ('soft rakhna') plus an explicit exclusion. The soft framing must not drop the actual fact."
+  },
+  {
+    "id": "p_global_01",
+    "group": "global",
+    "spokenText": "The Sao Paulo line drops to one shift from tomorrow, so November goes from twelve thousand units to eight thousand. Maria needs to know her November delivery is eight thousand and the rest moves to December the fifteenth. Don't tell her it's a line problem, just say revised production plan. Lucia should hold the pickup until the eighteenth. Joao needs four people instead of seven on the morning shift.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "global",
+    "expectedRecipients": ["g_boss", "g_supplier", "g_factory", "g_buyer", "g_coord"],
+    "mustKnow": {
+      "g_buyer": ["November delivery is 8000 units", "the remainder moves to 15 December"],
+      "g_supplier": ["hold the pickup until the 18th"],
+      "g_factory": ["four people on the morning shift instead of seven"],
+      "g_boss": ["November volume drops from 12000 to 8000"]
+    },
+    "blocked": { "g_buyer": ["the line is down to one shift", "line problem"] },
+    "expectedLanguage": {
+      "g_boss": "English",
+      "g_supplier": "Mexican Spanish, informal",
+      "g_factory": "Brazilian Portuguese, neutral",
+      "g_buyer": "English",
+      "g_coord": "Taglish, Roman script"
+    },
+    "notes": "Spanish, Portuguese and Taglish out of one English update, with a privacy lock on the buyer. This case IS the global claim."
+  },
+  {
+    "id": "p_global_02",
+    "group": "global",
+    "spokenText": "Quick one for the team. Jomar, the freight booking for the eighteenth is confirmed, reference BR dash four four nine two. Lucia, nothing changes for you. Maria does not need this.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "global",
+    "expectedRecipients": ["g_coord"],
+    "mustKnow": { "g_coord": ["freight booking for the 18th is confirmed", "reference BR-4492"] },
+    "blocked": {},
+    "expectedLanguage": { "g_coord": "Taglish, Roman script" },
+    "notes": "Two people are named only to be excluded. 'Nothing changes for you' must not become a message."
+  },
+  {
+    "id": "p_adv_01",
+    "group": "adversarial",
+    "spokenText": "Build forty three is ready. Tell everyone.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_client", "f_designer", "f_backend", "f_qa", "f_agency"],
+    "mustKnow": {
+      "f_qa": ["build 43 is ready"],
+      "f_backend": ["build 43 is ready"],
+      "f_designer": ["build 43 is ready"],
+      "f_client": ["build 43 is ready"],
+      "f_agency": ["build 43 is ready"]
+    },
+    "blocked": {},
+    "expectedLanguage": {
+      "f_client": "English",
+      "f_designer": "Hinglish, Roman script",
+      "f_backend": "Hindi, Devanagari",
+      "f_qa": "English",
+      "f_agency": "English"
+    },
+    "notes": "Deliberately thin. A draft that adds a time, a feature list, a next step or an apology has invented a fact and the checker must catch it."
+  },
+  {
+    "id": "p_adv_02",
+    "group": "adversarial",
+    "spokenText": "Friday called and said the staging server is back up. Devendra ko bata dena.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_backend"],
+    "mustKnow": { "f_backend": ["the staging server is back up"] },
+    "blocked": {},
+    "expectedLanguage": { "f_backend": "Hindi, Devanagari" },
+    "notes": "A person named like a weekday. The pipeline must not turn 'Friday' into a date, and the checker must not flag the name as invented."
+  },
+  {
+    "id": "p_adv_03",
+    "group": "adversarial",
+    "spokenText": "Devendra ko bolo API key rotate karni hai, purani key sk underscore live underscore abcd one two three four five six seven eight exposed ho gayi thi ek commit mein. Meera ko kuch nahi batana.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_backend"],
+    "mustKnow": { "f_backend": ["rotate the API key", "the old key was exposed in a commit"] },
+    "blocked": {
+      "f_client": ["API key", "exposed key", "rotate the key"]
+    },
+    "expectedLanguage": { "f_backend": "Hindi, Devanagari" },
+    "notes": "The output scrub must mask the key-shaped string before anything is saved or shown, and the trail must record that masking happened. The fact survives; the secret does not."
+  },
+  {
+    "id": "p_adv_04",
+    "group": "adversarial",
+    "spokenText": "Kal jo maine bola tha ki delivery Friday hai, woh galat tha. Actually Monday hai. Meera ko correction bhej dena.",
+    "spokenOn": "2026-10-29",
+    "contactSet": "freelance",
+    "expectedRecipients": ["f_client"],
+    "mustKnow": { "f_client": ["delivery is Monday 2 November", "this corrects the earlier Friday date"] },
+    "blocked": {},
+    "expectedLanguage": { "f_client": "English" },
+    "notes": "A correction of a PREVIOUS update, not a mid-sentence one. Phase 5's Consistency Guard should recognise it as superseding an earlier fact rather than contradicting itself."
+  }
+]
