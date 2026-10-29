@@ -2,8 +2,9 @@
 
 import { useState } from "react";
 import { Badge } from "./Badge";
+import { dominantScript } from "@/lib/script";
 import type { CheckOutcome } from "@/lib/checker";
-import type { Contact, Draft } from "@/lib/types";
+import type { Contact, Draft, Fact } from "@/lib/types";
 
 /**
  * One card per reader.
@@ -27,6 +28,8 @@ export interface DraftCardProps {
   sent?: boolean;
   sentAt?: string | null;
   overridden?: boolean;
+  facts?: Fact[];
+  project?: string;
   onToggleSent?: (messageId: string, nextSent: boolean) => void | Promise<void>;
   onOverride?: (messageId: string) => void | Promise<void>;
   /** Highlights the spoken words a sentence came from. */
@@ -50,6 +53,37 @@ export function DraftCard(props: DraftCardProps) {
     explanation: string;
   } | null>(null);
   const [feedbackStatus, setFeedbackStatus] = useState<string | null>(null);
+  const [switchingScript, setSwitchingScript] = useState(false);
+
+  const isHindiEligible = /hindi|hinglish|devanagari/i.test(contact.language);
+  const currentScript = dominantScript(body);
+  const targetScript = currentScript === "devanagari" ? "latin" : "devanagari";
+
+  async function handleSwitchScript() {
+    if (!draft || switchingScript) return;
+    setSwitchingScript(true);
+    try {
+      const res = await fetch("/api/drafts/switch-script", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          contact,
+          facts: props.facts ?? [],
+          draft,
+          targetScript,
+          project: props.project ?? "",
+        }),
+      });
+      if (res.ok) {
+        const data = await res.json();
+        setBody(data.draft.body);
+      }
+    } catch (err) {
+      console.warn("Script switch failed:", err);
+    } finally {
+      setSwitchingScript(false);
+    }
+  }
 
   const failed = check !== null && !check.ok;
   const sendable = draft !== null && (!failed || isOverridden) && props.sendHref !== null;
@@ -256,6 +290,23 @@ export function DraftCard(props: DraftCardProps) {
             value={body}
             onChange={(event) => setBody(event.target.value)}
             rows={Math.min(14, Math.max(4, body.split("\n").length + 2))}
+            lang={
+              currentScript === "devanagari"
+                ? "hi"
+                : contact.language.toLowerCase().includes("spanish")
+                  ? "es"
+                  : contact.language.toLowerCase().includes("portuguese")
+                    ? "pt"
+                    : contact.language.toLowerCase().includes("taglish")
+                      ? "tl"
+                      : "en"
+            }
+            style={{
+              fontFamily:
+                currentScript === "devanagari"
+                  ? "'Noto Sans Devanagari', var(--font-sans)"
+                  : undefined,
+            }}
             className="mt-2 w-full resize-y rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-3 text-sm leading-relaxed outline-none"
           />
 
@@ -303,6 +354,21 @@ export function DraftCard(props: DraftCardProps) {
             >
               {copied ? "Copied" : "Copy"}
             </button>
+            {isHindiEligible && (
+              <button
+                type="button"
+                onClick={handleSwitchScript}
+                disabled={switchingScript}
+                title={`Switch between Devanagari and Roman script`}
+                className="min-h-11 rounded border border-[var(--color-rule)] px-3 text-xs font-medium hover:bg-[var(--color-paper-sunk)] text-[var(--color-ink-soft)]"
+              >
+                {switchingScript
+                  ? "Switching…"
+                  : currentScript === "devanagari"
+                    ? "A Switch to Roman"
+                    : "अ Switch to Devanagari"}
+              </button>
+            )}
             {sendable ? (
               <a
                 href={props.sendHref ?? "#"}

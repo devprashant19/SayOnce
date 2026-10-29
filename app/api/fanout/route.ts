@@ -19,6 +19,7 @@ import {
 import { REAL_DATASET } from "@/lib/db";
 import { detectContradictions, type ContradictionAlert } from "@/lib/consistency";
 import { composeOne } from "@/lib/ai/compose";
+import { getCachedDemoResult } from "@/lib/demo-cache";
 
 /**
  * Fan out: one spoken update -> one checked draft per person.
@@ -69,6 +70,71 @@ export async function POST(request: Request) {
       { error: "Send a spoken update of at least one character." },
       { status: 400 },
     );
+  }
+
+  // Phase 6: Instant demo mode cache lookup
+  // If text matches a committed sample update, serve pre-verified pipeline results instantly (<50ms)
+  const cachedDemo = getCachedDemoResult(body.spokenText);
+  if (cachedDemo) {
+    const updateId = crypto.randomUUID();
+    const at = new Date().toISOString();
+    const trailInputs: TrailEntryInput[] = (cachedDemo.trail ?? []).map((t, idx) => ({
+      updateId,
+      seq: idx + 1,
+      at,
+      actor: t.actor,
+      type: t.type,
+      payload: t.payload,
+    }));
+    const freshTrail = buildChain(trailInputs);
+    const freshCards = cachedDemo.cards.map((c) => ({
+      ...c,
+      messageId: crypto.randomUUID(),
+      sent: false,
+      sentAt: null,
+      overridden: false,
+    }));
+
+    try {
+      await saveFanoutRecord({
+        updateId,
+        dataset: body.contactSet === "freelance" ? REAL_DATASET : body.contactSet,
+        spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
+        timeZone: body.timeZone,
+        project: body.project || cachedDemo.project || "",
+        rawText: cachedDemo.spokenText,
+        summary: cachedDemo.summary,
+        decisions: cachedDemo.decisions,
+        elapsedSeconds: body.elapsedSeconds ?? 1,
+        facts: cachedDemo.facts,
+        messages: freshCards
+          .filter((c) => c.draft !== null)
+          .map((c) => ({
+            id: c.messageId,
+            contactId: c.contact.id,
+            channel: c.draft!.channel,
+            subject: c.draft!.subject,
+            body: c.draft!.body,
+            usedFactIds: c.draft!.usedFactIds,
+            sentences: c.draft!.sentences,
+            checkOk: c.check?.ok ?? null,
+            checkFailures: c.check?.failures ?? [],
+          })),
+        trail: freshTrail,
+      });
+    } catch (err) {
+      console.warn("Failed to persist cached demo record:", err);
+    }
+
+    return NextResponse.json({
+      ...cachedDemo,
+      updateId,
+      at,
+      cards: freshCards,
+      trail: freshTrail,
+      trailVerdict: verifyChain(freshTrail),
+      cached: true,
+    });
   }
 
   let contacts: Contact[];

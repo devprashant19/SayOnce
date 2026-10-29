@@ -125,3 +125,4 @@ if (!v5.ok && v5.brokenAtSeq === 3) {
 
 console.log("\nVerdict: " + (allPassed ? "ALL 5 TAMPER TESTS PASSED" : "FAILED"));
 process.exit(allPassed ? 0 : 1);
+
