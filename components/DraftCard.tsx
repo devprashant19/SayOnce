@@ -15,6 +15,8 @@ import type { Contact, Draft } from "@/lib/types";
  */
 
 export interface DraftCardProps {
+  messageId?: string;
+  updateId?: string;
   contact: Contact;
   draft: Draft | null;
   check: CheckOutcome | null;
@@ -22,6 +24,9 @@ export interface DraftCardProps {
   sendHref: string | null;
   sendLabel: string;
   sendBlockedReason: string | null;
+  sent?: boolean;
+  sentAt?: string | null;
+  onToggleSent?: (messageId: string, nextSent: boolean) => void | Promise<void>;
   /** Highlights the spoken words a sentence came from. */
   onHoverSentence?: (factIds: string[] | null) => void;
   index: number;
@@ -31,6 +36,8 @@ export function DraftCard(props: DraftCardProps) {
   const { contact, draft, check, error } = props;
   const [copied, setCopied] = useState(false);
   const [body, setBody] = useState(draft?.body ?? "");
+  const [isSent, setIsSent] = useState(props.sent ?? false);
+  const [sentAt, setSentAt] = useState(props.sentAt ?? null);
 
   const failed = check !== null && !check.ok;
   const sendable = draft !== null && !failed && props.sendHref !== null;
@@ -41,6 +48,34 @@ export function DraftCard(props: DraftCardProps) {
     );
     setCopied(true);
     window.setTimeout(() => setCopied(false), 1800);
+  }
+
+  async function handleSendClick() {
+    if (!isSent && props.messageId && props.onToggleSent) {
+      setIsSent(true);
+      const nowIso = new Date().toISOString();
+      setSentAt(nowIso);
+      await props.onToggleSent(props.messageId, true);
+    }
+  }
+
+  async function toggleSentManual() {
+    if (!props.messageId || !props.onToggleSent) return;
+    const nextSent = !isSent;
+    setIsSent(nextSent);
+    const nextSentAt = nextSent ? new Date().toISOString() : null;
+    setSentAt(nextSentAt);
+    await props.onToggleSent(props.messageId, nextSent);
+  }
+
+  function formatSentTime(iso: string | null): string {
+    if (!iso) return "";
+    try {
+      const d = new Date(iso);
+      return d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+    } catch {
+      return "";
+    }
   }
 
   return (
@@ -56,6 +91,11 @@ export function DraftCard(props: DraftCardProps) {
           <Badge tone="neutral">
             {contact.channel === "whatsapp" ? "WhatsApp" : "Email"}
           </Badge>
+          {isSent && (
+            <Badge tone="verified">
+              ✓ Sent {formatSentTime(sentAt)}
+            </Badge>
+          )}
           {check?.ok && (
             <Badge
               tone="verified"
@@ -153,9 +193,14 @@ export function DraftCard(props: DraftCardProps) {
                 href={props.sendHref ?? "#"}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="min-h-11 content-center rounded bg-[var(--color-accent)] px-3 text-sm font-medium text-white"
+                onClick={handleSendClick}
+                className={`min-h-11 content-center rounded px-3 text-sm font-medium ${
+                  isSent
+                    ? "border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] text-[var(--color-ink)] hover:bg-[var(--color-paper)]"
+                    : "bg-[var(--color-accent)] text-white hover:opacity-90"
+                }`}
               >
-                {props.sendLabel}
+                {isSent ? `Re-send (${props.sendLabel})` : props.sendLabel}
               </a>
             ) : (
               <button
@@ -169,6 +214,20 @@ export function DraftCard(props: DraftCardProps) {
               >
                 {props.sendLabel}
               </button>
+            )}
+            {props.messageId && props.onToggleSent && (
+              <button
+                type="button"
+                onClick={toggleSentManual}
+                className="min-h-11 rounded border border-[var(--color-rule)] px-3 text-xs font-medium text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] hover:text-[var(--color-ink)]"
+              >
+                {isSent ? "Mark unsent" : "Mark as sent"}
+              </button>
+            )}
+            {isSent && (
+              <span className="text-xs font-medium text-[var(--color-verified)]">
+                ✓ Sent {formatSentTime(sentAt)}
+              </span>
             )}
             {props.sendBlockedReason !== null && (
               <span className="text-xs text-[var(--color-ink-soft)]">
