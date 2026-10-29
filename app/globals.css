@@ -26,8 +26,8 @@
   --color-locked: #64748b;
 
   --font-sans: var(--font-inter), system-ui, -apple-system, "Noto Sans Devanagari", sans-serif;
-  --font-serif: var(--font-serif), Georgia, serif;
-  --font-mono: var(--font-mono), "JetBrains Mono", "Noto Sans Devanagari", monospace;
+  --font-serif: var(--font-newsreader), Georgia, serif;
+  --font-mono: var(--font-jetbrains), "JetBrains Mono", "Noto Sans Devanagari", monospace;
 
   --radius-card: 12px;
   --radius-control: 8px;
@@ -161,6 +161,26 @@ html.theme-transition *::after {
 }
 .hover-card-lift:active {
   transform: translateY(0) scale(0.99);
+}
+
+/*
+ * The signature motion: drafts fanning out after Fan out. DraftCard puts
+ * .fan-in on every card, so this is load-bearing — the R0 token rewrite
+ * dropped the keyframes and the cards began appearing with no entrance at
+ * all. The prefers-reduced-motion block at the end of this file covers it.
+ */
+@keyframes fan-in {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem) scale(0.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+.fan-in {
+  animation: fan-in 0.32s var(--ease) both;
 }
 
 @keyframes fade-in {

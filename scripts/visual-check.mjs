@@ -48,16 +48,27 @@ const ALL_ROUTES = ["/", "/app", "/people", "/log", "/lab", "/proof", "/demo"];
 const ALL_WIDTHS = [375, 768, 1024, 1440];
 
 /**
- * Git Bash on Windows rewrites a bare "/" argument into the Git install path
- * ("C:/Program Files/Git/"), which then produces a nonsense URL. Normalise it
- * back, and accept "app" as well as "/app" while we are here.
+ * Git Bash on Windows prefixes a leading-slash argument with the Git install
+ * path, so "/" arrives as "C:/Program Files/Git/" and "/demo" arrives as
+ * "C:/Program Files/Git/demo". Strip the prefix and keep whatever followed it —
+ * collapsing the whole thing to "/" would silently audit the wrong page and
+ * report it clean, which is worse than failing. Accepts "app" as well as "/app".
  */
 function normalizeRoute(raw) {
-  const value = String(raw ?? "").trim();
+  let value = String(raw ?? "").trim().split("\\").join("/");
   if (!value) return "/";
-  if (/^[A-Za-z]:[\\/]/.test(value) || value.includes("Program Files")) return "/";
-  const withSlash = value.startsWith("/") ? value : `/${value}`;
-  return withSlash.split("\\").join("/");
+  // "C:/Program Files/Git/demo" -> "demo";  "C:/Program Files/Git/" -> ""
+  const gitPrefix = value.match(/^[A-Za-z]:\/.*?\/Git\/(.*)$/);
+  if (gitPrefix) value = gitPrefix[1];
+  else if (/^[A-Za-z]:\//.test(value)) {
+    // Some other absolute path reached us — a route cannot be one.
+    throw new Error(
+      `--route got an absolute path (${raw}). In Git Bash, pass it as "--route app" ` +
+        `or escape it as "--route //demo".`,
+    );
+  }
+  value = value.replace(/^\/+/, "");
+  return value ? `/${value}` : "/";
 }
 
 const routes = flag("--route")
