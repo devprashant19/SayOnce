@@ -1,0 +1,313 @@
+#!/usr/bin/env node
+/**
+ * Screenshot every route and fail on layout defects.
+ *
+ *   npm run visual            # all routes, 4 widths, both themes
+ *   npm run visual -- --route /app --width 375
+ *   npm run visual -- --open  # also write an HTML contact sheet
+ *
+ * Why this exists: an agent that never looks at its output ships overlapping
+ * text. Screenshots alone do not help either, because nobody compares 56 PNGs
+ * by eye. So this does both — it captures the images AND runs five checks the
+ * browser can answer definitively:
+ *
+ *   1. Horizontal overflow     the page scrolls sideways
+ *   2. Element overflow        a box sticks out past the viewport
+ *   3. Text overlap            two text boxes intersect
+ *   4. Clipped text            content is cut off by its own container
+ *   5. Touch target size       an interactive element under 44px
+ *
+ * Needs the app running. Start it first:  npm run build && npm run start
+ */
+
+import { mkdirSync, writeFileSync, existsSync } from "node:fs";
+import { join } from "node:path";
+
+let chromium;
+try {
+  ({ chromium } = await import("playwright"));
+} catch {
+  console.error(
+    "Playwright is not installed.\n\n" +
+      "  npm i -D playwright\n" +
+      "  npx playwright install chromium\n",
+  );
+  process.exit(1);
+}
+
+const BASE = process.env.SAYONCE_BASE_URL ?? "http://localhost:3000";
+const OUT = join(process.cwd(), ".visual");
+
+const args = process.argv.slice(2);
+const flag = (name) => {
+  const i = args.indexOf(name);
+  return i >= 0 ? args[i + 1] : null;
+};
+
+const ALL_ROUTES = ["/", "/app", "/people", "/log", "/lab", "/proof", "/demo"];
+const ALL_WIDTHS = [375, 768, 1024, 1440];
+
+/**
+ * Git Bash on Windows rewrites a bare "/" argument into the Git install path
+ * ("C:/Program Files/Git/"), which then produces a nonsense URL. Normalise it
+ * back, and accept "app" as well as "/app" while we are here.
+ */
+function normalizeRoute(raw) {
+  const value = String(raw ?? "").trim();
+  if (!value) return "/";
+  if (/^[A-Za-z]:[\\/]/.test(value) || value.includes("Program Files")) return "/";
+  const withSlash = value.startsWith("/") ? value : `/${value}`;
+  return withSlash.split("\\").join("/");
+}
+
+const routes = flag("--route")
+  ? flag("--route").split(",").map(normalizeRoute)
+  : ALL_ROUTES;
+const widths = flag("--width") ? [Number(flag("--width"))] : ALL_WIDTHS;
+const themes = flag("--theme") ? [flag("--theme")] : ["light", "dark"];
+const reducedMotion = args.includes("--reduced-motion");
+
+mkdirSync(OUT, { recursive: true });
+
+/**
+ * Runs inside the page. Everything here is a question the browser can answer
+ * without judgement, which is what makes it a usable gate.
+ */
+const AUDIT = () => {
+  const problems = [];
+  const vw = window.innerWidth;
+
+  // --- 1. the page itself scrolls sideways -------------------------------
+  if (document.documentElement.scrollWidth > vw + 1) {
+    problems.push({
+      kind: "horizontal-overflow",
+      detail: `page scrollWidth ${document.documentElement.scrollWidth} > viewport ${vw}`,
+    });
+  }
+
+  const describe = (el) => {
+    const id = el.id ? `#${el.id}` : "";
+    const cls =
+      typeof el.className === "string" && el.className
+        ? `.${el.className.trim().split(/\s+/).slice(0, 2).join(".")}`
+        : "";
+    const text = (el.textContent ?? "").trim().slice(0, 40);
+    return `${el.tagName.toLowerCase()}${id}${cls}${text ? ` "${text}"` : ""}`;
+  };
+
+  const visible = (el) => {
+    const style = getComputedStyle(el);
+    if (style.display === "none" || style.visibility === "hidden") return false;
+    if (Number(style.opacity) === 0) return false;
+    const r = el.getBoundingClientRect();
+    return r.width > 1 && r.height > 1;
+  };
+
+  const all = [...document.querySelectorAll("body *")].filter(visible);
+
+  // --- 2. a box sticks out past the viewport ------------------------------
+  for (const el of all) {
+    const r = el.getBoundingClientRect();
+    if (getComputedStyle(el).position === "fixed") continue;
+    if (r.right > vw + 2) {
+      problems.push({
+        kind: "element-overflow",
+        detail: `${describe(el)} extends to ${Math.round(r.right)}px (viewport ${vw})`,
+      });
+    }
+    if (r.left < -2) {
+      problems.push({
+        kind: "element-overflow",
+        detail: `${describe(el)} starts at ${Math.round(r.left)}px`,
+      });
+    }
+  }
+
+  // --- 3. two pieces of text overlap -------------------------------------
+  // Only leaf text elements, so a container legitimately wrapping its child
+  // is not reported. Overlap must exceed 35% of the smaller box to count,
+  // which tolerates sub-pixel and intentional tight stacking.
+  const leafText = all.filter((el) => {
+    if (!(el.textContent ?? "").trim()) return false;
+    if (el.children.length > 0) return false;
+    const style = getComputedStyle(el);
+    if (style.position === "absolute" || style.position === "fixed") return false;
+    if (style.pointerEvents === "none") return false;
+    return true;
+  });
+
+  const area = (r) => Math.max(0, r.width) * Math.max(0, r.height);
+  for (let i = 0; i < leafText.length; i += 1) {
+    for (let j = i + 1; j < leafText.length; j += 1) {
+      const a = leafText[i].getBoundingClientRect();
+      const b = leafText[j].getBoundingClientRect();
+      const ox = Math.min(a.right, b.right) - Math.max(a.left, b.left);
+      const oy = Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top);
+      if (ox <= 1 || oy <= 1) continue;
+      const overlap = ox * oy;
+      const smaller = Math.min(area(a), area(b));
+      if (smaller > 0 && overlap / smaller > 0.35) {
+        problems.push({
+          kind: "text-overlap",
+          detail: `${describe(leafText[i])} overlaps ${describe(leafText[j])} by ${Math.round((overlap / smaller) * 100)}%`,
+        });
+      }
+    }
+  }
+
+  // --- 4. text clipped by its own container ------------------------------
+  for (const el of leafText) {
+    const style = getComputedStyle(el);
+    const hidden = style.overflow === "hidden" || style.overflowY === "hidden";
+    const clamped =
+      style.webkitLineClamp && style.webkitLineClamp !== "none";
+    const ellipsis = style.textOverflow === "ellipsis";
+    if (!hidden || clamped || ellipsis) continue;
+    if (el.scrollHeight > el.clientHeight + 2) {
+      problems.push({
+        kind: "clipped-text",
+        detail: `${describe(el)} is cut off (content ${el.scrollHeight}px in ${el.clientHeight}px)`,
+      });
+    }
+  }
+
+  // --- 5. touch targets --------------------------------------------------
+  const tappable = [
+    ...document.querySelectorAll("button, a[href], [role='button'], input, select, textarea"),
+  ].filter(visible);
+  for (const el of tappable) {
+    const r = el.getBoundingClientRect();
+    if (r.height < 44 - 0.5 || r.width < 24) {
+      problems.push({
+        kind: "small-target",
+        detail: `${describe(el)} is ${Math.round(r.width)}×${Math.round(r.height)}px (need 44px tall)`,
+      });
+    }
+  }
+
+  return problems;
+};
+
+const browser = await chromium.launch();
+const findings = [];
+const shots = [];
+
+console.log(`Visual check against ${BASE}`);
+console.log(
+  `${routes.length} route(s) × ${widths.length} width(s) × ${themes.length} theme(s)` +
+    (reducedMotion ? " + reduced motion" : "") +
+    "\n",
+);
+
+for (const theme of themes) {
+  for (const width of widths) {
+    const context = await browser.newContext({
+      viewport: { width, height: 900 },
+      colorScheme: theme,
+      deviceScaleFactor: 1,
+      ...(reducedMotion ? { reducedMotion: "reduce" } : {}),
+    });
+    const page = await context.newPage();
+
+    for (const route of routes) {
+      const label = `${route.replace(/\//g, "_") || "_root"}-${width}-${theme}${reducedMotion ? "-rm" : ""}`;
+      try {
+        const response = await page.goto(`${BASE}${route}`, {
+          waitUntil: "networkidle",
+          timeout: 45_000,
+        });
+        const status = response?.status() ?? 0;
+
+        if (status >= 400) {
+          findings.push({ route, width, theme, problems: [{ kind: "http", detail: `HTTP ${status}` }] });
+          console.log(`  ${label}  HTTP ${status}`);
+          continue;
+        }
+
+        // Let entrance animations settle so a mid-flight frame is not audited.
+        await page.waitForTimeout(700);
+
+        const file = join(OUT, `${label}.png`);
+        await page.screenshot({ path: file, fullPage: true });
+        shots.push({ label, file: `${label}.png`, route, width, theme });
+
+        const problems = await page.evaluate(AUDIT);
+        if (problems.length > 0) findings.push({ route, width, theme, problems });
+
+        console.log(
+          `  ${label.padEnd(34)} ${problems.length === 0 ? "clean" : `${problems.length} problem(s)`}`,
+        );
+      } catch (error) {
+        findings.push({
+          route,
+          width,
+          theme,
+          problems: [{ kind: "error", detail: String(error).slice(0, 180) }],
+        });
+        console.log(`  ${label}  ERROR`);
+      }
+    }
+    await context.close();
+  }
+}
+
+await browser.close();
+
+// --- contact sheet ---------------------------------------------------------
+if (args.includes("--open") && shots.length > 0) {
+  const html = `<!doctype html>
+<html lang="en"><head><meta charset="utf-8">
+<title>SayOnce visual check</title>
+<style>
+ body{font:14px system-ui;margin:0;padding:24px;background:#0f172a;color:#f8fafc}
+ h1{font-size:18px;margin:0 0 16px}
+ .grid{display:grid;gap:20px;grid-template-columns:repeat(auto-fill,minmax(320px,1fr))}
+ figure{margin:0;background:#182030;border-radius:8px;overflow:hidden}
+ img{width:100%;display:block;border-bottom:1px solid #1f293d}
+ figcaption{padding:8px 10px;font-family:ui-monospace,monospace;font-size:12px}
+</style></head><body>
+<h1>SayOnce visual check — ${shots.length} screens</h1>
+<div class="grid">
+${shots.map((s) => `<figure><img src="${s.file}" alt="${s.label}" loading="lazy"><figcaption>${s.label}</figcaption></figure>`).join("\n")}
+</div></body></html>`;
+  writeFileSync(join(OUT, "index.html"), html, "utf8");
+  console.log(`\nContact sheet: ${join(OUT, "index.html").replace(process.cwd(), ".")}`);
+}
+
+// --- report ---------------------------------------------------------------
+console.log(`\n${shots.length} screenshot(s) in ${OUT.replace(process.cwd(), ".")}`);
+
+if (findings.length === 0) {
+  console.log("\nNo overlaps, no overflow, no clipped text, no small targets. Clean.");
+  process.exit(0);
+}
+
+const byKind = new Map();
+for (const f of findings) {
+  for (const p of f.problems) {
+    byKind.set(p.kind, (byKind.get(p.kind) ?? 0) + 1);
+  }
+}
+
+console.error("\nLayout problems found:\n");
+for (const finding of findings) {
+  console.error(`  ${finding.route} @ ${finding.width}px ${finding.theme}`);
+  const seen = new Set();
+  for (const p of finding.problems) {
+    const key = `${p.kind}:${p.detail}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    console.error(`    [${p.kind}] ${p.detail}`);
+  }
+  console.error("");
+}
+
+console.error("Summary:");
+for (const [kind, count] of [...byKind].sort((a, b) => b[1] - a[1])) {
+  console.error(`  ${String(count).padStart(4)}  ${kind}`);
+}
+console.error(
+  "\nFix each one, then re-run. Look at the screenshots too — these checks " +
+    "catch geometry, not whether the page reads well.",
+);
+process.exit(1);

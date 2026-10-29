@@ -38,6 +38,8 @@ inside phases rather than cutting phases.
 | [17-PRIOR-ART.md](17-PRIOR-ART.md) | Five proven patterns worth copying, and one to avoid |
 | [18-GLOBAL-READINESS.md](18-GLOBAL-READINESS.md) | Why nothing is hard-coded for one country |
 | [19-SCHEDULE-2-DAYS.md](19-SCHEDULE-2-DAYS.md) | The 48-hour plan, hour by hour, with cut lines |
+| [20-DESIGN-SYSTEM.md](20-DESIGN-SYSTEM.md) | **The design system.** Palette by role, type triad, motion vocabulary, the CSS to install, anti-patterns |
+| [21-REDESIGN-PLAN.md](21-REDESIGN-PLAN.md) | **The redesign.** Eight stages, each page given its own layout archetype |
 
 ## Rules
 
