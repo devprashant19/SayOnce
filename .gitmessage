@@ -1,0 +1,14 @@
+# <type>(<scope>): <summary in the imperative, under 72 chars>
+#
+# Why this change, and what it does. Wrap at 76. Explain the reasoning a
+# reviewer cannot get from the diff — the diff already says what changed.
+#
+# If it fixes a golden case or a test, name it:
+#   Fixes g_tricky_01, which kept both Tuesday and Wednesday.
+#
+# If it changes accuracy, give the before and after from `npm run lab`.
+#
+# type:  feat fix perf refactor test docs chore style build
+# scope: extract route compose verify checker trail links dates script scrub
+#        people log lab demo landing proof send ui a11y db api prompts
+#        schema env deploy docs golden

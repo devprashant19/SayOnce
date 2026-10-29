@@ -83,9 +83,11 @@ introduce speculative helpers, factories or abstractions for one caller.
 have to be in the repo so every agent on every machine starts from the same
 rules.
 
-Two lists, two ignore files — see
-[R4](R4-DATA-AND-SECRETS.md). `npm run audit:secrets` gates the deploy. **Do not
-push to git unless asked.**
+Two lists, two ignore files — see [R4](R4-DATA-AND-SECRETS.md).
+`npm run audit:secrets` gates the deploy.
+
+Committing and pushing is authorized and expected — see
+[R8](R8-GIT-DISCIPLINE.md).
 
 ### 11. Verify before saying done
 

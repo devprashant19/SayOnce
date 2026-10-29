@@ -1,23 +1,17 @@
-# R6 — Git and deployment
+# R6 — Deployment
 
 Full detail in [../11-DEPLOYMENT.md](../11-DEPLOYMENT.md).
 
-## Git
+## Git is R8
 
-**Do not push unless asked.** The public link comes from a CLI deploy of the
-local folder, not from a repo — so nothing has to be pushed to ship.
+Commits, branches, tags and the standing authorization to push are all in
+[R8 — Git discipline](R8-GIT-DISCIPLINE.md). The short version: commit after
+every fix that passes `npm run check`, push as you go, tag each phase gate.
 
-- Commit locally, often, so there is always something to go back to.
-- Never commit the private files in [R4](R4-DATA-AND-SECRETS.md).
-- Branch rather than committing to the default branch.
-- A commit message says what changed and why in one line. If a commit fixes a
-  golden case, name the case.
-
-## Snapshots instead of branches
-
-Each phase gate ends with a named snapshot you can roll back to, kept locally.
-No push needed. On a two-day build, "go back to the state at the Phase 4 gate"
-is worth more than any branching strategy.
+One thing worth repeating here, because it surprises people: **the public link
+does not come from the repo.** It comes from a CLI deploy of the local folder.
+Pushing and deploying are independent — a push does not ship anything, and a
+deploy does not need a push.
 
 ## Deploy
 

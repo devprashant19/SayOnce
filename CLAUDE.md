@@ -60,7 +60,8 @@ Summarised; the full text is in
 9. Keep it simple; change only what the task asks.
 10. Never commit `SPEC.md`, the golden set, `.env*` or `ROLLBACK.md` — they hold
     real names, real phone numbers and keys. Never *deploy* those or any agent
-    instruction file. Do not push to git unless asked.
+    instruction file. Committing and pushing is otherwise authorized: see
+    [`docs/rules/R8-GIT-DISCIPLINE.md`](docs/rules/R8-GIT-DISCIPLINE.md).
 11. Verify before saying done.
 
 ## 4. Already built — do not reimplement
@@ -100,6 +101,7 @@ expensive mistake available on a two-day build, because it looks like progress.*
 | 7 | Animated landing page | [`PHASE-07`](docs/phases/PHASE-07-LANDING-PAGE.md) |
 | D | Judge demo and deployment | [`PHASE-D`](docs/phases/PHASE-D-JUDGE-DEMO-DEPLOY.md) |
 | 8 | Real use, proof, video, submission | [`PHASE-08`](docs/phases/PHASE-08-PROOF-AND-SUBMISSION.md) |
+| 9 | Repo cleanup — **asks first**, after submission | [`PHASE-09`](docs/phases/PHASE-09-REPO-CLEANUP.md) |
 
 **Every phase gets built.** Scope is cut *inside* a phase, using the cut line
 named in its doc — never by skipping a phase. The 48-hour schedule is in
@@ -118,9 +120,18 @@ No phase is done until all six pass. All six, every phase.
 3. **UI** — the five checks
 4. **Review** — a reviewer that did not build it rates all four judging criteria ≥8
 5. **Wispr log** — words noted, one clip saved
-6. **Snapshot** — a named local rollback point
+6. **Snapshot** — an annotated tag, `phase-NN-gate`, pushed
 
-## 7. Commands
+## 7. Git
+
+Commit after every fix that passes `npm run check`. One logical change per
+commit, Conventional Commits, and name the golden case a fix fixes. Branch per
+phase, merge `--no-ff` at the gate, tag it. Pushing is authorized; force-push,
+hard reset and removing files from the repo are not.
+
+Full conventions: [`docs/rules/R8-GIT-DISCIPLINE.md`](docs/rules/R8-GIT-DISCIPLINE.md).
+
+## 8. Commands
 
 ```bash
 npm run dev             # the pipeline lives behind a server route
@@ -135,7 +146,7 @@ npm run audit:secrets   # pre-deploy leak audit; run after a build
 
 `npm run test` never calls a model. `smoke:ai`, `test:live` and `lab` do.
 
-## 8. Skills to apply, by phase
+## 9. Skills to apply, by phase
 
 Install them **globally** (`-g`), never into the project, so no `SKILL.md` or
 `.claude/` folder lands in the app folder.
@@ -156,7 +167,7 @@ Every phase: **`superpowers` verification-before-completion.** Skip
 `using-git-worktrees` and branch-finishing workflows — this build uses local
 snapshots and a CLI deploy, not branches and merges.
 
-## 9. Working style
+## 10. Working style
 
 - Before building: restate the task, list assumptions, show a short plan with a
   check per step. Wait for an OK.
@@ -165,7 +176,7 @@ snapshots and a CLI deploy, not branches and merges.
 - End every task with: **what changed, how you verified it (evidence, not
   claims), what is still open, what you skipped.**
 
-## 10. This is an isolated project
+## 11. This is an isolated project
 
 SayOnce shares a parent folder with an unrelated project called Rightful.
 **Never read from, write to, or reference anything outside this folder.** They

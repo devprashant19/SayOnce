@@ -53,6 +53,7 @@ Short, enforceable, and quoted at the agent in every session.
 | [rules/R5-TESTING-AND-GATES.md](rules/R5-TESTING-AND-GATES.md) | Prove it with output, re-run everything, no self-grading |
 | [rules/R6-GIT-AND-DEPLOY.md](rules/R6-GIT-AND-DEPLOY.md) | What is committed, what is uploaded, how to roll back |
 | [rules/R7-VOICE-WORKFLOW.md](rules/R7-VOICE-WORKFLOW.md) | Dictate everything; the loop between planner, builder and reviewer |
+| [rules/R8-GIT-DISCIPLINE.md](rules/R8-GIT-DISCIPLINE.md) | Commit after every fix, Conventional Commits, branch per phase, tag each gate |
 
 ## Phases
 
@@ -70,6 +71,7 @@ Nine build phases plus deployment. Each ends with the same gate.
 | 7 | Animated landing page | [phases/PHASE-07-LANDING-PAGE.md](phases/PHASE-07-LANDING-PAGE.md) |
 | D | Judge demo and deployment | [phases/PHASE-D-JUDGE-DEMO-DEPLOY.md](phases/PHASE-D-JUDGE-DEMO-DEPLOY.md) |
 | 8 | Real use, proof, demo video, submission | [phases/PHASE-08-PROOF-AND-SUBMISSION.md](phases/PHASE-08-PROOF-AND-SUBMISSION.md) |
+| 9 | Repo cleanup, after submission — **asks before removing anything** | [phases/PHASE-09-REPO-CLEANUP.md](phases/PHASE-09-REPO-CLEANUP.md) |
 
 Phase D runs after Phase 7 and before Phase 8, so the judges and the real use
 share one deployed app.

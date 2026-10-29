@@ -66,10 +66,19 @@ open with "I built this by talking to it" and have it be visibly true.
 
 ## 6. Snapshot
 
-- [ ] A named local snapshot you can roll back to
+- [ ] The phase branch merged to `main` with `--no-ff`
+- [ ] An annotated tag, `phase-NN-gate`, carrying the lab headline numbers
+- [ ] Pushed with `--follow-tags`
 
-No push needed. "Go back to the state at the Phase 4 gate" is worth more on a
-two-day build than any branching strategy.
+```bash
+git checkout main && git merge --no-ff phase/04-verify-and-lab
+git tag -a phase-04-gate -m "Phase 4 gate passed: 0 invented, 100% privacy, 96% must-know"
+git push origin main --follow-tags
+```
+
+"Go back to the state at the Phase 4 gate" is worth more on a two-day build
+than any branching strategy, and a tag is how you get it. Conventions in
+[../rules/R8-GIT-DISCIPLINE.md](../rules/R8-GIT-DISCIPLINE.md).
 
 ---
 

@@ -69,7 +69,12 @@ HARD RULES:
  - Never commit SPEC.md, the golden set, .env files or ROLLBACK.md: they hold
    real names, real phone numbers and keys. Never DEPLOY those or any agent
    instruction file (SKILL.md, AGENTS.md, CLAUDE.md, .claude/) — .vercelignore
-   handles that. Do not push to git unless I ask.
+   handles that.
+ - Commit after every fix that passes `npm run check`, and push. One logical
+   change per commit, Conventional Commits, name the golden case a fix fixes.
+   Branch per phase, tag each gate. Full conventions in
+   docs/rules/R8-GIT-DISCIPLINE.md. Ask before force-pushing, resetting hard,
+   or removing files from the repo.
 
 GOLDEN SET: data/golden/golden-set.json — my real cases, never committed.
 data/golden/golden-set.example.json — eight seed cases, committed.
