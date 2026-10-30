@@ -2,6 +2,7 @@
 
 import { useEffect, useState, useCallback, useRef } from "react";
 import { Badge } from "@/components/Badge";
+import { useAutoGrow } from "@/lib/use-auto-grow";
 import type { Contact, Channel, Formality, ParsedContact } from "@/lib/types";
 
 const INITIAL_FORM: Omit<Contact, "id" | "profileVersion" | "archived" | "learnedRules"> & { id?: string } = {
@@ -33,6 +34,12 @@ export default function PeoplePage() {
   const [isEditing, setIsEditing] = useState(false);
   const [formData, setFormData] = useState(INITIAL_FORM);
   const [neverTellInput, setNeverTellInput] = useState("");
+
+  // Text boxes grow to fit; nothing is hidden behind a scrollbar in a box.
+  const voiceRef = useRef<HTMLTextAreaElement>(null);
+  const caresRef = useRef<HTMLTextAreaElement>(null);
+  useAutoGrow(voiceRef, dictatedText, 96);
+  useAutoGrow(caresRef, formData.caresAbout, 64);
   const [saving, setSaving] = useState(false);
 
   const drawerRef = useRef<HTMLDivElement>(null);
@@ -248,12 +255,12 @@ export default function PeoplePage() {
 
         <textarea
           id="voice-entry"
+          ref={voiceRef}
           value={dictatedText}
           onChange={(e) => setDictatedText(e.target.value)}
           placeholder='e.g. "Ramesh, our packaging vendor, speaks Hinglish, WhatsApp, plus 91 90 double zero double zero double zero nine nine, only cares about quantities and dates, never tell him about pricing."'
           rows={3}
-          style={{ fontFamily: "var(--font-jetbrains), var(--font-mono)" }}
-          className="mt-1 w-full rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-3 text-xs sm:text-sm font-mono leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]"
+          className="mt-1 w-full resize-none overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-3 text-sm leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/25"
         />
 
         <div className="flex flex-wrap items-center gap-3 pt-1">
@@ -565,7 +572,9 @@ export default function PeoplePage() {
                       />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3">
+                    {/* One column on a phone: side by side in the drawer the
+                        channel picker cut off "WhatsApp (wa.me)". */}
+                    <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
                       <div>
                         <label className="block text-xs font-medium text-[var(--color-ink)]">Channel *</label>
                         <select
@@ -621,11 +630,12 @@ export default function PeoplePage() {
                     <div>
                       <label className="block text-xs font-medium text-[var(--color-ink)]">Priorities (Cares About)</label>
                       <textarea
+                        ref={caresRef}
                         value={formData.caresAbout}
                         onChange={(e) => setFormData({ ...formData, caresAbout: e.target.value })}
                         rows={2}
                         placeholder="e.g. Quantities, arrival dates, shipment counts. No operational gossip."
-                        className="mt-1 w-full rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-2.5 text-sm outline-none"
+                        className="mt-1 w-full resize-none overflow-hidden rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-2.5 text-sm outline-none"
                       />
                     </div>
 

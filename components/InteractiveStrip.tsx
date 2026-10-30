@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import Link from "next/link";
+import { useAutoGrow } from "@/lib/use-auto-grow";
 import { ChevronRight } from "lucide-react";
 import { Badge } from "./Badge";
 import { sendTargetFor } from "@/lib/links";
@@ -61,6 +62,9 @@ const PRESETS: PresetItem[] = [
 export function InteractiveStrip() {
   const [selectedPreset, setSelectedPreset] = useState<string>(PRESETS[0]!.id);
   const [spokenText, setSpokenText] = useState<string>(PRESETS[0]!.spokenText);
+  // Grows to fit: on a phone the sample update was mostly hidden in the box.
+  const textRef = useRef<HTMLTextAreaElement>(null);
+  useAutoGrow(textRef, spokenText, 112);
   const [activePreset, setActivePreset] = useState<PresetItem>(PRESETS[0]!);
   const [loading, setLoading] = useState<boolean>(false);
   const [result, setResult] = useState<FanoutResponse | null>(null);
@@ -154,6 +158,7 @@ export function InteractiveStrip() {
         </label>
         <textarea
           id="interactive-spoken-text"
+          ref={textRef}
           value={spokenText}
           rows={4}
           onChange={(e) => {
@@ -161,7 +166,7 @@ export function InteractiveStrip() {
             setSelectedPreset("");
           }}
           placeholder="Type or paste a work update here..."
-          className="w-full resize-y rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper)] p-3 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)]"
+          className="w-full resize-none overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-3 text-sm leading-relaxed outline-none focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/25"
         />
         <div className="mt-2 flex flex-wrap items-center justify-between gap-2">
           <span className="text-xs text-[var(--color-ink-faint)]">

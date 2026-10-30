@@ -480,8 +480,13 @@ function SpeakContent() {
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Pane: Sticky 40% */}
         <aside
+          id="speak-tray"
           aria-labelledby="speak-step"
-          className="lg:col-span-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-5 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6"
+          // Not sticky and not a scroll box of its own. As a fixed-height pane
+          // with its own scrollbar it nested a scroll inside the page, cut the
+          // Fan out button off at its bottom edge, and hid its own heading
+          // when the guided tour scrolled it.
+          className="lg:col-span-5 space-y-5 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6"
         >
           <div className="border-b border-[var(--color-line)] pb-4">
             <StepLabel step="Step 1" label="Speak" />
@@ -503,8 +508,10 @@ function SpeakContent() {
               disabled={busy}
             />
 
-            <div className="flex flex-wrap items-end gap-3">
-              <div className="flex-1 min-w-[120px]">
+            {/* Stacked, each full width. Side by side in this column the
+                project name was cut to "Diwali retail o". */}
+            <div className="grid gap-3">
+              <div>
                 <label htmlFor="project" className="block text-xs font-medium text-[var(--color-ink-soft)]">
                   Project
                 </label>
@@ -512,7 +519,7 @@ function SpeakContent() {
                   id="project"
                   value={project}
                   onChange={(event) => setProject(event.target.value)}
-                  className="mt-1 w-full min-h-11 rounded border border-[var(--color-rule)] bg-[var(--color-paper)] px-3 text-sm text-[var(--color-ink)]"
+                  className="mt-1 w-full min-h-11 rounded-xl border border-[var(--color-line)] bg-[var(--color-surface)] px-3 text-sm text-[var(--color-ink)]"
                 >
                   {PROJECTS.map((name) => (
                     <option key={name} value={name}>
@@ -522,7 +529,7 @@ function SpeakContent() {
                 </select>
               </div>
 
-              <div className="flex-1 min-w-[200px]">
+              <div>
                 <span className="block text-xs font-medium text-[var(--color-ink-soft)] mb-1">
                   Contacts roster
                 </span>
@@ -563,6 +570,7 @@ function SpeakContent() {
               </div>
 
               <button
+                id="fanout-button"
                 type="button"
                 onClick={fanOut}
                 disabled={busy}

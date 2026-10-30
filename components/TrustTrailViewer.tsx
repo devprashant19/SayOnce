@@ -94,10 +94,11 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
 
         <div className="flex flex-wrap items-center gap-2 text-xs">
           <button
+            id="verify-trail-button"
             type="button"
             onClick={() => handleVerify()}
             disabled={verifying}
-            className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 py-1 font-medium hover:bg-[var(--color-paper)] disabled:opacity-50"
+            className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 min-h-11 inline-flex items-center font-medium hover:bg-[var(--color-paper)] disabled:opacity-50"
           >
             {verifying ? "Verifying…" : "Verify trail"}
           </button>
@@ -107,7 +108,7 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
                 <button
                   type="button"
                   onClick={handleSimulateTamper}
-                  className="rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] px-2 py-1 font-medium text-[var(--color-ink)] hover:opacity-80"
+                  className="rounded border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] px-2 min-h-11 inline-flex items-center font-medium text-[var(--color-ink)] hover:opacity-80"
                   title="Dev only: Simulates database payload tampering on entry #3 to verify detection"
                 >
                   Simulate tamper
@@ -116,7 +117,7 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
                 <button
                   type="button"
                   onClick={handleResetTrail}
-                  className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2 py-1 font-medium text-[var(--color-ink)] hover:bg-[var(--color-paper)]"
+                  className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2 min-h-11 inline-flex items-center font-medium text-[var(--color-ink)] hover:bg-[var(--color-paper)]"
                 >
                   Reset trail
                 </button>
@@ -126,14 +127,14 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
           <button
             type="button"
             onClick={handleExportJson}
-            className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 py-1 font-medium hover:bg-[var(--color-paper)]"
+            className="rounded border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 min-h-11 inline-flex items-center font-medium hover:bg-[var(--color-paper)]"
           >
             {copied ? "Copied JSON!" : "Export trail (JSON)"}
           </button>
           <button
             type="button"
             onClick={() => setIsOpen((prev) => !prev)}
-            className="rounded px-2 py-1 font-medium text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
+            className="rounded px-2 min-h-11 inline-flex items-center font-medium text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
           >
             {isOpen ? "Hide entries ▲" : "Show entries ▼"}
           </button>

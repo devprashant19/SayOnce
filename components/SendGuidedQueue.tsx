@@ -90,7 +90,7 @@ export function SendGuidedQueue({
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-2 text-sm text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] hover:text-[var(--color-ink)]"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full text-sm text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] hover:text-[var(--color-ink)]"
             aria-label="Close send queue"
           >
             ✕
@@ -169,11 +169,13 @@ export function SendGuidedQueue({
             </button>
           </div>
 
-          <div className="flex items-center gap-2">
+          {/* On a phone these stack full width, the primary send action on
+              top; side by side they wrapped "Open in Email ↗" onto two lines. */}
+          <div className="flex w-full flex-col-reverse gap-2 sm:w-auto sm:flex-row sm:items-center">
             <button
               type="button"
               onClick={() => handleToggleSent(current)}
-              className="min-h-11 rounded border border-[var(--color-rule)] px-3 text-xs font-medium text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)]"
+              className="inline-flex min-h-11 w-full items-center justify-center rounded-full border border-[var(--color-line)] px-4 text-xs font-medium text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] sm:w-auto"
             >
               {isCurrentSent ? "Mark unsent" : "Mark as sent without link"}
             </button>
@@ -189,7 +191,7 @@ export function SendGuidedQueue({
                     setTimeout(() => setCurrentIndex((i) => i + 1), 500);
                   }
                 }}
-                className="min-h-11 content-center rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-95"
+                className="btn-pill btn-accent w-full justify-center px-5 text-sm font-semibold sm:w-auto"
               >
                 {isCurrentSent ? `Re-send: ${current.target.label} ↗` : `${current.target.label} ↗`}
               </a>
@@ -197,7 +199,7 @@ export function SendGuidedQueue({
               <button
                 type="button"
                 disabled
-                className="min-h-11 rounded border border-[var(--color-rule)] px-4 text-sm opacity-50 cursor-not-allowed"
+                className="min-h-11 w-full cursor-not-allowed rounded-full border border-[var(--color-line)] px-4 text-sm opacity-50 sm:w-auto"
               >
                 Cannot send (missing info)
               </button>

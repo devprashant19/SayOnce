@@ -1,12 +1,18 @@
 "use client";
 
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 
 export interface TourStep {
   title: string;
   badge: string;
   description: string;
   targetId: string;
+  /**
+   * The control this step asks you to press. On a phone the step card covers
+   * the bottom of the screen, and step 1 once hid the very Fan out button it
+   * told you to press; the page now scrolls this control clear of the card.
+   */
+  actionId?: string;
 }
 
 export const TOUR_STEPS: TourStep[] = [
@@ -15,7 +21,10 @@ export const TOUR_STEPS: TourStep[] = [
     badge: "Step 1 of 5",
     description:
       "Press the 'Fan out' button (or hit Ctrl/Cmd+Enter) to transform the spoken update into separate personalized messages.",
-    targetId: "fanout-controls",
+    // The whole Step 1 tray, heading included. Ringing only the controls
+    // beneath the heading scrolled the heading up under the navbar.
+    targetId: "speak-tray",
+    actionId: "fanout-button",
   },
   {
     title: "2. The Knowledge Matrix",
@@ -44,6 +53,7 @@ export const TOUR_STEPS: TourStep[] = [
     description:
       "Every update, routing decision, and draft is cryptographically chained with SHA-256 hashes. Click 'Verify trail' to confirm tamper-evident proof.",
     targetId: "trail-section",
+    actionId: "verify-trail-button",
   },
 ];
 
@@ -69,6 +79,7 @@ export function GuidedTour({
 }: GuidedTourProps) {
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [targetRect, setTargetRect] = useState<TargetRect | null>(null);
+  const cardRef = useRef<HTMLDivElement>(null);
 
   const step = TOUR_STEPS[currentStepIndex]!;
   const isLast = currentStepIndex === TOUR_STEPS.length - 1;
@@ -88,12 +99,24 @@ export function GuidedTour({
       if (details && !details.open) {
         details.open = true;
       }
+      // Ring only what is on screen. A target taller than the viewport, or
+      // partly scrolled away, drew a ring past the screen edge and under the
+      // sticky navbar. Clamp to the visible band below the navbar.
       const r = el.getBoundingClientRect();
+      const header = document.querySelector("header")?.getBoundingClientRect();
+      const topLimit = Math.max(8, (header?.bottom ?? 0) + 8);
+      const bottomLimit = window.innerHeight - 8;
+      const top = Math.max(r.top - 8, topLimit);
+      const bottom = Math.min(r.bottom + 8, bottomLimit);
+      if (bottom - top < 24) {
+        setTargetRect(null);
+        return;
+      }
       setTargetRect({
-        top: r.top,
-        left: r.left,
-        width: r.width,
-        height: r.height,
+        top,
+        left: Math.max(8, r.left - 8),
+        width: Math.min(r.width + 16, window.innerWidth - 16),
+        height: bottom - top,
       });
     } else {
       setTargetRect(null);
@@ -118,26 +141,46 @@ export function GuidedTour({
         if (details && !details.open) {
           details.open = true;
         }
-        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        // Centre a target that fits; a taller one is aligned to its top, which
+        // the page's scroll-padding places just below the sticky navbar.
+        const fits = el.getBoundingClientRect().height < window.innerHeight - 160;
+        el.scrollIntoView({ behavior: "smooth", block: fits ? "center" : "start" });
       }
       updateSpotlight();
     }, 60);
 
     const secondaryTimer = setTimeout(updateSpotlight, 350);
 
+    // Once the smooth scroll has landed, make sure the control this step asks
+    // for is not under the step card; lift it just clear if it is.
+    const actionTimer = setTimeout(() => {
+      const actionId = TOUR_STEPS[currentStepIndex]?.actionId;
+      const action = actionId ? document.getElementById(actionId) : null;
+      const card = cardRef.current;
+      if (!action || !card) return;
+      const a = action.getBoundingClientRect();
+      const c = card.getBoundingClientRect();
+      const overlapsHorizontally = a.right > c.left && a.left < c.right;
+      if (overlapsHorizontally && a.bottom > c.top - 12) {
+        window.scrollBy({ top: a.bottom - c.top + 24, behavior: "smooth" });
+      }
+    }, 650);
+
     return () => {
       clearTimeout(timer);
       clearTimeout(secondaryTimer);
+      clearTimeout(actionTimer);
     };
   }, [isOpen, currentStepIndex, hasResult, onEnsureResult, updateSpotlight]);
 
   // Recalculate on window scroll and resize
   useEffect(() => {
     if (!isOpen) return;
-    window.addEventListener("scroll", updateSpotlight, { passive: true });
+    // Capture, so a scroll inside any container moves the ring too.
+    window.addEventListener("scroll", updateSpotlight, { passive: true, capture: true });
     window.addEventListener("resize", updateSpotlight, { passive: true });
     return () => {
-      window.removeEventListener("scroll", updateSpotlight);
+      window.removeEventListener("scroll", updateSpotlight, { capture: true });
       window.removeEventListener("resize", updateSpotlight);
     };
   }, [isOpen, updateSpotlight]);
@@ -169,12 +212,15 @@ export function GuidedTour({
       {targetRect && (
         <div
           data-testid="tour-spotlight"
-          className="fixed pointer-events-none z-40 rounded-xl transition-all duration-300"
+          // Above the sticky navbar (z-40) so it is dimmed with everything
+          // else, below the step card (z-50). The rect is already padded and
+          // clamped to the visible band in updateSpotlight.
+          className="fixed pointer-events-none z-[45] rounded-2xl transition-all duration-300"
           style={{
-            top: `${Math.max(4, targetRect.top - 8)}px`,
-            left: `${Math.max(4, targetRect.left - 8)}px`,
-            width: `${targetRect.width + 16}px`,
-            height: `${targetRect.height + 16}px`,
+            top: `${targetRect.top}px`,
+            left: `${targetRect.left}px`,
+            width: `${targetRect.width}px`,
+            height: `${targetRect.height}px`,
             boxShadow: "0 0 0 9999px rgb(0 0 0 / 0.55)",
             border: "2px solid var(--color-accent)",
           }}
@@ -184,10 +230,13 @@ export function GuidedTour({
 
       {/* Floating step card, bottom-right */}
       <div
+        ref={cardRef}
         role="dialog"
         aria-labelledby="tour-step-title"
         aria-modal="false"
-        className="fixed bottom-6 right-6 z-50 w-96 max-w-[calc(100vw-3rem)] rounded-[var(--radius-card)] border-2 border-[var(--color-accent)] bg-[var(--color-paper)] p-5 shadow-2xl animate-fade-in"
+        // A compact sheet across the bottom on a phone, a card bottom-right
+        // from sm up. Less of the page is hidden under it on a small screen.
+        className="fixed inset-x-3 bottom-3 z-50 rounded-[var(--radius-card)] border-2 border-[var(--color-accent)] bg-[var(--color-paper)] p-4 shadow-2xl animate-fade-in sm:inset-x-auto sm:bottom-6 sm:right-6 sm:w-96 sm:p-5"
       >
         <div className="flex items-center justify-between gap-3 border-b border-[var(--color-rule)] pb-3">
           <div className="flex items-center gap-2">

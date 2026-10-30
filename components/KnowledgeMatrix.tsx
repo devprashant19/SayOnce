@@ -78,12 +78,12 @@ export function KnowledgeMatrix({
                   >
                     <div className="flex flex-col items-center gap-1">
                       {onToggleContact ? (
-                        <label className="flex cursor-pointer items-center gap-1">
+                        <label className="flex min-h-11 cursor-pointer items-center gap-1.5 px-1">
                           <input
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => onToggleContact(contact.id)}
-                            className="rounded border-[var(--color-rule)]"
+                            className="h-4 w-4 rounded border-[var(--color-rule)] accent-[var(--color-accent)]"
                             aria-label={`Toggle message for ${contact.name}`}
                           />
                           <span className="font-semibold">{contact.name}</span>

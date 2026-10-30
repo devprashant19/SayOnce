@@ -1,6 +1,7 @@
 "use client";
 
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
+import { useAutoGrow } from "@/lib/use-auto-grow";
 
 /**
  * The speak box.
@@ -28,14 +29,9 @@ export interface SpeakBoxProps {
 export function SpeakBox({ value, onChange, onSubmit, disabled, label }: SpeakBoxProps) {
   const ref = useRef<HTMLTextAreaElement>(null);
 
-  // Grow to fit. Done on the element rather than with a CSS field-sizing
-  // fallback so it behaves the same in every browser a judge might use.
-  useEffect(() => {
-    const el = ref.current;
-    if (!el) return;
-    el.style.height = "auto";
-    el.style.height = `${Math.max(el.scrollHeight, 160)}px`;
-  }, [value]);
+  // Grow to fit, rather than scrolling a six-line window. Done on the element
+  // rather than with CSS field-sizing so it behaves the same in every browser.
+  useAutoGrow(ref, value, 160);
 
   return (
     <div>
@@ -66,11 +62,10 @@ export function SpeakBox({ value, onChange, onSubmit, disabled, label }: SpeakBo
           }
         }}
         placeholder="Hold your Wispr key and talk…"
-        style={{
-          viewTransitionName: "speak-box",
-          fontFamily: "var(--font-jetbrains), var(--font-mono)",
-        }}
-        className="mt-2 w-full resize-none rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-4 font-mono text-sm sm:text-base leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)] placeholder:text-[var(--color-ink-faint)] disabled:opacity-60"
+        style={{ viewTransitionName: "speak-box" }}
+        // Inter, as in Parity's inputs. Monospace at this size in a narrow
+        // column wrapped a short update into twenty lines.
+        className="mt-2 w-full resize-none overflow-hidden rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 text-[15px] leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/25 placeholder:text-[var(--color-ink-faint)] disabled:opacity-60"
       />
       <p
         id="speak-hint"

@@ -108,6 +108,15 @@
  * is opt-in through the toggle, which sets data-theme="dark".
  */
 
+/*
+ * The floating navbar is sticky, so anything scrolled into view — an anchor,
+ * a guided-tour step, a focused field — must land below it rather than
+ * behind it. 6.5rem clears the pill and its top offset at every width.
+ */
+html {
+  scroll-padding-top: 6.5rem;
+}
+
 body {
   background: var(--color-ground);
   color: var(--color-ink);

@@ -1,7 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { Badge } from "./Badge";
+import { useAutoGrow } from "@/lib/use-auto-grow";
 import { dominantScript } from "@/lib/script";
 import type { CheckOutcome } from "@/lib/checker";
 import type { Contact, Draft, Fact } from "@/lib/types";
@@ -42,6 +43,9 @@ export function DraftCard(props: DraftCardProps) {
   const { contact, draft, check, error } = props;
   const [copied, setCopied] = useState(false);
   const [body, setBody] = useState(draft?.body ?? "");
+  // The draft box grows to fit, so a long message is never cut off in it.
+  const bodyRef = useRef<HTMLTextAreaElement>(null);
+  useAutoGrow(bodyRef, body, 96);
   const [isSent, setIsSent] = useState(props.sent ?? false);
   const [sentAt, setSentAt] = useState(props.sentAt ?? null);
   const [isOverridden, setIsOverridden] = useState(props.overridden ?? false);
@@ -296,6 +300,7 @@ export function DraftCard(props: DraftCardProps) {
           </label>
           <textarea
             id={`body-${contact.id}`}
+            ref={bodyRef}
             value={body}
             onChange={(event) => setBody(event.target.value)}
             rows={Math.min(14, Math.max(4, body.split("\n").length + 2))}
@@ -316,7 +321,7 @@ export function DraftCard(props: DraftCardProps) {
                   ? "'Noto Sans Devanagari', var(--font-sans)"
                   : "var(--font-jetbrains), var(--font-mono)",
             }}
-            className="mt-2 w-full resize-y rounded border border-[var(--color-rule)] bg-[var(--color-surface-raised)] p-3 font-mono text-xs sm:text-sm leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-1 focus:ring-[var(--color-accent)]"
+            className="mt-2 w-full resize-none overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-raised)] p-3 font-mono text-xs sm:text-sm leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/25"
           />
 
           {draft.sentences.length > 0 && props.onHoverSentence && (

@@ -81,7 +81,7 @@ export function CommandBar({ isOpen, onClose, onExecute }: CommandBarProps) {
           <button
             type="button"
             onClick={onClose}
-            className="rounded p-1 text-xs text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] hover:text-[var(--color-ink)]"
+            className="inline-flex min-h-11 min-w-11 items-center justify-center rounded-full px-2 text-xs text-[var(--color-ink-soft)] hover:bg-[var(--color-paper-sunk)] hover:text-[var(--color-ink)]"
             aria-label="Close command bar"
           >
             Esc
