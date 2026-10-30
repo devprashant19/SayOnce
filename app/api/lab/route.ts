@@ -129,6 +129,8 @@ export async function POST(request: Request) {
           spokenOnIso: testCase.spokenOn,
           contactSet: testCase.contactSet,
           project: "Golden Set Quality Run",
+          // Golden cases use the real roster; this keeps them out of real use.
+          source: "lab",
         }),
       });
 

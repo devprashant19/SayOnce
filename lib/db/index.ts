@@ -27,3 +27,11 @@ export { schema };
 
 /** The dataset marker for the speaker's own data. Demo rows use a session id. */
 export const REAL_DATASET = "real";
+
+/**
+ * Quality Lab runs. Kept apart from REAL_DATASET because /proof reads real use
+ * from REAL_DATASET only, and a lab run replays golden cases that use the real
+ * roster — filed as real, every benchmark would be counted as the speaker's
+ * own work.
+ */
+export const LAB_DATASET = "lab";

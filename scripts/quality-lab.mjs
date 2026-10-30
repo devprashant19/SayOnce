@@ -80,6 +80,8 @@ for (const [index, testCase] of cases.entries()) {
         project: testCase.notes?.slice(0, 40) ?? "",
         contactSet: testCase.contactSet,
         spokenOnIso: testCase.spokenOn,
+        // Golden cases use the real roster; this keeps them out of real use.
+        source: "lab",
       }),
     });
 

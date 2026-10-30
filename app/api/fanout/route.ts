@@ -17,6 +17,7 @@ import {
   getFrequentContactsForProject,
 } from "@/lib/update-repo";
 import { REAL_DATASET } from "@/lib/db";
+import { datasetFor } from "@/lib/dataset";
 import { detectContradictions, type ContradictionAlert } from "@/lib/consistency";
 import { composeOne } from "@/lib/ai/compose";
 import { isQuotaExhaustedError, INSTANT_MODE_MESSAGE } from "@/lib/ai/call";
@@ -51,6 +52,8 @@ const RequestBody = z.object({
   spokenOnIso: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional(),
   timeZone: z.string().default("Asia/Kolkata"),
   elapsedSeconds: z.number().int().min(0).optional(),
+  /** The Quality Lab sends "lab" so its runs are never filed as real use. */
+  source: z.enum(["app", "lab"]).default("app"),
 });
 
 export interface FanoutCard {
@@ -101,7 +104,7 @@ async function servePrepared(
     try {
       await saveFanoutRecord({
         updateId,
-        dataset: body.contactSet === "freelance" ? REAL_DATASET : body.contactSet,
+        dataset: datasetFor({ source: body.source, contactSet: body.contactSet }),
         spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
         timeZone: body.timeZone,
         project: body.project || cachedDemo.project || "",
@@ -512,9 +515,11 @@ export async function POST(request: Request) {
   try {
     await saveFanoutRecord({
       updateId,
-      dataset: isDemo
-        ? (demoSessionId ? `demo_${demoSessionId}` : body.contactSet)
-        : REAL_DATASET,
+      dataset: datasetFor({
+        source: body.source,
+        contactSet: body.contactSet,
+        demoSessionId: isDemo ? demoSessionId : undefined,
+      }),
       spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
       timeZone: body.timeZone,
       project: body.project,

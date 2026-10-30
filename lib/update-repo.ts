@@ -741,7 +741,12 @@ export async function getAllUpdates(dataset?: string): Promise<UpdateLogRow[]> {
     }
   }
 
-  const updatesList = readJsonFile<StoredUpdate>(UPDATES_FILE);
+  // Same filter as the database path above. Without it the local store
+  // returned every dataset, so /proof counted demo fan-outs as the speaker's
+  // real use and /log mixed demo rows into the real ledger.
+  const updatesList = readJsonFile<StoredUpdate>(UPDATES_FILE).filter(
+    (u) => u.dataset === chosenDataset,
+  );
   const factsList = readJsonFile<StoredFact>(FACTS_FILE);
   const messagesList = readJsonFile<StoredMessage>(MESSAGES_FILE);
 
