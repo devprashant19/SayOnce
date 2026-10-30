@@ -79,7 +79,14 @@ export const env = {
   get thinkingBudget(): number | null {
     const raw = process.env.SAYONCE_THINKING_BUDGET;
     if (raw === "none") return null;
-    return optionalNumber("SAYONCE_THINKING_BUDGET", 0);
+    const budget = optionalNumber("SAYONCE_THINKING_BUDGET", 0);
+    // Unbounded thinking cannot finish a fan-out inside a serverless function's
+    // time limit, so on Vercel it is treated as off. A stale -1 left in the
+    // project's environment variables would otherwise keep every live run slow
+    // enough to fall back to prepared output. A bounded positive budget is
+    // still honoured.
+    if (budget === -1 && process.env.VERCEL) return 0;
+    return budget;
   },
   /**
    * How long a live fan-out may take before the visitor is shown prepared

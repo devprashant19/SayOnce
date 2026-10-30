@@ -4,4 +4,4 @@
  * suite changes; `tests/evidence.test.ts` fails if any page states a
  * different one.
  */
-export const AUTOMATED_TEST_COUNT = 225;
+export const AUTOMATED_TEST_COUNT = 230;
