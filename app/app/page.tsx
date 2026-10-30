@@ -908,70 +908,6 @@ function SpeakContent() {
                 </div>
               </section>
 
-              {/* Collapsible Knowledge Matrix */}
-              <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition" open>
-                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
-                  <span className="flex items-center gap-2">
-                    <span>Knowledge Matrix</span>
-                    <span className="text-xs text-[var(--color-ink-soft)] font-normal">
-                      ({result.facts.length} facts × {result.cards.length} recipients)
-                    </span>
-                  </span>
-                  <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <div id="knowledge-matrix-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
-                  <KnowledgeMatrix
-                    facts={result.facts}
-                    contacts={result.cards.map((c) => c.contact)}
-                    cards={result.cards}
-                    activeContactIds={activeRecipients}
-                    onToggleContact={(id) => {
-                      setActiveRecipients((prev) =>
-                        prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
-                      );
-                    }}
-                    onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
-                  />
-                </div>
-              </details>
-
-              {/* Collapsible Privacy Panel */}
-              <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition">
-                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
-                  <span className="flex items-center gap-2">
-                    <span>🛡 Privacy Shield</span>
-                    <span className="text-xs text-[var(--color-ink-soft)] font-normal">
-                      Deliberate omission rules
-                    </span>
-                  </span>
-                  <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <div id="privacy-shield-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
-                  <PrivacyPanel
-                    facts={result.facts}
-                    contacts={result.cards.map((c) => c.contact)}
-                  />
-                </div>
-              </details>
-
-              {/* Collapsible Trust Trail */}
-              <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition">
-                <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
-                  <span className="flex items-center gap-2">
-                    <span>⛓ Trust Trail</span>
-                    <span className="text-xs text-[var(--color-ink-soft)] font-normal">
-                      Cryptographic tamper-evident chain ({result.trail.length} entries)
-                    </span>
-                  </span>
-                  <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
-                </summary>
-                <div id="trail-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
-                  <TrustTrailViewer
-                    entries={result.trail}
-                    updateId={result.updateId}
-                  />
-                </div>
-              </details>
             </>
           )}
 
@@ -989,6 +925,78 @@ function SpeakContent() {
           )}
         </main>
       </div>
+
+      {/* Full width under both panes. In the right pane alone the matrix showed
+          three of five recipients, and the withheld-fact locks scrolled out of
+          sight, while the left pane below the tray sat empty. */}
+      {result !== null && !busy && (
+        <div className="mt-8 space-y-6">
+          {/* Collapsible Knowledge Matrix */}
+          <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition" open>
+            <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
+              <span className="flex items-center gap-2">
+                <span>Knowledge Matrix</span>
+                <span className="text-xs text-[var(--color-ink-soft)] font-normal">
+                  ({result.facts.length} facts × {result.cards.length} recipients)
+                </span>
+              </span>
+              <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div id="knowledge-matrix-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
+              <KnowledgeMatrix
+                facts={result.facts}
+                contacts={result.cards.map((c) => c.contact)}
+                cards={result.cards}
+                activeContactIds={activeRecipients}
+                onToggleContact={(id) => {
+                  setActiveRecipients((prev) =>
+                    prev.includes(id) ? prev.filter((x) => x !== id) : [...prev, id],
+                  );
+                }}
+                onHighlightFact={(factId) => setHighlight(factId ? [factId] : null)}
+              />
+            </div>
+          </details>
+
+          {/* Collapsible Privacy Panel */}
+          <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition">
+            <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
+              <span className="flex items-center gap-2">
+                <span>🛡 Privacy Shield</span>
+                <span className="text-xs text-[var(--color-ink-soft)] font-normal">
+                  Deliberate omission rules
+                </span>
+              </span>
+              <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div id="privacy-shield-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
+              <PrivacyPanel
+                facts={result.facts}
+                contacts={result.cards.map((c) => c.contact)}
+              />
+            </div>
+          </details>
+
+          {/* Collapsible Trust Trail */}
+          <details className="group rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 transition">
+            <summary className="cursor-pointer text-sm font-semibold flex items-center justify-between select-none">
+              <span className="flex items-center gap-2">
+                <span>⛓ Trust Trail</span>
+                <span className="text-xs text-[var(--color-ink-soft)] font-normal">
+                  Cryptographic tamper-evident chain ({result.trail.length} entries)
+                </span>
+              </span>
+              <span className="text-xs text-[var(--color-accent)] font-mono group-open:rotate-180 transition-transform">▼</span>
+            </summary>
+            <div id="trail-section" className="mt-4 pt-3 border-t border-[var(--color-rule)]">
+              <TrustTrailViewer
+                entries={result.trail}
+                updateId={result.updateId}
+              />
+            </div>
+          </details>
+        </div>
+      )}
 
       {showQueue && result && (
         <SendGuidedQueue

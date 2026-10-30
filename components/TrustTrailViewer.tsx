@@ -16,16 +16,18 @@ function shortHash(hash: string): string {
 export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
   const [localEntries, setLocalEntries] = useState<TrailEntry[]>(entries);
   const [expandedSeq, setExpandedSeq] = useState<number | null>(null);
-  const [verdict, setVerdict] = useState<TrailVerdict>({
-    ok: true,
-    length: entries.length,
-  });
+  // Nothing is "verified" until the chain has actually been recomputed. The
+  // badge used to start green, so pressing Verify changed nothing on screen
+  // and the claim came before the check.
+  const [verdict, setVerdict] = useState<TrailVerdict | null>(null);
+  const [checkFailed, setCheckFailed] = useState(false);
   const [copied, setCopied] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
   const [verifying, setVerifying] = useState(false);
 
   async function handleVerify(itemsToVerify = localEntries) {
     setVerifying(true);
+    setCheckFailed(false);
     try {
       const res = await fetch("/api/trail/verify", {
         method: "POST",
@@ -35,9 +37,13 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
       if (res.ok) {
         const data = await res.json();
         setVerdict(data.verdict);
+        setIsOpen(true);
+      } else {
+        setCheckFailed(true);
       }
     } catch (err) {
       console.warn("Failed to verify trail on server:", err);
+      setCheckFailed(true);
     } finally {
       setVerifying(false);
     }
@@ -71,11 +77,11 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
 
   function handleResetTrail() {
     setLocalEntries(entries);
-    setVerdict({ ok: true, length: entries.length });
+    setVerdict(null);
   }
 
-  const isIntact = verdict.ok;
-  const brokenSeq = !verdict.ok ? verdict.brokenAtSeq : null;
+  const isIntact = verdict?.ok !== false;
+  const brokenSeq = verdict && !verdict.ok ? verdict.brokenAtSeq : null;
 
   return (
     <section className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 space-y-3">
@@ -85,10 +91,14 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
             ⛓️
           </div>
           <h2 className="text-sm font-semibold">Trust Trail (Audit Log)</h2>
-          <Badge tone={isIntact ? "verified" : "blocked"}>
-            {isIntact
-              ? `Chain intact · ${localEntries.length} entries verified`
-              : `TAMPER DETECTED · Broken at #${brokenSeq}`}
+          <Badge tone={!verdict ? "neutral" : verdict.ok ? "verified" : "blocked"}>
+            {!verdict
+              ? checkFailed
+                ? `${localEntries.length} entries · could not check just now`
+                : `${localEntries.length} entries · not checked yet`
+              : verdict.ok
+                ? `Chain intact · ${verdict.length} of ${verdict.length} hashes match`
+                : `TAMPER DETECTED · Broken at #${brokenSeq}`}
           </Badge>
         </div>
 
@@ -141,7 +151,7 @@ export function TrustTrailViewer({ entries, updateId }: TrustTrailViewerProps) {
         </div>
       </div>
 
-      {!isIntact && (
+      {verdict && !verdict.ok && (
         <div className="rounded border border-[var(--color-blocked)]/40 bg-[var(--color-blocked-wash)] p-3 text-xs text-[var(--color-blocked)]">
           <strong>Tamper alert:</strong> {verdict.reason}
         </div>

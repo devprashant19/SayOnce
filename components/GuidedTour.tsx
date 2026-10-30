@@ -179,11 +179,17 @@ export function GuidedTour({
     // Capture, so a scroll inside any container moves the ring too.
     window.addEventListener("scroll", updateSpotlight, { passive: true, capture: true });
     window.addEventListener("resize", updateSpotlight, { passive: true });
+    // And when the target itself grows: Verify trail opens the entries below
+    // it, and the ring stayed at the old height, striking through the text.
+    const target = document.getElementById(TOUR_STEPS[currentStepIndex]?.targetId ?? "");
+    const observer = target ? new ResizeObserver(() => updateSpotlight()) : null;
+    if (target) observer?.observe(target);
     return () => {
       window.removeEventListener("scroll", updateSpotlight, { capture: true });
       window.removeEventListener("resize", updateSpotlight);
+      observer?.disconnect();
     };
-  }, [isOpen, updateSpotlight]);
+  }, [isOpen, updateSpotlight, currentStepIndex, hasResult]);
 
   // Keyboard navigation: Escape to skip, ArrowRight / Enter to advance, ArrowLeft to go back
   useEffect(() => {

@@ -341,12 +341,15 @@ html.theme-transition *::after {
   }
 }
 
+/* Slides the gradient, not the element: moving the placeholder blocks with
+   translateX pushed them past the page edge and widened a phone screen to
+   732px while a fan-out was loading. */
 @keyframes shimmer {
   0% {
-    transform: translateX(-100%);
+    background-position: 100% 0;
   }
   100% {
-    transform: translateX(100%);
+    background-position: -100% 0;
   }
 }
 

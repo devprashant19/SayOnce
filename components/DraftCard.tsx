@@ -319,9 +319,10 @@ export function DraftCard(props: DraftCardProps) {
               fontFamily:
                 currentScript === "devanagari"
                   ? "'Noto Sans Devanagari', var(--font-sans)"
-                  : "var(--font-jetbrains), var(--font-mono)",
+                  : // A message, not code: set like the one the reader receives.
+                    "var(--font-sans)",
             }}
-            className="mt-2 w-full resize-none overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-raised)] p-3 font-mono text-xs sm:text-sm leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/25"
+            className="mt-2 w-full resize-none overflow-hidden rounded-xl border border-[var(--color-line)] bg-[var(--color-surface-raised)] p-3 text-sm sm:text-[15px] leading-relaxed text-[var(--color-ink)] outline-none transition focus:border-[var(--color-accent)] focus:ring-2 focus:ring-[var(--color-accent)]/25"
           />
 
           {draft.sentences.length > 0 && props.onHoverSentence && (
