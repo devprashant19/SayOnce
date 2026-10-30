@@ -37,7 +37,10 @@ const ALLOWED = [
 ];
 
 const RULES = [
-  { name: "Google AI API key", pattern: /AIza[0-9A-Za-z_-]{30,}/g },
+  { name: "Google AI API key", pattern: /\bAIza[0-9A-Za-z_-]{30,}/g },
+  // Google's newer key format. "." is not a base64 character, so this cannot
+  // occur by accident inside an encoded asset.
+  { name: "Google AI API key (AQ. format)", pattern: /\bAQ\.[A-Za-z0-9_-]{40,}/g },
   { name: "Anthropic API key", pattern: /sk-ant-[A-Za-z0-9_-]{8,}/g },
   { name: "generic secret key", pattern: /\b(?:sk|pk)_(?:live|test)_[A-Za-z0-9]{10,}/g },
   { name: "Neon/Postgres URL with password", pattern: /postgres(?:ql)?:\/\/[^\s"'`]*:[^\s"'`@]+@/g },
@@ -77,6 +80,46 @@ function walk(dir, out = []) {
   return out;
 }
 
+/**
+ * Patterns only know what a key looks like today. The certain check is to look
+ * for the secrets this project is actually configured with: if the value of
+ * GEMINI_API_KEY appears anywhere in the build, it leaked, whatever its shape.
+ * Values come from the environment and from .env.local, and are never printed.
+ */
+const SECRET_ENV_NAMES = ["GEMINI_API_KEY", "GOOGLE_API_KEY", "DATABASE_URL", "DEMO_SESSION_SECRET"];
+
+function configuredSecrets() {
+  const values = new Map();
+  for (const name of SECRET_ENV_NAMES) {
+    if (process.env[name]) values.set(name, process.env[name]);
+  }
+  const envFile = join(ROOT, ".env.local");
+  if (existsSync(envFile)) {
+    for (const line of readFileSync(envFile, "utf8").split(/\r?\n/)) {
+      const m = line.match(/^\s*([A-Z0-9_]+)\s*=\s*(.*?)\s*$/);
+      if (!m || !SECRET_ENV_NAMES.includes(m[1])) continue;
+      const value = m[2].replace(/^["']|["']$/g, "");
+      if (!values.has(m[1]) && value) values.set(m[1], value);
+    }
+  }
+  // Short values would match ordinary text; none of the real ones are short.
+  return [...values].filter(([, value]) => value.length >= 16);
+}
+
+const SECRETS = configuredSecrets();
+
+/** Never echo a secret into a terminal or a CI log, even while reporting it. */
+function mask(value) {
+  return `${value.slice(0, 4)}… (${value.length} chars)`;
+}
+const MASKED_RULES = new Set([
+  "Google AI API key",
+  "Google AI API key (AQ. format)",
+  "Anthropic API key",
+  "generic secret key",
+  "Neon/Postgres URL with password",
+]);
+
 const findings = [];
 
 for (const dir of SCAN_DIRS) {
@@ -93,7 +136,17 @@ for (const dir of SCAN_DIRS) {
       for (const match of content.matchAll(rule.pattern)) {
         const value = match[0];
         if (ALLOWED.some((allowed) => allowed.test(value))) continue;
-        findings.push({ rel, rule: rule.name, value, index: match.index ?? 0 });
+        findings.push({
+          rel,
+          rule: rule.name,
+          value: MASKED_RULES.has(rule.name) ? mask(value) : value,
+          index: match.index ?? 0,
+        });
+      }
+    }
+    for (const [name, secret] of SECRETS) {
+      if (content.includes(secret)) {
+        findings.push({ rel, rule: `configured secret ${name}`, value: mask(secret), index: 0 });
       }
     }
   }
@@ -107,7 +160,10 @@ for (const forbidden of ["SPEC.md", "data/golden/golden-set.json", "ROLLBACK.md"
 }
 
 if (findings.length === 0) {
-  console.log("Leak audit clean: no keys, real numbers, real addresses or private files found.");
+  console.log(
+    "Leak audit clean: no keys, real numbers, real addresses or private files found. " +
+      `Checked for ${SECRETS.length} configured secret value(s) by exact match.`,
+  );
   process.exit(0);
 }
 
