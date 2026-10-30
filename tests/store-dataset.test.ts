@@ -57,6 +57,16 @@ describe("the local store keeps datasets apart", () => {
     expect((await getAllUpdates("lab")).map((r) => r.id)).toEqual(["u_lab"]);
   });
 
+  it("reports no time saving on /log without a measured baseline", async () => {
+    // The ledger once assumed a 15-minute manual baseline per update, so this
+    // one real update — never timed, no baseline measured — showed "~15m saved".
+    delete process.env.SAYONCE_BASELINE_MINUTES;
+    const { GET } = await import("@/app/api/updates/route");
+    const body = await (await GET()).json();
+    expect(body.metrics.totalUpdates).toBe(1);
+    expect(body.metrics.totalMinutesSaved).toBeNull();
+  });
+
   it("never lets demo, lab or judge-session rows into real use", async () => {
     const { realUseEvidence } = await import("@/lib/proof");
     const evidence = await realUseEvidence();

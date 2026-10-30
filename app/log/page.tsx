@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState, useRef } from "react";
+import { CounterCard } from "@/components/parity/CounterCard";
 import { Badge } from "@/components/Badge";
 import type { UpdateLogRow } from "@/lib/update-repo";
 import type { TrailEntry, TrailVerdict } from "@/lib/trail";
@@ -9,8 +10,10 @@ interface Metrics {
   totalUpdates: number;
   totalSpokenWords: number;
   totalDeliveredWords: number;
-  amplification: number;
-  totalMinutesSaved: number;
+  /** Null until something has been spoken. */
+  amplification: number | null;
+  /** Null until a baseline has been measured. */
+  totalMinutesSaved: number | null;
   openCommitmentsCount: number;
 }
 
@@ -272,58 +275,49 @@ export default function LogPage() {
         </button>
       </div>
 
-      {/* Aggregate Stats */}
+      {/* Aggregate stats, on Parity counter cards. Unmeasured reads as such. */}
       {metrics && (
-        <section className="grid grid-cols-2 gap-3 sm:grid-cols-4">
-          <div className="hover-card-lift rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 space-y-1">
-            <span className="text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
-              Total Updates
-            </span>
-            <p
-              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-ink)]"
-            >
-              {metrics.totalUpdates}
-            </p>
-          </div>
-          <div className="hover-card-lift rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 space-y-1">
-            <span className="text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
-              Amplification
-            </span>
-            <p
-              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-accent)]"
-            >
-              {metrics.amplification}×
-            </p>
-            <span className="block font-mono text-[11px] text-[var(--color-ink-soft)]">
-              {metrics.totalSpokenWords} spoke → {metrics.totalDeliveredWords} delivered
-            </span>
-          </div>
-          <div className="hover-card-lift rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 space-y-1">
-            <span className="text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
-              Time Saved
-            </span>
-            <p
-              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-verified)]"
-            >
-              ~{metrics.totalMinutesSaved}m
-            </p>
-            <span className="block text-[11px] text-[var(--color-ink-soft)]">
-              vs manual update drafting
-            </span>
-          </div>
-          <div className="hover-card-lift rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-4 space-y-1">
-            <span className="text-xs font-medium text-[var(--color-ink-soft)] uppercase tracking-wider font-mono">
-              Open Commitments
-            </span>
-            <p
-              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-ink)]"
-            >
-              {allCommitments.filter((c) => c.status === "open").length}
-            </p>
-            <span className="block text-[11px] text-[var(--color-ink-soft)]">
-              Tracked across projects
-            </span>
-          </div>
+        <section aria-label="Ledger totals" className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+          <CounterCard
+            label="Updates"
+            meta="Real use"
+            value={String(metrics.totalUpdates)}
+            caption="Spoken updates on record"
+            footer="Demo sessions are not counted"
+          />
+          <CounterCard
+            label="Amplification"
+            meta="Words"
+            value={metrics.amplification === null ? "Not yet measured" : `${metrics.amplification}×`}
+            caption={`${metrics.totalSpokenWords} spoken, ${metrics.totalDeliveredWords} delivered`}
+            footer="Delivered words per spoken word"
+            delayMs={60}
+          />
+          <CounterCard
+            tone="verified"
+            label="Time saved"
+            meta="Measured"
+            value={
+              metrics.totalMinutesSaved === null ? "Not yet measured" : `${metrics.totalMinutesSaved} min`
+            }
+            caption={
+              metrics.totalMinutesSaved === null
+                ? "Needs a timed baseline first"
+                : "Against your measured baseline"
+            }
+            footer="Never estimated"
+            footerTone="verified"
+            delayMs={120}
+          />
+          <CounterCard
+            tone="review"
+            label="Open commitments"
+            meta="Tracked"
+            value={String(allCommitments.filter((c) => c.status === "open").length)}
+            caption="Promises made inside updates"
+            footer="Across every project"
+            delayMs={180}
+          />
         </section>
       )}
 
