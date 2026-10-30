@@ -117,6 +117,7 @@ export async function aiCall<T extends z.ZodType>(
   let lastRawText = "";
 
   for (let attempt = 0; attempt < 2; attempt += 1) {
+    const started = Date.now();
     try {
       aiCallCounter += 1;
       const response = await gemini().models.generateContent({
@@ -160,6 +161,9 @@ export async function aiCall<T extends z.ZodType>(
         throw new AiStepError(step, `the response did not match the schema: ${summarise(parsed.error)}`);
       }
 
+      if (process.env.SAYONCE_TRACE) {
+        console.log(`[ai] ${step} ${Date.now() - started}ms${attempt > 0 ? " (after retry)" : ""}`);
+      }
       return {
         value: parsed.data as z.infer<T>,
         usage: {
@@ -170,6 +174,9 @@ export async function aiCall<T extends z.ZodType>(
       };
     } catch (error) {
       lastError = error;
+      // Server log only. A silent retry costs 2-8 seconds of a live budget,
+      // and without this line a slow fan-out had no visible cause.
+      console.warn(`[ai] ${step} attempt ${attempt + 1} failed after ${Date.now() - started}ms: ${describe(error).slice(0, 200)}`);
       if (isQuotaExhaustedError(error)) {
         throw new AiQuotaExhaustedError(step, undefined, error);
       }

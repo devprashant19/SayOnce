@@ -285,7 +285,10 @@ console.log(`\nRun saved to ${runFile.replace(ROOT, ".")}`);
 // The deployed site cannot read .lab/, so the run's scores are stored too.
 // Scores and case ids only: the golden set is private, and grading detail
 // quotes it.
-if (process.env.DATABASE_URL && graded.length > 0) {
+// Only a run of the whole set speaks for the pipeline: a --case or --group
+// run would otherwise become the site's headline figure.
+const wholeSet = !onlyCase && !onlyGroup && !useExample;
+if (process.env.DATABASE_URL && graded.length > 0 && wholeSet) {
   try {
     const { neon } = await import("@neondatabase/serverless");
     const sql = neon(process.env.DATABASE_URL);
