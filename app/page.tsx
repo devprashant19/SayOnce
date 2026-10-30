@@ -33,7 +33,9 @@ export default async function LandingPage() {
   // "0 invented facts" was printed whether or not any lab run had measured
   // it. It now appears only when the latest stored run did.
   const lab = labEvidenceFromStored((await storedLabRuns(1))[0]);
-  const labClaim = lab ? `${lab.inventedFacts} invented facts in ${lab.gradedCount} lab cases` : null;
+  const labClaim = lab
+    ? `${lab.inventedFacts} invented ${lab.inventedFacts === 1 ? "fact" : "facts"} in ${lab.gradedCount} lab cases`
+    : null;
   // Computed from the prepared sample in data/demo. If it is ever missing the
   // band is dropped rather than filled with plausible-looking numbers.
   const sample = landingSample();
