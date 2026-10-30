@@ -45,24 +45,41 @@ async function databaseState(): Promise<DatabaseState> {
  */
 async function tableStates(): Promise<Record<string, string>> {
   const { db, schema } = await import("@/lib/db");
+  const { getTableColumns } = await import("drizzle-orm");
   const database = db();
-  const probes: Record<string, () => Promise<unknown>> = {
-    updates: () => database.select().from(schema.updates).limit(1),
-    facts: () => database.select().from(schema.facts).limit(1),
-    messages: () => database.select().from(schema.messages).limit(1),
-    contacts: () => database.select().from(schema.contacts).limit(1),
-    trail_entries: () => database.select().from(schema.trailEntries).limit(1),
+  const sql = neon(process.env.DATABASE_URL!);
+  const tables = {
+    updates: schema.updates,
+    facts: schema.facts,
+    messages: schema.messages,
+    contacts: schema.contacts,
+    trail_entries: schema.trailEntries,
   };
   const states: Record<string, string> = {};
-  for (const [name, probe] of Object.entries(probes)) {
+  for (const [name, table] of Object.entries(tables)) {
     try {
-      await probe();
+      await database.select().from(table).limit(1);
       states[name] = "ok";
     } catch (error) {
       const code =
         (error as { code?: string })?.code ??
         (error as { cause?: { code?: string } })?.cause?.code;
-      states[name] = code ? `error ${code}` : "error";
+      if (code !== "42703") {
+        states[name] = code ? `error ${code}` : "error";
+        continue;
+      }
+      // A column is missing: name which. Column names describe the schema,
+      // not anyone's data, and they decide the repair — a few late additions
+      // mean an out-of-date SayOnce schema; most missing means the URL points
+      // at a different project's database, which must not be altered.
+      const expected = Object.values(getTableColumns(table)).map((c) => c.name);
+      const rows = (await sql`
+        select column_name from information_schema.columns
+        where table_schema = 'public' and table_name = ${name}
+      `) as Array<{ column_name: string }>;
+      const present = new Set(rows.map((r) => r.column_name));
+      const missing = expected.filter((c) => !present.has(c));
+      states[name] = `missing ${missing.length} of ${expected.length}: ${missing.join(", ")}`;
     }
   }
   return states;
