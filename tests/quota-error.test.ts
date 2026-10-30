@@ -139,6 +139,54 @@ describe("instant mode: live AI unavailable", () => {
     }
   });
 
+  it("serves instant mode when the demo live-AI switch is off, not a 429", async () => {
+    // A spent demo cap answered with a 429 and "Live AI is currently paused to
+    // conserve demonstration quota" — a judge mid-demo saw a quota message.
+    process.env.DEMO_LIVE_AI = "false";
+    try {
+      const response = await POST(
+        new Request("http://localhost:3000/api/fanout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            spokenText: "A capped update that matches no prepared sample at all.",
+            project: "Custom Project",
+            contactSet: "india",
+          }),
+        }),
+      );
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.mode).toBe("instant");
+      expect(body.cards.length).toBeGreaterThan(0);
+      expect(JSON.stringify(body).toLowerCase()).not.toMatch(/quota|paused|cap\b/);
+    } finally {
+      delete process.env.DEMO_LIVE_AI;
+    }
+  });
+
+  it("never hands a Quality Lab case a prepared fan-out for another update", async () => {
+    // The lab grades what the pipeline produced for this case. Instant mode's
+    // prepared output belongs to a different update, so grading it would
+    // score the wrong text; the case must come back as not run.
+    vi.spyOn(extractModule, "extract").mockRejectedValueOnce(new Error("network blip"));
+    const response = await POST(
+      new Request("http://localhost:3000/api/fanout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({
+          spokenText: "A golden case that matches no prepared sample.",
+          contactSet: "freelance",
+          source: "lab",
+        }),
+      }),
+    );
+    expect(response.status).toBe(503);
+    const body = await response.json();
+    expect(body.cards).toBeUndefined();
+    expect(body.mode).toBeUndefined();
+  });
+
   it("never phrases instant mode as a failure", async () => {
     const response = await fanoutWithProviderLimit();
     const body = await response.json();

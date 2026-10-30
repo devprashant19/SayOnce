@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { after, NextResponse } from "next/server";
 import { z } from "zod";
 import { extract } from "@/lib/ai/extract";
 import { route } from "@/lib/ai/route";
@@ -101,8 +101,7 @@ async function servePrepared(
       overridden: false,
     }));
 
-    try {
-      await saveFanoutRecord({
+    const persist = () => saveFanoutRecord({
         updateId,
         dataset: datasetFor({ source: body.source, contactSet: body.contactSet }),
         spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
@@ -127,9 +126,16 @@ async function servePrepared(
             checkFailures: c.check?.failures ?? [],
           })),
         trail: freshTrail,
-      });
-    } catch (err) {
-      console.warn("Failed to persist cached demo record:", err);
+      }).catch((err) => console.warn("Failed to persist cached demo record:", err));
+
+    // The answer is ready before the save is: a row-by-row write to the
+    // database held the judge demo on a spinner for 2-7 seconds. Save after
+    // responding; outside a request (unit tests) there is no "after", so save
+    // inline.
+    try {
+      after(persist);
+    } catch {
+      await persist();
     }
 
     return NextResponse.json({
@@ -158,6 +164,12 @@ async function servePrepared(
  * provider state and never carries provider text.
  */
 async function instantModeResponse(body: z.infer<typeof RequestBody>) {
+  // The Quality Lab grades what the pipeline produced for *this* update. A
+  // prepared fan-out for another update would be graded as if it were live,
+  // so a lab case that cannot run live is reported as not run instead.
+  if (body.source === "lab") {
+    return NextResponse.json({ error: "The live run did not complete." }, { status: 503 });
+  }
   const fallback = getPreparedFallback(body.contactSet);
   if (!fallback) {
     return NextResponse.json({
@@ -235,10 +247,10 @@ async function runFanout(request: Request, body: z.infer<typeof RequestBody>): P
 
     const allowance = checkDemoAiAllowance(sessionToken);
     if (!allowance.allowed) {
-      return NextResponse.json(
-        { error: allowance.message, isCapped: true },
-        { status: allowance.status },
-      );
+      // A spent cap or the kill switch is the same to a visitor as any other
+      // live failure: prepared output, never a quota message and a 429.
+      console.warn(`FANOUT: demo live AI not allowed (${allowance.message}); serving instant mode`);
+      return instantModeResponse(body);
     }
     demoSessionId = allowance.sessionId;
   }
