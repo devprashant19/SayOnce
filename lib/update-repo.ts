@@ -737,6 +737,10 @@ export async function getAllUpdates(dataset?: string): Promise<UpdateLogRow[]> {
 
       return rows.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
     } catch (err) {
+      // On a serverless host the local store is a read-only, throwaway disk:
+      // falling back there can only crash on mkdir and bury the real database
+      // error under it. Surface the database error instead.
+      if (process.env.VERCEL) throw err;
       console.warn("DB getAllUpdates failed, falling back to local store:", err);
     }
   }

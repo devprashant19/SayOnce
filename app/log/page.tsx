@@ -21,6 +21,8 @@ export default function LogPage() {
   const [updates, setUpdates] = useState<UpdateLogRow[]>([]);
   const [metrics, setMetrics] = useState<Metrics | null>(null);
   const [loading, setLoading] = useState(true);
+  // A ledger that failed to load must not look like an empty one.
+  const [loadFailed, setLoadFailed] = useState(false);
   const [search, setSearch] = useState("");
   const [selectedProject, setSelectedProject] = useState("all");
   const [selectedContact, setSelectedContact] = useState("all");
@@ -44,9 +46,12 @@ export default function LogPage() {
           const data = await res.json();
           setUpdates(data.updates ?? []);
           setMetrics(data.metrics ?? null);
+        } else {
+          setLoadFailed(true);
         }
       } catch (err) {
         console.warn("Failed to load updates:", err);
+        setLoadFailed(true);
       } finally {
         setLoading(false);
       }
@@ -389,9 +394,20 @@ export default function LogPage() {
             <div className="py-12 text-center text-sm font-mono text-[var(--color-ink-soft)]">
               Loading records…
             </div>
+          ) : loadFailed ? (
+            <div
+              role="alert"
+              className="rounded-[var(--radius-card)] border border-[var(--color-warning)]/40 bg-[var(--color-warning-wash)] p-8 text-center text-sm text-[var(--color-ink)]"
+            >
+              <p className="font-semibold">The update ledger could not be loaded.</p>
+              <p className="mt-1 text-xs text-[var(--color-ink-soft)]">
+                The database did not answer, so nothing is shown rather than an empty ledger.{" "}
+                <code className="font-mono">/api/health</code> reports its state.
+              </p>
+            </div>
           ) : filteredUpdates.length === 0 ? (
             <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-12 text-center text-xs text-[var(--color-ink-soft)]">
-              No updates match the selected filters.
+              {updates.length === 0 ? "No updates recorded yet." : "No updates match the selected filters."}
             </div>
           ) : (
             <div
