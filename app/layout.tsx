@@ -15,15 +15,50 @@ const instrument = Instrument_Serif({
 });
 const mono = JetBrains_Mono({ subsets: ["latin"], variable: "--font-jetbrains", display: "swap" });
 
+const SITE = "https://say-once-kappa.vercel.app";
+
+/**
+ * `metadataBase` is what makes the Open Graph image resolve to an absolute
+ * URL. Without it Next emits a relative path and every scraper — Slack,
+ * WhatsApp, LinkedIn, Devpost — silently shows no card at all.
+ *
+ * The icons are deliberately not declared here. Next serves `app/icon.svg`,
+ * `app/apple-icon.png` and `app/opengraph-image.png` by file convention and
+ * emits the tags itself; listing them again only lets the two drift apart.
+ */
 export const metadata: Metadata = {
-  title: "SayOnce — say it once, everyone gets their version",
+  metadataBase: new URL(SITE),
+  title: {
+    default: "SayOnce — say it once, everyone gets their version",
+    template: "%s — SayOnce",
+  },
   description:
     "Speak one work update. SayOnce decides who needs to know, writes each person their own message in their language, tone and channel, checks every draft against what you said, and logs it.",
+  applicationName: "SayOnce",
+  authors: [{ name: "Dev Prashant" }],
+  creator: "Dev Prashant",
+  keywords: [
+    "voice",
+    "dictation",
+    "work updates",
+    "Hinglish",
+    "provenance",
+    "Wispr Flow",
+  ],
   openGraph: {
+    type: "website",
+    url: SITE,
+    siteName: "SayOnce",
+    locale: "en_IN",
+    title: "SayOnce — say it once, everyone gets their version",
+    description: "Say it once. Everyone gets their version.",
+  },
+  twitter: {
+    card: "summary_large_image",
     title: "SayOnce",
     description: "Say it once. Everyone gets their version.",
-    type: "website",
   },
+  robots: { index: true, follow: true },
 };
 
 export const viewport: Viewport = {

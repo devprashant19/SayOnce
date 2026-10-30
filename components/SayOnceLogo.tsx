@@ -1,17 +1,28 @@
 /**
  * The SayOnce mark.
  *
- * One voice becomes many: a single solid origin fanning out 1 → 2 → 3, with
- * opacity falling off by depth. Pure circles, so it stays legible at 16px in a
- * favicon and at 160px in the landing hero.
+ * A spoken waveform on the left — three bars with a real speech envelope,
+ * short, tall, medium — fanning into three rays on the right, each a different
+ * length, each fading further out. One utterance, three different versions.
+ *
+ * The voice read is deliberate: this is a Wispr Flow entry, and a mark that is
+ * only an abstract fan says nothing about speech. It is still not a microphone
+ * glyph, because the product is not a recorder — what it does with the voice is
+ * the point, so the mark shows the fan-out, not the input device.
+ *
+ * Checked by rendering at 16, 24, 32, 64 and 180px. The opacity floor is 0.65
+ * rather than 0.5 because anything fainter disappears in a 16px favicon, and
+ * the rays vary by length as well as opacity so the falloff survives at any
+ * size. Three bars, not four: four has a better envelope at 180px and turns to
+ * mud at 16px.
  *
  * It draws in `currentColor` by default, so it inherits the text colour of
  * wherever it sits. Pass `tone="brand"` for Parity's orange.
  *
- * The colour goes in a style, not the `fill` attribute. SVG presentation
- * attributes cannot resolve var(), so `fill="var(--...)"` is discarded and the
- * circles inherit the root's `fill="none"` — the mark rendered invisible in
- * the header for exactly that reason.
+ * The colour goes in a style, not the `stroke` attribute. SVG presentation
+ * attributes cannot resolve var(), so `stroke="var(--...)"` is discarded and
+ * the mark renders invisible — which is exactly what happened to the old one
+ * in the header.
  *
  * This is the only logo in the product. Do not draw a second one, do not add
  * a wordmark graphic — the word "SayOnce" is set beside it.
@@ -24,7 +35,7 @@ export interface SayOnceLogoProps {
   /** Set true when a visible "SayOnce" wordmark sits next to it. */
   decorative?: boolean;
   className?: string;
-  /** Animates the fan on mount. Respects prefers-reduced-motion in CSS. */
+  /** Staggers the bars then the rays, left to right. Reduced-motion safe. */
   animated?: boolean;
 }
 
@@ -35,7 +46,7 @@ export function SayOnceLogo({
   className = "",
   animated = false,
 }: SayOnceLogoProps) {
-  const fill = tone === "brand" ? "var(--color-brand)" : "currentColor";
+  const stroke = tone === "brand" ? "var(--color-brand)" : "currentColor";
 
   return (
     <svg
@@ -50,13 +61,23 @@ export function SayOnceLogo({
       focusable="false"
     >
       {!decorative && <title>SayOnce</title>}
-      <g style={{ fill }}>
-        <circle cx="5" cy="16" r="4.5" className={animated ? "logo-origin" : undefined} />
-        <circle cx="15.5" cy="10.5" r="3.2" opacity="0.78" className={animated ? "logo-fan logo-fan-1" : undefined} />
-        <circle cx="15.5" cy="21.5" r="3.2" opacity="0.78" className={animated ? "logo-fan logo-fan-2" : undefined} />
-        <circle cx="25.5" cy="6" r="2.4" opacity="0.52" className={animated ? "logo-fan logo-fan-3" : undefined} />
-        <circle cx="25.5" cy="16" r="2.4" opacity="0.52" className={animated ? "logo-fan logo-fan-4" : undefined} />
-        <circle cx="25.5" cy="26" r="2.4" opacity="0.52" className={animated ? "logo-fan logo-fan-5" : undefined} />
+      <g style={{ stroke }} strokeWidth={3} strokeLinecap="round" fill="none">
+        {/* the voice: a speech envelope, not a bar chart */}
+        <path d="M4.5 13V19" className={animated ? "logo-origin" : undefined} />
+        <path d="M9 7V25" className={animated ? "logo-fan logo-fan-1" : undefined} />
+        <path d="M13.5 11V21" className={animated ? "logo-fan logo-fan-2" : undefined} />
+        {/* the versions: three, each different, fading outward */}
+        <path d="M19 9H27" className={animated ? "logo-fan logo-fan-3" : undefined} />
+        <path
+          d="M19 16H29"
+          opacity={0.82}
+          className={animated ? "logo-fan logo-fan-4" : undefined}
+        />
+        <path
+          d="M19 23H25"
+          opacity={0.65}
+          className={animated ? "logo-fan logo-fan-5" : undefined}
+        />
       </g>
     </svg>
   );
