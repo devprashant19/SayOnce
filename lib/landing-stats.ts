@@ -27,6 +27,10 @@ export interface LandingSample {
   languages: number;
   /** Facts the speaker locked away from at least one recipient. */
   withheld: number;
+  /** Drafts the deterministic checker passed, out of those drafted. */
+  checked: number;
+  /** checked as a whole-number percentage of recipients. */
+  checkerPassRate: number;
 }
 
 export function landingSample(): LandingSample | null {
@@ -46,11 +50,15 @@ export function landingSample(): LandingSample | null {
   );
   if (spokenWords === 0) return null;
 
+  const checked = drafted.filter((card) => card.check?.ok === true).length;
+
   return {
     spokenWords,
     deliveredWords,
     recipients: drafted.length,
     languages: new Set(drafted.map((c) => languageKey(c.contact.language))).size,
     withheld: result.facts.filter((f) => f.privacy.blockedFor.length > 0).length,
+    checked,
+    checkerPassRate: Math.round((checked / drafted.length) * 100),
   };
 }

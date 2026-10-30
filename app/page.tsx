@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { ChevronRight, Mic, Sparkles } from "lucide-react";
+import { ChevronRight, Languages, Lock, Mic, Send, Sparkles } from "lucide-react";
+import { StepLabel } from "@/components/parity/Tray";
+import { CounterCard } from "@/components/parity/CounterCard";
+import { Gauge } from "@/components/parity/Gauge";
 import { InteractiveStrip } from "@/components/InteractiveStrip";
 import { SayOnceLogo } from "@/components/SayOnceLogo";
 import { landingSample } from "@/lib/landing-stats";
@@ -152,15 +155,13 @@ export default function LandingPage() {
       {/* =========================================================================
           SCENE 2: EXTRACT
          ========================================================================= */}
-      <section aria-labelledby="extract-heading" className="space-y-6">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Step 1 · Precision Decomposition
-          </span>
-          <h2 id="extract-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+      <section aria-labelledby="extract-heading" className="space-y-6 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6">
+        <div className="border-b border-[var(--color-line)] pb-5">
+          <StepLabel step="Step 1" label="Precision Decomposition" />
+          <h2 id="extract-heading" className="font-display mt-0.5 text-lg font-semibold text-[var(--color-ink)] sm:text-xl">
             The sentence breaks apart. Facts lift out.
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+          <p className="mt-0.5 max-w-2xl text-xs text-[var(--color-ink-soft)] sm:text-sm">
             Filler dissolves. Dates anchor to real calendar dates (e.g. “Friday” ➔ 2026-10-30,
             “Monday” ➔ 2026-11-02). Numbers, people, and sensitive confidentiality boundaries are
             explicitly bound.
@@ -255,15 +256,13 @@ export default function LandingPage() {
       {/* =========================================================================
           SCENE 3: ROUTE & THE PRIVACY SHIELD
          ========================================================================= */}
-      <section aria-labelledby="route-heading" className="space-y-6">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Step 2 · Knowledge Partitioning
-          </span>
-          <h2 id="route-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+      <section aria-labelledby="route-heading" className="space-y-6 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6">
+        <div className="border-b border-[var(--color-line)] pb-5">
+          <StepLabel step="Step 2" label="Knowledge Partitioning" />
+          <h2 id="route-heading" className="font-display mt-0.5 text-lg font-semibold text-[var(--color-ink)] sm:text-xl">
             Who needs to know — and what is shielded
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+          <p className="mt-0.5 max-w-2xl text-xs text-[var(--color-ink-soft)] sm:text-sm">
             SayOnce routes facts, not documents. Each person gets what they need to know, and
             nothing they shouldn’t. The confidential fact hits a privacy shield in front of the
             client and bounces off.
@@ -381,15 +380,13 @@ export default function LandingPage() {
       {/* =========================================================================
           SCENE 4: COMPOSE — THE 4-COLUMN "WHAT THEY HEARD" COMPARISON
          ========================================================================= */}
-      <section aria-labelledby="compose-heading" className="space-y-6">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Step 3 · The Signature Moment
-          </span>
-          <h2 id="compose-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+      <section aria-labelledby="compose-heading" className="space-y-6 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6">
+        <div className="border-b border-[var(--color-line)] pb-5">
+          <StepLabel step="Step 3" label="The Signature Moment" />
+          <h2 id="compose-heading" className="font-display mt-0.5 text-lg font-semibold text-[var(--color-ink)] sm:text-xl">
             What they heard: one update, four tailored versions
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+          <p className="mt-0.5 max-w-2xl text-xs text-[var(--color-ink-soft)] sm:text-sm">
             Not a translation. Not a shared summary. Four completely different messages written
             simultaneously from the exact same dictation — each in their own language, script, tone and channel.
           </p>
@@ -577,15 +574,13 @@ export default function LandingPage() {
       {/* =========================================================================
           SCENE 5: VERIFY — DETERMINISTIC VERIFIER
          ========================================================================= */}
-      <section aria-labelledby="verify-heading" className="space-y-6">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Step 4 · Pure Deterministic Verification
-          </span>
-          <h2 id="verify-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+      <section aria-labelledby="verify-heading" className="space-y-6 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6">
+        <div className="border-b border-[var(--color-line)] pb-5">
+          <StepLabel step="Step 4" label="Pure Deterministic Verification" />
+          <h2 id="verify-heading" className="font-display mt-0.5 text-lg font-semibold text-[var(--color-ink)] sm:text-xl">
             Final authority belongs to code, not the AI
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+          <p className="mt-0.5 max-w-2xl text-xs text-[var(--color-ink-soft)] sm:text-sm">
             A pure TypeScript verifier (no network, no model, no clock) inspects every single
             draft before the send button unlocks. If anything violates facts, privacy, or script,
             the send button is physically locked.
@@ -637,15 +632,13 @@ export default function LandingPage() {
       {/* =========================================================================
           SCENE 6: TRUST TRAIL & THE VOICE RETURN
          ========================================================================= */}
-      <section aria-labelledby="trust-heading" className="space-y-6">
-        <div>
-          <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Step 5 · Cryptographic Memory & ROI
-          </span>
-          <h2 id="trust-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+      <section aria-labelledby="trust-heading" className="space-y-6 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6">
+        <div className="border-b border-[var(--color-line)] pb-5">
+          <StepLabel step="Step 5" label="Cryptographic Memory & ROI" />
+          <h2 id="trust-heading" className="font-display mt-0.5 text-lg font-semibold text-[var(--color-ink)] sm:text-xl">
             The Trust Trail & The Voice Return
           </h2>
-          <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
+          <p className="mt-0.5 max-w-2xl text-xs text-[var(--color-ink-soft)] sm:text-sm">
             Every update, fact, decision, and draft is permanently logged to an audit chain
             secured by SHA-256 hash chaining. If any byte in the past is altered, the entire chain
             rings an alarm.
@@ -698,52 +691,76 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* The Voice Return Numbers — arithmetic over the prepared sample. */}
+        {/* Parity's results row: arithmetic over the prepared sample above. */}
         {sample && (
-        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {[
-            {
-              label: "Words spoken",
-              value: String(sample.spokenWords),
-              sub: "One Hinglish dictation",
-              sample: true,
-            },
-            {
-              label: "Words delivered",
-              value: String(sample.deliveredWords),
-              sub: `Across ${sample.recipients} tailored messages`,
-              sample: true,
-            },
-            {
-              label: "Languages and scripts",
-              value: String(sample.languages),
-              sub: "Each message in its reader's own",
-              sample: true,
-            },
-            {
-              label: "Facts withheld",
-              value: String(sample.withheld),
-              sub: "Never entered the blocked reader's prompt",
-              sample: true,
-            },
-          ].map((stat) => (
-            <div
-              key={stat.label}
-              className="rounded-xl border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-5"
-            >
-              <div className="text-xs font-semibold text-[var(--color-ink-soft)]">
-                {stat.label}
-                {stat.sample && (
-                  <span className="ml-1 text-[10px] text-[var(--color-ink-faint)]">(sample)</span>
-                )}
+          <div className="space-y-4">
+            <div className="flex flex-col justify-between gap-2 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-3.5 shadow-sm sm:flex-row sm:items-center">
+              <div className="flex items-center gap-2">
+                <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[var(--color-brand)]" />
+                <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink)]">
+                  Prepared sample
+                </span>
+                <span className="hidden text-xs text-[var(--color-ink-soft)] md:inline">
+                  (every figure is arithmetic over the fan-out shown above)
+                </span>
               </div>
-              <div className="mt-2 text-3xl font-bold tracking-tight text-[var(--color-ink)]">
-                {stat.value}
-              </div>
-              <p className="mt-1 text-xs text-[var(--color-ink-soft)]">{stat.sub}</p>
+              <span className="shrink-0 text-xs font-medium text-[var(--color-accent)]">
+                {sample.recipients} drafts checked by code
+              </span>
             </div>
-          ))}
-        </div>
+
+            <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+              <CounterCard
+                label="Messages"
+                meta="This update"
+                value={String(sample.recipients)}
+                pill={{ icon: <Send size={12} strokeWidth={2.5} />, text: "From one dictation" }}
+                caption={`${sample.spokenWords} words spoken, ${sample.deliveredWords} delivered`}
+                footer="Each in its reader's own words"
+              />
+              <div className="hover-card-lift animate-fade-in flex flex-col justify-between rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm sm:col-span-2 sm:p-5 lg:col-span-1">
+                <div className="flex items-center justify-between text-[13px]">
+                  <span className="font-medium text-[var(--color-accent)]">Checker pass rate</span>
+                  <span className="text-[var(--color-ink-soft)]">Deterministic</span>
+                </div>
+                <div className="mt-1">
+                  <Gauge
+                    value={sample.checkerPassRate}
+                    label="Drafts passing the deterministic checker"
+                    color={
+                      sample.checkerPassRate === 100
+                        ? "var(--color-verified)"
+                        : "var(--color-brand)"
+                    }
+                  />
+                </div>
+                <p className="mt-1 text-center text-[11px] font-medium text-[var(--color-ink-soft)]">
+                  {sample.checked} of {sample.recipients} drafts passed
+                </p>
+              </div>
+              <CounterCard
+                tone="verified"
+                label="Languages and scripts"
+                meta="Tailored"
+                value={String(sample.languages)}
+                pill={{ icon: <Languages size={12} strokeWidth={2.5} />, text: "Native script" }}
+                caption="Each message in its reader's own"
+                footer="Hindi in Devanagari, Hinglish in Roman"
+                footerTone="verified"
+                delayMs={120}
+              />
+              <CounterCard
+                tone="blocked"
+                label="Facts withheld"
+                meta="Privacy Shield"
+                value={String(sample.withheld)}
+                pill={{ icon: <Lock size={12} strokeWidth={2.5} />, text: "Kept back" }}
+                caption="Never entered the blocked reader's prompt"
+                footer="Enforced before the model runs"
+                delayMs={180}
+              />
+            </div>
+          </div>
         )}
       </section>
 
@@ -752,33 +769,32 @@ export default function LandingPage() {
          ========================================================================= */}
       <section
         aria-labelledby="close-heading"
-        className="rounded-[28px] bg-[var(--color-ink-button)] px-6 py-12 text-center sm:px-12 sm:py-16"
-        style={{ color: "var(--color-ground)" }}
+        className="rounded-3xl border border-[var(--color-line)] bg-[var(--color-surface)] px-6 py-12 text-center shadow-md sm:px-12 sm:py-16"
       >
         <h2
           id="close-heading"
-          className="font-display mx-auto max-w-2xl font-medium leading-[1.08]"
+          className="font-display mx-auto max-w-2xl font-medium leading-[1.08] text-[var(--color-ink)]"
           style={{ fontSize: "clamp(28px, 5vw, 46px)" }}
         >
           Say it <em className="font-accent">once.</em> Everyone hears it their way.
         </h2>
         <p
           className="mx-auto mt-4 max-w-xl text-sm sm:text-base"
-          style={{ color: "color-mix(in srgb, var(--color-ground) 72%, transparent)" }}
+          style={{ color: "var(--color-ink-soft)" }}
         >
           Built for anyone who coordinates people across languages, roles and channels.
           India first, because that is where the problem is loudest.
         </p>
 
         <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-          <Link href="/app" className="btn-pill btn-accent" style={{ viewTransitionName: "speak-box" }}>
+          <Link href="/app" className="btn-pill btn-accent">
             <Mic size={15} aria-hidden="true" />
             Try it with your voice
             <span className="btn-chip" aria-hidden="true">
               <ChevronRight size={16} strokeWidth={2.5} />
             </span>
           </Link>
-          <Link href="/proof" className="btn-pill btn-quiet">
+          <Link href="/proof" className="btn-pill btn-ink">
             How we check every draft
             <span className="btn-chip" aria-hidden="true">
               <ChevronRight size={16} strokeWidth={2.5} />
@@ -787,38 +803,6 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* =========================================================================
-          FOOTER
-         ========================================================================= */}
-      <footer className="border-t border-[var(--color-rule)] pt-8 text-xs text-[var(--color-ink-soft)] space-y-3">
-        <div className="flex flex-wrap items-center justify-between gap-4">
-          <div className="font-semibold text-sm text-[var(--color-ink)]">
-            SayOnce · No Hands Wispr Challenge Entry
-          </div>
-          <div className="flex flex-wrap items-center gap-2 sm:gap-4">
-            <Link href="/app" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
-              Speak
-            </Link>
-            <Link href="/people" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
-              People Book
-            </Link>
-            <Link href="/log" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
-              Update Log
-            </Link>
-            <Link href="/lab" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
-              Quality Lab
-            </Link>
-            <Link href="/proof" className="inline-flex min-h-11 items-center px-2 hover:underline hover:text-[var(--color-ink)] transition">
-              Proof
-            </Link>
-          </div>
-        </div>
-        <p>
-          Built for <em>No Hands: The Wispr Challenge</em> by WeMakeDevs and Wispr Flow.
-          Figures on this page are computed from the prepared sample above. Behaviour is
-          covered by {AUTOMATED_TEST_COUNT} automated tests and a cryptographic audit trail.
-        </p>
-      </footer>
     </div>
   );
 }

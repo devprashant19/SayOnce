@@ -14,6 +14,10 @@ import { SendGuidedQueue, type QueueItem } from "@/components/SendGuidedQueue";
 import { CommandBar } from "@/components/CommandBar";
 import { GuidedTour } from "@/components/GuidedTour";
 import { Badge } from "@/components/Badge";
+import { AlertTriangle, CheckCircle2, Lock, Send } from "lucide-react";
+import { CounterCard } from "@/components/parity/CounterCard";
+import { Gauge } from "@/components/parity/Gauge";
+import { StepLabel } from "@/components/parity/Tray";
 import { sendTargetFor } from "@/lib/links";
 import { CONTACT_SET_LABELS } from "@/lib/contact-sets";
 import type { Contact, Draft, Fact } from "@/lib/types";
@@ -68,6 +72,8 @@ interface FanoutResponse {
    * screen always belong to the words on screen.
    */
   mode?: "instant";
+  /** True when served from a prepared sample rather than run live. */
+  cached?: boolean;
   message?: string;
   preparedFrom?: string;
   preparedText?: string;
@@ -473,7 +479,19 @@ function SpeakContent() {
       {/* Two-pane at >=1024px: Left 40% (sticky), Right 60% (scrolls) */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
         {/* Left Pane: Sticky 40% */}
-        <aside className="lg:col-span-5 lg:sticky lg:top-20 lg:max-h-[calc(100vh-6rem)] lg:overflow-y-auto space-y-5 pr-1">
+        <aside
+          aria-labelledby="speak-step"
+          className="lg:col-span-5 lg:sticky lg:top-24 lg:max-h-[calc(100vh-7rem)] lg:overflow-y-auto space-y-5 rounded-3xl border border-[var(--color-line)] bg-[var(--color-paper-sunk)] p-4 shadow-md sm:p-6"
+        >
+          <div className="border-b border-[var(--color-line)] pb-4">
+            <StepLabel step="Step 1" label="Speak" />
+            <h2 id="speak-step" className="font-display mt-0.5 text-lg font-semibold text-[var(--color-ink)]">
+              One update, in your own words
+            </h2>
+            <p className="mt-0.5 text-xs text-[var(--color-ink-soft)]">
+              Hold your Wispr key and talk, or pick a sample below.
+            </p>
+          </div>
           <div id="fanout-controls" className="space-y-4">
             <SpeakBox
               value={spokenText}
@@ -743,11 +761,91 @@ function SpeakContent() {
                 </div>
               )}
 
+              {(() => {
+                // Parity's results row, computed from this fan-out alone.
+                const drafted = result.cards.filter((c) => c.draft !== null);
+                const passed = drafted.filter((c) => c.check?.ok === true).length;
+                const withheld = result.facts.filter((f) => f.privacy.blockedFor.length > 0).length;
+                const rate = drafted.length > 0 ? Math.round((passed / drafted.length) * 100) : 0;
+                const prepared = result.mode === "instant" || result.cached === true;
+                if (drafted.length === 0) return null;
+                return (
+                  <section aria-label="Fan-out summary" className="space-y-4">
+                    <div className="flex flex-col justify-between gap-2 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-3.5 shadow-sm sm:flex-row sm:items-center">
+                      <div className="flex items-center gap-2">
+                        <span aria-hidden="true" className="h-2 w-2 shrink-0 animate-pulse rounded-full bg-[var(--color-brand)]" />
+                        <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink)]">
+                          {prepared ? "Prepared fan-out" : "Live fan-out"}
+                        </span>
+                        <span className="hidden text-xs text-[var(--color-ink-soft)] md:inline">
+                          {prepared ? "(drafted and checked ahead of time)" : "(drafted just now, checked by code)"}
+                        </span>
+                      </div>
+                      <span className="shrink-0 text-xs font-medium text-[var(--color-accent)]">
+                        {drafted.length} drafts checked by code
+                      </span>
+                    </div>
+                    <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4">
+                      <CounterCard
+                        label="Drafts"
+                        meta="This update"
+                        value={String(drafted.length)}
+                        pill={{ icon: <Send size={12} strokeWidth={2.5} />, text: "Ready to send" }}
+                        caption="One per person who needs to know"
+                        footer="Each in its reader's own words"
+                      />
+                      <div className="hover-card-lift animate-fade-in flex flex-col justify-between rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm sm:p-5">
+                        <div className="flex items-center justify-between text-[13px]">
+                          <span className="font-medium text-[var(--color-accent)]">Checker</span>
+                          <span className="text-[var(--color-ink-soft)]">Deterministic</span>
+                        </div>
+                        <div className="mt-1">
+                          <Gauge
+                            value={rate}
+                            label="Drafts passing the deterministic checker"
+                            color={rate === 100 ? "var(--color-verified)" : "var(--color-brand)"}
+                          />
+                        </div>
+                        <p className="mt-1 text-center text-[11px] font-medium text-[var(--color-ink-soft)]">
+                          {passed} of {drafted.length} passed
+                        </p>
+                      </div>
+                      <CounterCard
+                        tone="blocked"
+                        label="Withheld"
+                        meta="Privacy Shield"
+                        value={String(withheld)}
+                        pill={{ icon: <Lock size={12} strokeWidth={2.5} />, text: "Kept back" }}
+                        caption="Never handed to the blocked reader's draft"
+                        footer="Enforced before the model runs"
+                        delayMs={120}
+                      />
+                      <CounterCard
+                        tone={drafted.length - passed > 0 ? "review" : "verified"}
+                        label="Needs you"
+                        meta="Before sending"
+                        value={String(drafted.length - passed)}
+                        pill={
+                          drafted.length - passed > 0
+                            ? { icon: <AlertTriangle size={12} strokeWidth={2.5} />, text: "Edit or override" }
+                            : { icon: <CheckCircle2 size={12} strokeWidth={2.5} />, text: "All clear" }
+                        }
+                        caption="Drafts the checker held back"
+                        footer="Send stays locked until resolved"
+                        footerTone={drafted.length - passed > 0 ? "review" : "verified"}
+                        delayMs={180}
+                      />
+                    </div>
+                  </section>
+                );
+              })()}
+
               <section id="drafts-section" className="space-y-4">
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-rule)] pb-3">
                   <div>
+                    <StepLabel step="Step 2" label="Fan-out" />
                     <h2
-                      className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
+                      className="font-display mt-0.5 text-xl font-semibold tracking-tight text-[var(--color-ink)]"
                     >
                       Drafted Messages ({result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length})
                     </h2>
@@ -759,7 +857,7 @@ function SpeakContent() {
                     <button
                       type="button"
                       onClick={() => setShowQueue(true)}
-                      className="min-h-11 rounded-lg bg-[var(--color-ink)] px-4 py-2 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition"
+                      className="btn-pill btn-ink pr-5 text-xs font-semibold"
                     >
                       Send all ({sendableQueueItems.filter((q) => !q.isSent).length} pending) · Guided queue →
                     </button>

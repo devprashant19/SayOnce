@@ -159,12 +159,32 @@ const AUDIT = () => {
   // Only leaf text elements, so a container legitimately wrapping its child
   // is not reported. Overlap must exceed 35% of the smaller box to count,
   // which tolerates sub-pixel and intentional tight stacking.
+  /**
+   * Text scrolled out of its own clipping container — a sticky pane with its
+   * own scrollbar, say — cannot be seen, so it cannot collide with anything.
+   * Without this, the /app pane scrolled by the guided tour put its hidden
+   * "Step 1" label "on top of" a strip that had also scrolled off-screen.
+   */
+  const clippedAway = (el) => {
+    const r = el.getBoundingClientRect();
+    for (let p = el.parentElement; p && p !== document.body; p = p.parentElement) {
+      const cs = getComputedStyle(p);
+      if (cs.overflowX === "visible" && cs.overflowY === "visible") continue;
+      const pr = p.getBoundingClientRect();
+      const ix = Math.min(r.right, pr.right) - Math.max(r.left, pr.left);
+      const iy = Math.min(r.bottom, pr.bottom) - Math.max(r.top, pr.top);
+      if (ix <= 1 || iy <= 1) return true;
+    }
+    return false;
+  };
+
   const leafText = all.filter((el) => {
     if (!(el.textContent ?? "").trim()) return false;
     if (el.children.length > 0) return false;
     const style = getComputedStyle(el);
     if (style.position === "absolute" || style.position === "fixed") return false;
     if (style.pointerEvents === "none") return false;
+    if (clippedAway(el)) return false;
     return true;
   });
 

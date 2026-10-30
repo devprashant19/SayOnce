@@ -109,7 +109,9 @@ export default async function ProofPage() {
           </span>
           <span className="text-[var(--color-rule)]">/</span>
           <Badge tone={lab && lab.inventedFacts === 0 ? "verified" : "neutral"} animated>
-            {lab ? `Quality Lab · ${lab.gradedCount} cases graded` : "Quality Lab · no run yet"}
+            {lab
+              ? `Quality Lab · ${lab.gradedCount} ${lab.gradedCount === 1 ? "case" : "cases"} graded`
+              : "Quality Lab · no run yet"}
           </Badge>
           {realUse.updateCount > 0 && (
             <Badge tone="neutral">{realUse.updateCount} real updates</Badge>
