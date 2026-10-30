@@ -23,6 +23,7 @@
     "check": "npm run typecheck && npm run lint && npm run test",
     "visual": "node scripts/visual-check.mjs",
     "visual:states": "node scripts/visual-states.mjs",
+    "rehearse": "node scripts/rehearse.mjs",
     "verify:cached": "vitest run tests/cached-path-zero-ai.test.ts --reporter=verbose",
     "smoke:prod": "node scripts/smoke-playwright.mjs"
   },
