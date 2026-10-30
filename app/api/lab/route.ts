@@ -3,6 +3,7 @@ import { readdirSync, readFileSync, writeFileSync, existsSync, mkdirSync } from 
 import { join } from "node:path";
 import { z } from "zod";
 import { env } from "@/lib/env";
+import { storedLabRuns } from "@/lib/lab-store";
 import { GoldenCase } from "@/lib/types";
 
 export const runtime = "nodejs";
@@ -66,9 +67,35 @@ function getRunHistory() {
   }
 }
 
+/** Stored runs in the shape the page reads; the deployed site has no .lab/. */
+async function getStoredHistory() {
+  const runs = await storedLabRuns();
+  return runs
+    .filter((run) => (run.scores.gradedCount ?? 0) > 0)
+    .map((run) => {
+      const aggregates = { ...run.scores };
+      delete aggregates.gradedCount;
+      delete aggregates.passCount;
+      return {
+        at: run.at,
+        model: run.model,
+        graderTemperature: run.graderTemperature,
+        caseCount: run.caseCount,
+        passedCount: run.scores.passCount ?? 0,
+        allPassed: run.passed,
+        aggregates,
+        // A case that could not run live has no scores, and is not shown as one.
+        results: run.perCase
+          .filter((c) => c.scores !== null && !c.error)
+          .map((c) => ({ ...c, detail: [] as string[] })),
+      };
+    });
+}
+
 export async function GET() {
   const { path, cases } = getGoldenSet();
-  const history = getRunHistory();
+  const onDisk = getRunHistory();
+  const history = onDisk.length > 0 ? onDisk : await getStoredHistory();
 
   return NextResponse.json({
     path,

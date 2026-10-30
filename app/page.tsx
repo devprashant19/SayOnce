@@ -7,6 +7,12 @@ import { InteractiveStrip } from "@/components/InteractiveStrip";
 import { SayOnceLogo } from "@/components/SayOnceLogo";
 import { landingSample } from "@/lib/landing-stats";
 import { AUTOMATED_TEST_COUNT } from "@/lib/evidence";
+import { storedLabRuns } from "@/lib/lab-store";
+import { labEvidenceFromStored } from "@/lib/proof";
+
+// The lab figure under the hero is read from the latest stored run, so the
+// page is refreshed rather than frozen at build time.
+export const revalidate = 300;
 
 /**
  * SayOnce Animated Landing Page (Phase 7).
@@ -23,7 +29,11 @@ import { AUTOMATED_TEST_COUNT } from "@/lib/evidence";
  * Close: Honest summary, launch CTA with View Transitions, and Wispr Challenge credit.
  */
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  // "0 invented facts" was printed whether or not any lab run had measured
+  // it. It now appears only when the latest stored run did.
+  const lab = labEvidenceFromStored((await storedLabRuns(1))[0]);
+  const labClaim = lab ? `${lab.inventedFacts} invented facts in ${lab.gradedCount} lab cases` : null;
   // Computed from the prepared sample in data/demo. If it is ever missing the
   // band is dropped rather than filled with plausible-looking numbers.
   const sample = landingSample();
@@ -87,7 +97,7 @@ export default function LandingPage() {
         </div>
 
         <p className="mt-3 flex flex-wrap items-center justify-center gap-x-1 text-xs text-[var(--color-ink-soft)]">
-          <span>{AUTOMATED_TEST_COUNT} automated tests · 0 invented facts ·</span>
+          <span>{AUTOMATED_TEST_COUNT} automated tests{labClaim ? ` · ${labClaim}` : ""} ·</span>
           <Link
             href="/lab"
             className="inline-flex min-h-11 items-center font-semibold text-[var(--color-ink)] underline-offset-4 hover:text-[var(--color-accent)] hover:underline"

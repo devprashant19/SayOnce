@@ -18,6 +18,7 @@
 
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
+import { randomUUID } from "node:crypto";
 
 const ROOT = process.cwd();
 const BASE = process.env.SAYONCE_BASE_URL ?? "http://localhost:3000";
@@ -236,12 +237,14 @@ console.log("──────────────────────�
 
 let allHardGatesHeld = true;
 let allTargetsMet = true;
+const aggregates = {};
 
 for (const [key, spec] of Object.entries(TARGETS)) {
   const values = graded.map((r) => r.scores[key]);
   const value = values.length === 0 ? 0 : spec.lowerIsBetter
     ? values.reduce((a, b) => a + b, 0)
     : values.reduce((a, b) => a + b, 0) / values.length;
+  aggregates[key] = value;
   const met = spec.lowerIsBetter ? value <= spec.target : value >= spec.target;
   if (!met) {
     allTargetsMet = false;
@@ -275,8 +278,37 @@ for (const result of errored) {
 // Runs are kept so improvement is visible rather than claimed.
 mkdirSync(join(ROOT, ".lab"), { recursive: true });
 const runFile = join(ROOT, ".lab", `run-${new Date().toISOString().replace(/[:.]/g, "-")}.json`);
-writeFileSync(runFile, JSON.stringify({ at: new Date().toISOString(), path, results }, null, 2));
+const at = new Date().toISOString();
+writeFileSync(runFile, JSON.stringify({ at, path, aggregates, results }, null, 2));
 console.log(`\nRun saved to ${runFile.replace(ROOT, ".")}`);
+
+// The deployed site cannot read .lab/, so the run's scores are stored too.
+// Scores and case ids only: the golden set is private, and grading detail
+// quotes it.
+if (process.env.DATABASE_URL && graded.length > 0) {
+  try {
+    const { neon } = await import("@neondatabase/serverless");
+    const sql = neon(process.env.DATABASE_URL);
+    const info = await fetch(`${BASE}/api/lab`).then((r) => (r.ok ? r.json() : {})).catch(() => ({}));
+    const perCase = results.map((r) => ({
+      id: r.id,
+      group: r.group,
+      pass: r.pass ?? false,
+      scores: r.scores ?? null,
+      ...(r.error ? { error: "did not run live" } : {}),
+      trailOk: r.trailOk ?? false,
+    }));
+    const scores = { ...aggregates, gradedCount: graded.length, passCount: graded.length - failing.length };
+    const passed = allHardGatesHeld && allTargetsMet && errored.length === 0;
+    await sql`insert into lab_runs (id, started_at, model, grader_temperature, case_count, scores, per_case, passed)
+      values (${randomUUID()}, ${at}, ${info.model ?? process.env.SAYONCE_MODEL ?? "unknown"},
+              ${info.graderTemperature ?? 0}, ${results.length}, ${JSON.stringify(scores)},
+              ${JSON.stringify(perCase)}, ${passed})`;
+    console.log("Scores stored for the deployed /lab and /proof.");
+  } catch (error) {
+    console.error(`Could not store the run's scores: ${String(error).split("\n")[0]}`);
+  }
+}
 
 if (!allHardGatesHeld) {
   console.error("\nA hard gate failed. Zero invented facts and 100% privacy are not negotiable.");

@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { getAllUpdates } from "./update-repo";
 import { countWords } from "./voice-return";
 import { env } from "./env";
+import { storedLabRuns, type StoredLabRun } from "./lab-store";
 
 /**
  * The evidence behind /proof.
@@ -18,7 +19,7 @@ import { env } from "./env";
  *
  * Real-use totals come from the `real` dataset only — a judge pressing Fan out
  * in demo mode must never inflate them. Accuracy comes from the latest Quality
- * Lab run on disk. The time saving is computed only when a measured baseline
+ * Lab run, on disk or as stored. The time saving is computed only when a measured baseline
  * and measured elapsed times both exist.
  */
 
@@ -188,9 +189,31 @@ export function latestLabEvidence(root = process.cwd()): LabEvidence | null {
   };
 }
 
+/** A stored run as LabEvidence, or null when it graded nothing. */
+export function labEvidenceFromStored(run: StoredLabRun | undefined): LabEvidence | null {
+  const s = run?.scores;
+  const gradedCount = s?.gradedCount ?? 0;
+  if (!run || !s || gradedCount <= 0) return null;
+  return {
+    at: run.at,
+    caseCount: run.caseCount,
+    gradedCount,
+    passCount: s.passCount ?? 0,
+    inventedFacts: s.inventedFacts ?? 0,
+    privacy: s.privacy ?? 0,
+    mustKnow: s.mustKnow ?? 0,
+    routingRecall: s.routingRecall ?? 0,
+    routingPrecision: s.routingPrecision ?? 0,
+    languageScript: s.languageScript ?? 0,
+    channelFit: s.channelFit ?? 0,
+  };
+}
+
 export async function proofEvidence(): Promise<ProofEvidence> {
   const realUse = await realUseEvidence();
-  const lab = latestLabEvidence();
+  // Disk first, where the run was made; the deployed site has no .lab/ and
+  // reads the copy the runner stored in the database.
+  const lab = latestLabEvidence() ?? labEvidenceFromStored((await storedLabRuns(1))[0]);
   return { realUse, lab, isEmpty: realUse.updateCount === 0 && lab === null };
 }
 
