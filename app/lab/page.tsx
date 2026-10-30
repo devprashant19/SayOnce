@@ -1,7 +1,11 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
+import { AlertTriangle, CheckCircle2, Clock, HelpCircle } from "lucide-react";
 import { Badge } from "@/components/Badge";
+import { CounterCard } from "@/components/parity/CounterCard";
+import { Gauge } from "@/components/parity/Gauge";
+import { labMetricRows, labPassRate, type MetricRow, type Verdict } from "@/lib/lab-verdicts";
 
 interface CaseItem {
   id: string;
@@ -60,6 +64,37 @@ const GROUPS = [
   { id: "adversarial", label: "Adversarial" },
 ];
 
+const TONE: Record<Verdict, "verified" | "review" | "blocked" | "neutral"> = {
+  pass: "verified",
+  below: "review",
+  failed: "blocked",
+  "not-run": "neutral",
+};
+const BADGE: Record<Verdict, "verified" | "warning" | "blocked" | "neutral"> = {
+  pass: "verified",
+  below: "warning",
+  failed: "blocked",
+  "not-run": "neutral",
+};
+const LABEL: Record<Verdict, string> = {
+  pass: "Pass",
+  below: "Below target",
+  failed: "Failed gate",
+  "not-run": "Not run",
+};
+const VERDICT_TEXT: Record<Verdict, string> = {
+  pass: "PASS",
+  below: "BELOW TARGET",
+  failed: "FAILED GATE",
+  "not-run": "NOT RUN",
+};
+const ICON: Record<Verdict, React.ReactNode> = {
+  pass: <CheckCircle2 size={12} strokeWidth={2.5} />,
+  below: <HelpCircle size={12} strokeWidth={2.5} />,
+  failed: <AlertTriangle size={12} strokeWidth={2.5} />,
+  "not-run": <Clock size={12} strokeWidth={2.5} />,
+};
+
 export default function LabPage() {
   const [cases, setCases] = useState<CaseItem[]>([]);
   const [history, setHistory] = useState<RunRecord[]>([]);
@@ -69,6 +104,10 @@ export default function LabPage() {
   const [running, setRunning] = useState(false);
   const [loading, setLoading] = useState(true);
   const [model, setModel] = useState("gemini-3.1-flash-lite");
+  // The server says whether this deployment may run the lab. On a shared
+  // host a full run is ~240 model calls against the same free quota every
+  // visitor's live fan-out uses, so it runs locally instead.
+  const [canRun, setCanRun] = useState(false);
 
   useEffect(() => {
     async function loadLabData() {
@@ -79,6 +118,7 @@ export default function LabPage() {
           setCases(data.cases ?? []);
           setHistory(data.history ?? []);
           setModel(data.model ?? "gemini-3.1-flash-lite");
+          setCanRun(data.canRun === true);
           if (data.history && data.history.length > 0) {
             setCurrentRun(data.history[0]);
           }
@@ -122,19 +162,6 @@ export default function LabPage() {
     );
   }, [cases, selectedGroup]);
 
-  // Sparkline data calculation
-  const sparklineData = useMemo(() => {
-    if (history.length === 0) return [];
-    return history.slice(0, 10).reverse().map((h) => {
-      const total = h.caseCount || h.results.length || 1;
-      const passed = h.passedCount ?? h.results.filter((r) => r.pass).length;
-      return {
-        at: h.at,
-        rate: passed / total,
-        percent: Math.round((passed / total) * 100),
-      };
-    });
-  }, [history]);
 
   if (loading) {
     return (
@@ -144,10 +171,10 @@ export default function LabPage() {
     );
   }
 
-  const aggregates = currentRun?.aggregates;
-  const totalPass = currentRun?.results.filter((r) => r.pass).length ?? 0;
-  const totalCount = currentRun?.caseCount || cases.length;
-  const passRate = totalCount > 0 ? Math.round((totalPass / totalCount) * 100) : 0;
+  // A benchmark that has not run has no result: see lib/lab-verdicts.
+  const rows = labMetricRows(currentRun?.aggregates);
+  const byKey = Object.fromEntries(rows.map((r) => [r.key, r])) as Record<MetricRow["key"], MetricRow>;
+  const passRate = labPassRate(currentRun);
 
   return (
     <div className="space-y-10">
@@ -177,13 +204,19 @@ export default function LabPage() {
         <div className="flex flex-col gap-2 w-full sm:w-auto">
           <button
             type="button"
-            disabled={running}
+            disabled={running || !canRun}
             onClick={() => triggerRun("all")}
-            className="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 text-sm font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+            className="btn-pill btn-accent text-sm font-semibold disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <span>{running ? "Evaluating Pipeline…" : `Run all ${cases.length} cases`}</span>
-            <span className="font-mono text-xs">▶</span>
+            <span>{running ? "Evaluating pipeline…" : `Run all ${cases.length} cases`}</span>
+            <span className="btn-chip font-mono text-xs" aria-hidden="true">▶</span>
           </button>
+          {!canRun && (
+            <p className="max-w-[16rem] text-[11px] text-[var(--color-ink-soft)]">
+              Runs on a developer machine with <code className="font-mono">npm run lab</code>.
+              A full run is about 240 model calls.
+            </p>
+          )}
         </div>
       </div>
 
@@ -204,234 +237,134 @@ export default function LabPage() {
         </div>
       )}
 
-      {/* Benchmark Summary Scorecard & Sparkline */}
-      <section className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-stretch">
-        {/* Pass Rate & Sparkline of Run History */}
-        <div className="lg:col-span-5 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-5 shadow-sm flex flex-col justify-between space-y-4">
-          <div className="flex items-center justify-between">
-            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-soft)]">
-              Historical Pass Rate
-            </span>
-            <Badge tone={passRate >= 95 ? "verified" : "warning"} animated>
-              {passRate}% passing
-            </Badge>
-          </div>
-
-          <div className="flex items-baseline gap-2">
+      {/* Parity's results row. A benchmark that has not run has no result. */}
+      <section aria-labelledby="lab-summary" className="space-y-4">
+        <h2 id="lab-summary" className="sr-only">
+          Latest run summary
+        </h2>
+        <div className="flex flex-col justify-between gap-2 rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-3.5 shadow-sm sm:flex-row sm:items-center">
+          <div className="flex items-center gap-2">
             <span
-              className="font-display text-4xl sm:text-5xl font-semibold tracking-tight text-[var(--color-ink)]"
-            >
-              {totalPass}/{totalCount}
+              aria-hidden="true"
+              className={`h-2 w-2 shrink-0 rounded-full ${
+                currentRun ? "animate-pulse bg-[var(--color-brand)]" : "bg-[var(--color-ink-faint)]"
+              }`}
+            />
+            <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-ink)]">
+              {currentRun
+                ? `Latest run · ${new Date(currentRun.at).toLocaleDateString()}`
+                : "No run on record yet"}
             </span>
-            <span className="text-xs text-[var(--color-ink-soft)]">
-              cases passing in latest run
+            <span className="hidden text-xs text-[var(--color-ink-soft)] md:inline">
+              {currentRun
+                ? // Older run records lack these fields; say only what was recorded.
+                  `(${[
+                    currentRun.model,
+                    typeof currentRun.graderTemperature === "number"
+                      ? `grader temperature ${currentRun.graderTemperature}`
+                      : null,
+                  ]
+                    .filter(Boolean)
+                    .join(" · ") || "run details not recorded"})`
+                : "(nothing below is a result until the golden set has run)"}
             </span>
           </div>
-
-          {/* SVG Sparkline */}
-          <div className="space-y-1.5 pt-2">
-            <div className="h-14 w-full flex items-center justify-between border-b border-[var(--color-rule)]/60 pb-1">
-              {sparklineData.length > 1 ? (
-                <svg className="w-full h-12 overflow-visible" viewBox="0 0 260 40" preserveAspectRatio="none">
-                  {/* Grid baseline */}
-                  <line x1="0" y1="20" x2="260" y2="20" stroke="var(--color-rule)" strokeDasharray="3 3" strokeWidth="1" />
-                  {/* Polyline path */}
-                  <polyline
-                    fill="none"
-                    stroke="var(--color-accent)"
-                    strokeWidth="2.5"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    points={sparklineData
-                      .map((d, i) => `${(i / (sparklineData.length - 1)) * 260},${40 - Math.max(0.1, d.rate) * 36}`)
-                      .join(" ")}
-                  />
-                  {/* Dot on each run point */}
-                  {sparklineData.map((d, i) => (
-                    <circle
-                      key={i}
-                      cx={(i / (sparklineData.length - 1)) * 260}
-                      cy={40 - Math.max(0.1, d.rate) * 36}
-                      r="3.5"
-                      fill="var(--color-accent)"
-                      stroke="var(--color-paper)"
-                      strokeWidth="1.5"
-                    >
-                      <title>{`Run ${i + 1}: ${d.percent}% pass (${new Date(d.at).toLocaleDateString()})`}</title>
-                    </circle>
-                  ))}
-                </svg>
-              ) : (
-                <div className="w-full text-center text-xs text-[var(--color-ink-faint)] italic font-mono">
-                  Sparkline populates over multiple benchmark runs
-                </div>
-              )}
-            </div>
-            <div className="flex justify-between text-[10px] font-mono text-[var(--color-ink-faint)]">
-              <span>Past runs</span>
-              <span>Latest</span>
-            </div>
-          </div>
+          <span className="shrink-0 text-xs font-medium text-[var(--color-accent)]">
+            {passRate ? `${passRate.total} golden cases evaluated` : `${cases.length} golden cases ready`}
+          </span>
         </div>
 
-        {/* Hard Gates & Core Targets Summary */}
-        <div className="lg:col-span-7 rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] p-5 shadow-sm space-y-4">
-          <div className="flex items-center justify-between border-b border-[var(--color-rule)] pb-2.5">
-            <span className="font-mono text-xs font-semibold uppercase tracking-wider text-[var(--color-ink-soft)]">
-              Gate Criteria Verdicts
-            </span>
-            <span className="font-mono text-xs text-[var(--color-ink-soft)]">
-              {currentRun ? new Date(currentRun.at).toLocaleDateString() : "Pending"}
-            </span>
+        <div className="grid grid-cols-1 gap-3.5 sm:grid-cols-2 sm:gap-4 lg:grid-cols-4">
+          <div className="hover-card-lift animate-fade-in flex flex-col justify-between rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] p-4 shadow-sm sm:col-span-2 sm:p-5 lg:col-span-1">
+            <div className="flex items-center justify-between text-[13px]">
+              <span className="font-medium text-[var(--color-accent)]">Pass rate</span>
+              <span className="text-[var(--color-ink-soft)]">Golden set</span>
+            </div>
+            {passRate ? (
+              <div className="mt-1">
+                <Gauge
+                  value={passRate.percent}
+                  label="Golden cases passing"
+                  color={passRate.percent >= 95 ? "var(--color-verified)" : "var(--color-brand)"}
+                />
+              </div>
+            ) : (
+              <div className="my-6 flex flex-col items-center gap-2 text-center text-[var(--color-ink-soft)]">
+                <Clock size={22} aria-hidden="true" />
+                <span className="text-sm font-medium text-[var(--color-ink)]">Not yet run</span>
+              </div>
+            )}
+            <p className="mt-1 text-center text-[11px] font-medium text-[var(--color-ink-soft)]">
+              {passRate ? `${passRate.passed} of ${passRate.total} cases passed` : "No benchmark recorded"}
+            </p>
           </div>
-
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-3 space-y-1">
-              <span className="font-medium text-[var(--color-ink-soft)] uppercase text-[10px] font-mono tracking-wider">
-                Invented Facts
-              </span>
-              <p className="font-mono text-xl font-bold text-[var(--color-ink)]">
-                {aggregates ? aggregates.inventedFacts : 0}
-              </p>
-              <Badge tone={aggregates?.inventedFacts === 0 ? "verified" : "blocked"} animated>
-                {aggregates?.inventedFacts === 0 ? "0 Invented" : "FAILED GATE"}
-              </Badge>
-            </div>
-
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-3 space-y-1">
-              <span className="font-medium text-[var(--color-ink-soft)] uppercase text-[10px] font-mono tracking-wider">
-                Privacy Held
-              </span>
-              <p className="font-mono text-xl font-bold text-[var(--color-ink)]">
-                {aggregates ? `${(aggregates.privacy * 100).toFixed(0)}%` : "100%"}
-              </p>
-              <Badge tone={aggregates?.privacy === 1 ? "verified" : "blocked"} animated>
-                {aggregates?.privacy === 1 ? "100% Held" : "LEAK DETECTED"}
-              </Badge>
-            </div>
-
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-3 space-y-1">
-              <span className="font-medium text-[var(--color-ink-soft)] uppercase text-[10px] font-mono tracking-wider">
-                Must-Know
-              </span>
-              <p className="font-mono text-xl font-bold text-[var(--color-ink)]">
-                {aggregates ? `${(aggregates.mustKnow * 100).toFixed(0)}%` : "95%"}
-              </p>
-              <Badge tone={(aggregates?.mustKnow ?? 0) >= 0.95 ? "verified" : "warning"} animated>
-                Target 95%
-              </Badge>
-            </div>
-
-            <div className="rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-surface-raised)]/60 p-3 space-y-1">
-              <span className="font-medium text-[var(--color-ink-soft)] uppercase text-[10px] font-mono tracking-wider">
-                Routing Recall
-              </span>
-              <p className="font-mono text-xl font-bold text-[var(--color-ink)]">
-                {aggregates ? `${(aggregates.routingRecall * 100).toFixed(0)}%` : "90%"}
-              </p>
-              <Badge tone={(aggregates?.routingRecall ?? 0) >= 0.9 ? "verified" : "warning"} animated>
-                Target 90%
-              </Badge>
-            </div>
-          </div>
+          {(["inventedFacts", "privacy", "mustKnow"] as const).map((key, i) => {
+            const row = byKey[key];
+            return (
+              <CounterCard
+                key={key}
+                tone={TONE[row.verdict]}
+                label={row.name}
+                meta={row.hard ? "Hard gate" : "Target"}
+                value={row.result}
+                pill={{ icon: ICON[row.verdict], text: LABEL[row.verdict], tone: TONE[row.verdict] }}
+                footer={`Target ${row.target}`}
+                delayMs={(i + 1) * 60}
+              />
+            );
+          })}
         </div>
       </section>
 
-      {/* Metrics Table: metric, result, target, verdict pill */}
+      {/* Metrics table: one row per metric, judged by lib/lab-verdicts. */}
       <section className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2
-            className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
-          >
-            Benchmark Metrics Table
+          <h2 className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]">
+            Benchmark metrics
           </h2>
-          <span className="text-xs text-[var(--color-ink-soft)] font-mono">
-            Deterministic Evaluation Engine
-          </span>
+          <span className="font-mono text-xs text-[var(--color-ink-soft)]">Deterministic grader</span>
         </div>
 
         <div
           tabIndex={0}
           role="region"
           aria-label="Benchmark metrics table, scrolls horizontally"
-          className="overflow-x-auto rounded-[var(--radius-card)] border border-[var(--color-rule)] bg-[var(--color-paper)] shadow-sm"
+          className="overflow-x-auto rounded-2xl border border-[var(--color-line)] bg-[var(--color-surface)] shadow-sm"
         >
-          <table className="w-full text-left text-xs sm:text-sm border-collapse min-w-[500px]">
-            <caption className="sr-only">Quality Lab Metrics Table</caption>
-            <thead className="border-b border-[var(--color-rule)] bg-[var(--color-surface-raised)] font-mono text-xs uppercase tracking-wider text-[var(--color-ink-soft)]">
+          <table className="w-full min-w-[500px] border-collapse text-left text-xs sm:text-sm">
+            <caption className="sr-only">Quality Lab metrics table</caption>
+            <thead className="border-b border-[var(--color-line)] bg-[var(--color-surface-raised)] font-mono text-xs uppercase tracking-wider text-[var(--color-ink-soft)]">
               <tr>
-                <th scope="col" className="py-3 px-4 font-semibold">Evaluation Metric</th>
-                <th scope="col" className="py-3 px-4 font-semibold">Latest Result</th>
-                <th scope="col" className="py-3 px-4 font-semibold">Gate Target</th>
-                <th scope="col" className="py-3 px-4 font-semibold">Verdict</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Metric</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Latest result</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Target</th>
+                <th scope="col" className="px-4 py-3 font-semibold">Verdict</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[var(--color-rule)]">
-              {[
-                {
-                  name: "Invented facts",
-                  result: aggregates ? String(aggregates.inventedFacts) : "0",
-                  target: "0",
-                  ok: aggregates ? aggregates.inventedFacts === 0 : true,
-                  hard: true,
-                },
-                {
-                  name: "Privacy held",
-                  result: aggregates ? `${(aggregates.privacy * 100).toFixed(1)}%` : "100.0%",
-                  target: "100%",
-                  ok: aggregates ? aggregates.privacy >= 1 : true,
-                  hard: true,
-                },
-                {
-                  name: "Must-know coverage",
-                  result: aggregates ? `${(aggregates.mustKnow * 100).toFixed(1)}%` : "95.0%",
-                  target: "95%",
-                  ok: aggregates ? aggregates.mustKnow >= 0.95 : true,
-                  hard: false,
-                },
-                {
-                  name: "Routing recall",
-                  result: aggregates ? `${(aggregates.routingRecall * 100).toFixed(1)}%` : "90.0%",
-                  target: "90%",
-                  ok: aggregates ? aggregates.routingRecall >= 0.9 : true,
-                  hard: false,
-                },
-                {
-                  name: "Routing precision",
-                  result: aggregates ? `${(aggregates.routingPrecision * 100).toFixed(1)}%` : "85.0%",
-                  target: "85%",
-                  ok: aggregates ? aggregates.routingPrecision >= 0.85 : true,
-                  hard: false,
-                },
-                {
-                  name: "Language and script",
-                  result: aggregates ? `${(aggregates.languageScript * 100).toFixed(1)}%` : "100.0%",
-                  target: "100%",
-                  ok: aggregates ? aggregates.languageScript >= 1 : true,
-                  hard: false,
-                },
-                {
-                  name: "Channel fit",
-                  result: aggregates ? `${(aggregates.channelFit * 100).toFixed(1)}%` : "95.0%",
-                  target: "95%",
-                  ok: aggregates ? aggregates.channelFit >= 0.95 : true,
-                  hard: false,
-                },
-              ].map((row) => (
-                <tr key={row.name} className="even:bg-[var(--color-surface-raised)]/40 hover:bg-[var(--color-surface-raised)] transition min-h-[44px]">
-                  <td className="py-3 px-4 font-medium text-[var(--color-ink)]">
+            <tbody className="divide-y divide-[var(--color-line)]">
+              {rows.map((row) => (
+                <tr key={row.key} className="transition hover:bg-[var(--color-surface-raised)]">
+                  <td className="px-4 py-3 font-medium text-[var(--color-ink)]">
                     <span>{row.name}</span>
                     {row.hard && (
-                      <span className="ml-2 font-mono text-[10px] text-[var(--color-blocked)] font-bold uppercase tracking-wider">
+                      <span className="ml-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[var(--color-blocked)]">
                         hard gate
                       </span>
                     )}
                   </td>
-                  <td className="py-3 px-4 font-mono font-medium text-[var(--color-ink)]">{row.result}</td>
-                  <td className="py-3 px-4 font-mono text-[var(--color-ink-soft)]">{row.target}</td>
-                  <td className="py-3 px-4">
-                    <Badge tone={row.ok ? "verified" : row.hard ? "blocked" : "warning"} animated>
-                      {row.ok ? "PASS" : row.hard ? "FAILED GATE" : "BELOW TARGET"}
+                  <td
+                    className={`px-4 py-3 ${
+                      row.value === null
+                        ? "text-[var(--color-ink-soft)]"
+                        : "font-mono font-medium text-[var(--color-ink)]"
+                    }`}
+                  >
+                    {row.result}
+                  </td>
+                  <td className="px-4 py-3 font-mono text-[var(--color-ink-soft)]">{row.target}</td>
+                  <td className="px-4 py-3">
+                    <Badge tone={BADGE[row.verdict]} animated>
+                      {VERDICT_TEXT[row.verdict]}
                     </Badge>
                   </td>
                 </tr>
@@ -536,7 +469,7 @@ export default function LabPage() {
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
-                      disabled={running}
+                      disabled={running || !canRun}
                       onClick={() => triggerRun(undefined, c.id)}
                       className="min-h-11 inline-flex items-center rounded bg-[var(--color-ink)] text-white px-4 text-xs font-semibold hover:opacity-90 active-press transition disabled:opacity-50"
                     >

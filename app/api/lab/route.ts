@@ -74,6 +74,7 @@ export async function GET() {
     path,
     model: env.model,
     graderTemperature: env.graderTemperature,
+    canRun: labRunAllowed(),
     targets: TARGETS,
     caseCount: cases.length,
     cases: cases.map((c) => ({
@@ -96,7 +97,25 @@ const RunBody = z.object({
   group: z.string().optional(),
 });
 
+/**
+ * The Quality Lab runs on a developer machine, never on the shared host. A
+ * full run is about 240 model calls against the same free quota every
+ * visitor's live fan-out uses — one click from a visitor would push everyone
+ * else into instant mode for the day. It also cannot work there: it calls the
+ * fan-out over localhost and writes run history to disk.
+ */
+function labRunAllowed(): boolean {
+  return !process.env.VERCEL;
+}
+
 export async function POST(request: Request) {
+  if (!labRunAllowed()) {
+    return NextResponse.json(
+      { error: "The Quality Lab runs on a developer machine: npm run lab." },
+      { status: 403 },
+    );
+  }
+
   let body: z.infer<typeof RunBody> = {};
   try {
     body = RunBody.parse(await request.json());
