@@ -47,7 +47,27 @@ describe("the fan-out route honours the source", () => {
     expect(await savedDatasetFor({ contactSet: "freelance", source: "lab" })).toBe(LAB_DATASET);
   });
 
-  it("still records genuine use of the real roster as real", async () => {
-    expect(await savedDatasetFor({ contactSet: "freelance" })).toBe(REAL_DATASET);
+  // Genuine use of the real roster is filed as real by datasetFor (tested
+  // above), which the live path calls. A prepared sample is not genuine use.
+});
+
+describe("prepared output is never real use", () => {
+  afterEach(() => vi.restoreAllMocks());
+
+  it("does not file a prepared sample served to the real roster as real", async () => {
+    // Instant mode answers "My contacts" with a prepared sample from a demo
+    // team. Filed under the request's roster, it counted as the speaker's own
+    // work on /proof.
+    const save = vi.spyOn(updateRepo, "saveFanoutRecord").mockResolvedValue(undefined as never);
+    const response = await POST(
+      new Request("http://localhost:3000/api/fanout", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ demoId: "demo_in_1", spokenText: "x", contactSet: "freelance" }),
+      }),
+    );
+    expect(response.status).toBe(200);
+    expect(save).toHaveBeenCalledTimes(1);
+    expect(save.mock.calls[0]![0].dataset).not.toBe(REAL_DATASET);
   });
 });

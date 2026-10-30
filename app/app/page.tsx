@@ -87,7 +87,11 @@ function SpeakContent() {
   const isDemo = searchParams.get("demo") === "1" || searchParams.get("demo") === "true";
   const [spokenText, setSpokenText] = useState("");
   const [project, setProject] = useState(PROJECTS[0]!);
-  const [contactSet, setContactSet] = useState("india");
+  // Outside the judge demo, your own roster comes first. /app offered only
+  // the two demo teams, so nothing spoken here could ever count as real use
+  // on /log or /proof.
+  const [contactSet, setContactSet] = useState(isDemo ? "india" : "freelance");
+  const rosterLabels = isDemo ? CONTACT_SET_LABELS : { freelance: "My contacts", ...CONTACT_SET_LABELS };
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [instantMode, setInstantMode] = useState(false);
@@ -272,6 +276,10 @@ function SpeakContent() {
           setSpokenText(fanoutData.preparedText);
           if (fanoutData.preparedProject) setProject(fanoutData.preparedProject);
           setSelectedDemoId(fanoutData.preparedFrom ?? null);
+          // The prepared sample belongs to a demo team: show that team as the
+          // roster, so the people on the cards match the roster selected.
+          const sample = demoUpdates.find((u) => u.id === fanoutData.preparedFrom);
+          if (sample) setContactSet(sample.contactSet);
         }
       } else {
         setInstantMode(false);
@@ -538,7 +546,7 @@ function SpeakContent() {
                   aria-label="Contacts roster"
                   className="inline-flex w-full items-center rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-0.5"
                 >
-                  {Object.entries(CONTACT_SET_LABELS).map(([value, label]) => {
+                  {Object.entries(rosterLabels).map(([value, label]) => {
                     const isSelected = contactSet === value;
                     return (
                       <button
@@ -581,31 +589,34 @@ function SpeakContent() {
               </button>
             </div>
 
-            <div>
-              <p className="text-xs font-medium text-[var(--color-ink-soft)]">Or try a sample update</p>
-              <div className="mt-2 flex flex-wrap gap-2">
-                {samples.map((sample) => (
-                  <button
-                    key={sample.id}
-                    type="button"
-                    onClick={() => {
-                      setSpokenText(sample.spokenText);
-                      setProject(sample.project);
-                      setSelectedDemoId(sample.id);
-                      setInstantMode(false);
-                      setError(null);
-                    }}
-                    className={`min-h-11 inline-flex items-center rounded-full border px-3.5 text-xs transition ${
-                      instantMode
-                        ? "border-[var(--color-accent)] bg-[var(--color-accent)]/15 font-bold text-[var(--color-accent)] ring-2 ring-[var(--color-accent)]"
-                        : "border-[var(--color-rule)] bg-[var(--color-paper)] hover:bg-[var(--color-paper-sunk)] text-[var(--color-ink)]"
-                    }`}
-                  >
-                    {sample.label}
-                  </button>
-                ))}
+            {/* Samples belong to the demo teams; your own roster has none. */}
+            {samples.length > 0 && (
+              <div>
+                <p className="text-xs font-medium text-[var(--color-ink-soft)]">Or try a sample update</p>
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {samples.map((sample) => (
+                    <button
+                      key={sample.id}
+                      type="button"
+                      onClick={() => {
+                        setSpokenText(sample.spokenText);
+                        setProject(sample.project);
+                        setSelectedDemoId(sample.id);
+                        setInstantMode(false);
+                        setError(null);
+                      }}
+                      className={`min-h-11 inline-flex items-center rounded-full border px-3.5 text-xs transition ${
+                        instantMode
+                          ? "border-[var(--color-accent)] bg-[var(--color-accent)]/15 font-bold text-[var(--color-accent)] ring-2 ring-[var(--color-accent)]"
+                          : "border-[var(--color-rule)] bg-[var(--color-paper)] hover:bg-[var(--color-paper-sunk)] text-[var(--color-ink)]"
+                      }`}
+                    >
+                      {sample.label}
+                    </button>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
           </div>
 
           {instantMode && (

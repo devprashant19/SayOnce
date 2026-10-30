@@ -31,6 +31,8 @@ const settle = (page, ms = 700) => page.waitForTimeout(ms);
 
 async function fanOutSample(page) {
   await page.goto(`${BASE}/app`, { waitUntil: "networkidle" });
+  // /app opens on your own roster, which has no samples; they are the teams'.
+  await page.getByRole("radio", { name: "Indian team" }).click();
   await page.getByRole("button", { name: /Delivery slipped/i }).first().click();
   await page.getByRole("button", { name: /^Fan out/i }).first().click();
   await page.getByText(/Drafted Messages/i).first().waitFor({ timeout: 20_000 });

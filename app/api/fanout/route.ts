@@ -78,6 +78,9 @@ export interface FanoutCard {
  * return it. Used both when the caller picked a sample and when live AI is
  * unavailable and the app drops into instant mode.
  */
+/** Where prepared output served to the real roster is filed: not real use. */
+const PREPARED_DATASET = "prepared";
+
 async function servePrepared(
   body: z.infer<typeof RequestBody>,
   cachedDemo: CachedFanoutResult,
@@ -106,7 +109,12 @@ async function servePrepared(
 
     const persist = () => saveFanoutRecord({
         updateId,
-        dataset: datasetFor({ source: body.source, contactSet: body.contactSet }),
+        // A prepared sample is never the speaker's own work: served to the
+        // real roster by instant mode, it would have counted on /proof.
+        dataset:
+          body.contactSet === "freelance" && body.source !== "lab"
+            ? PREPARED_DATASET
+            : datasetFor({ source: body.source, contactSet: body.contactSet }),
         spokenOn: body.spokenOnIso ?? new Date().toISOString().slice(0, 10),
         timeZone: body.timeZone,
         project: body.project || cachedDemo.project || "",
