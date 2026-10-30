@@ -26,6 +26,7 @@ import {
   getPreparedFallback,
   type CachedFanoutResult,
 } from "@/lib/demo-cache";
+import { anchorSpans } from "@/lib/anchor-spans";
 import { checkDemoAiAllowance, recordDemoAiUsage } from "@/lib/demo-session";
 
 /**
@@ -93,6 +94,8 @@ async function servePrepared(
       payload: t.payload,
     }));
     const freshTrail = buildChain(trailInputs);
+    // Prepared facts carry the model's drifted offsets; place them in code.
+    const facts = anchorSpans(cachedDemo.spokenText, cachedDemo.facts);
     const freshCards = cachedDemo.cards.map((c) => ({
       ...c,
       messageId: crypto.randomUUID(),
@@ -111,7 +114,7 @@ async function servePrepared(
         summary: cachedDemo.summary,
         decisions: cachedDemo.decisions,
         elapsedSeconds: body.elapsedSeconds ?? 1,
-        facts: cachedDemo.facts,
+        facts,
         messages: freshCards
           .filter((c) => c.draft !== null)
           .map((c) => ({
@@ -142,6 +145,7 @@ async function servePrepared(
       ...cachedDemo,
       updateId,
       at,
+      facts,
       cards: freshCards,
       trail: freshTrail,
       trailVerdict: verifyChain(freshTrail),

@@ -3,6 +3,7 @@ import { aiCall } from "./call";
 import { EXTRACT_SYSTEM, extractUser } from "./prompts/extract";
 import { ExtractResult, type Contact } from "../types";
 import { isoDay } from "../dates";
+import { anchorSpans } from "../anchor-spans";
 
 export interface ExtractInput {
   spokenText: string;
@@ -28,8 +29,9 @@ export async function extract(input: ExtractInput) {
     schema: ExtractResult,
   });
 
-  const clamped = clampSpans(result.value, input.spokenText);
-  return { ...result, value: normalizeBlocked(clamped, input.contacts) };
+  // The model's character offsets drift; code places each fact on its words.
+  const anchored = { ...result.value, facts: anchorSpans(input.spokenText, result.value.facts) };
+  return { ...result, value: normalizeBlocked(anchored, input.contacts) };
 }
 
 /**
@@ -64,23 +66,6 @@ function normalizeBlocked(value: ExtractResult, contacts: Contact[]): ExtractRes
           blockedFor: Array.from(new Set(normalizedBlocked)),
         },
       };
-    }),
-  };
-}
-
-/**
- * A source span pointing outside the spoken text would make the provenance
- * highlight jump to the wrong words, which is worse than no highlight. Clamp
- * rather than reject: the fact itself is still good.
- */
-function clampSpans(value: ExtractResult, spokenText: string): ExtractResult {
-  const max = spokenText.length;
-  return {
-    ...value,
-    facts: value.facts.map((fact) => {
-      const start = Math.min(Math.max(fact.sourceSpan.start, 0), max);
-      const end = Math.min(Math.max(fact.sourceSpan.end, start), max);
-      return { ...fact, sourceSpan: { start, end } };
     }),
   };
 }

@@ -72,7 +72,12 @@ function Highlighted({
   for (const [index, span] of spans.entries()) {
     if (span.start > cursor) pieces.push(text.slice(cursor, span.start));
     pieces.push(
-      <mark key={index} className="rounded bg-[var(--color-accent-wash)] px-0.5">
+      // A visible tint: the accent wash barely differed from this tray, so
+      // the words a sentence came from did not appear to light up at all.
+      <mark
+        key={index}
+        className="rounded bg-[color-mix(in_srgb,var(--color-brand)_24%,transparent)] px-0.5 text-[var(--color-ink)] transition-colors"
+      >
         {text.slice(span.start, span.end)}
       </mark>,
     );
