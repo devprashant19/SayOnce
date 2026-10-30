@@ -36,16 +36,50 @@ async function databaseState(): Promise<DatabaseState> {
   }
 }
 
+/**
+ * Reads one row from every table the app reads, through the app's own query
+ * layer — so the probe selects exactly the columns the pages do. A table can
+ * exist and still fail the app's query if a column is missing. Each table is
+ * reported as "ok" or by its Postgres SQLSTATE code (42P01: table missing,
+ * 42703: column missing), which identifies the fault and carries no data.
+ */
+async function tableStates(): Promise<Record<string, string>> {
+  const { db, schema } = await import("@/lib/db");
+  const database = db();
+  const probes: Record<string, () => Promise<unknown>> = {
+    updates: () => database.select().from(schema.updates).limit(1),
+    facts: () => database.select().from(schema.facts).limit(1),
+    messages: () => database.select().from(schema.messages).limit(1),
+    contacts: () => database.select().from(schema.contacts).limit(1),
+    trail_entries: () => database.select().from(schema.trailEntries).limit(1),
+  };
+  const states: Record<string, string> = {};
+  for (const [name, probe] of Object.entries(probes)) {
+    try {
+      await probe();
+      states[name] = "ok";
+    } catch (error) {
+      const code =
+        (error as { code?: string })?.code ??
+        (error as { cause?: { code?: string } })?.cause?.code;
+      states[name] = code ? `error ${code}` : "error";
+    }
+  }
+  return states;
+}
+
 export async function GET() {
   const database = await databaseState();
+  const tables = database === "ok" ? await tableStates() : undefined;
   return NextResponse.json({
     ok: true,
     at: new Date().toISOString(),
     ready: {
       ai: Boolean(process.env.GEMINI_API_KEY ?? process.env.GOOGLE_API_KEY),
-      database: database === "ok",
+      database: database === "ok" && Object.values(tables ?? {}).every((s) => s === "ok"),
       demoLiveAi: (process.env.DEMO_LIVE_AI ?? "on").toLowerCase() !== "off",
     },
     database,
+    ...(tables ? { tables } : {}),
   });
 }
