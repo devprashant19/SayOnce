@@ -330,3 +330,53 @@ describe("mustKnowCoverage", () => {
     expect(missing).toHaveLength(1);
   });
 });
+
+describe("the draft greets the person it is written to", () => {
+  // Production, 30 Oct: the update said "Kabir, hold the courier booking".
+  // Kabir is not on the roster, routing gave the instruction to Imran, and the
+  // draft to Imran opened "Kabir, courier booking hold kar do" — and passed,
+  // because a name at the start of a sentence is skipped, and Kabir was in
+  // the facts.
+  const COURIER = fact({
+    id: "f5",
+    text: "Kabir, hold the courier booking until Saturday",
+    values: { numbers: [], datesIso: [], names: ["Kabir"] },
+  });
+  const imran = contact({ id: "c_ops", name: "Imran Shaikh", role: "Ops coordinator" });
+
+  it("blocks a draft addressed to someone else by name", () => {
+    const outcome = checkDraft({
+      draft: draft({ contactId: "c_ops", body: "Kabir, courier booking hold kar do Saturday tak. Thanks." }),
+      contact: imran,
+      allowedFacts: [COURIER],
+      allFacts: [COURIER],
+    });
+    expect(outcome.ok).toBe(false);
+    expect(outcome.failures.map((f) => f.code)).toContain("wrong-recipient");
+    expect(outcome.failures.find((f) => f.code === "wrong-recipient")?.evidence).toBe("Kabir");
+  });
+
+  it("catches it after a salutation too", () => {
+    const outcome = checkDraft({
+      draft: draft({ contactId: "c_ops", channel: "email", subject: "Courier", body: "Dear Kabir,\n\nPlease hold the courier booking until Saturday." }),
+      contact: imran,
+      allowedFacts: [COURIER],
+      allFacts: [COURIER],
+    });
+    expect(outcome.failures.map((f) => f.code)).toContain("wrong-recipient");
+  });
+
+  it("passes the recipient's own first or last name, with or without an honorific", () => {
+    for (const body of ["Imran, courier hold kar do.", "Dear Imran Shaikh,\n\nHold the courier.", "Imran bhai, hold kar do.", "Hi Shaikh ji, hold kar do."]) {
+      const outcome = checkDraft({ draft: draft({ contactId: "c_ops", body }), contact: imran, allowedFacts: [COURIER], allFacts: [COURIER] });
+      expect(outcome.failures.map((f) => f.code), body).not.toContain("wrong-recipient");
+    }
+  });
+
+  it("does not mistake a greeting word or an opening word for a name", () => {
+    for (const body of ["Hi team, courier hold kar do.", "Namaste, courier hold kar do.", "Baaki, courier hold kar do Saturday tak.", "Hello all, hold the courier."]) {
+      const outcome = checkDraft({ draft: draft({ contactId: "c_ops", body }), contact: imran, allowedFacts: [COURIER], allFacts: [COURIER] });
+      expect(outcome.failures.map((f) => f.code), body).not.toContain("wrong-recipient");
+    }
+  });
+});

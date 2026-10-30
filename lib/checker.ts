@@ -23,6 +23,7 @@ export type CheckCode =
   | "invented-number"
   | "invented-date"
   | "invented-name"
+  | "wrong-recipient"
   | "blocked-fact-leak"
   | "unused-fact-claimed"
   | "wrong-script"
@@ -157,6 +158,27 @@ function namesIn(text: string): Set<string> {
   return found;
 }
 
+/** The name a draft opens by addressing: "Kabir," / "Dear Kabir," / "Hi Kabir ji,". */
+function greetedName(body: string): string | null {
+  const match = body
+    .trimStart()
+    .match(/^(?:(?:Dear|Hi|Hello|Hey|Namaste|Namaskar)\s+)?([A-Z][a-z]+)(?:\s+[A-Za-z]+)?\s*[,!:]/);
+  return match?.[1] ?? null;
+}
+
+/** Every person named anywhere in the update, lower-cased. */
+function peopleInUpdate(facts: Fact[]): Set<string> {
+  const people = new Set<string>();
+  for (const f of facts) {
+    for (const name of f.values.names) for (const part of name.split(/\s+/)) people.add(part.toLowerCase());
+    // A name opening a fact ("Kabir, hold the courier") is still a name here.
+    for (const m of f.text.matchAll(/\b[A-Z][a-z]+/g)) {
+      if (!NOT_A_NAME.has(m[0].toLowerCase())) people.add(m[0].toLowerCase());
+    }
+  }
+  return people;
+}
+
 function startsSentence(text: string, index: number): boolean {
   const prefix = text.slice(0, index);
   // If the word starts on a new line (with optional indentation or opening quotes), it starts a line
@@ -237,6 +259,21 @@ export function checkDraft({ draft, contact, allowedFacts, allFacts }: CheckInpu
       message: `The draft names "${name}", who is not in your update.`,
       evidence: name,
     });
+  }
+
+  // --- 1b. It greets the person it is written to --------------------------
+  // A name opening a draft is skipped above as a sentence start, and a name
+  // from the update is granted. So "Kabir, hold the courier" sent to Imran
+  // passed. Compare the greeted name with this contact's own.
+  const greeted = greetedName(body);
+  if (greeted && !contact.name.toLowerCase().split(/\s+/).includes(greeted.toLowerCase())) {
+    if (peopleInUpdate(allFacts).has(greeted.toLowerCase())) {
+      failures.push({
+        code: "wrong-recipient",
+        message: `The draft is addressed to ${greeted}, but it is for ${contact.name}.`,
+        evidence: greeted,
+      });
+    }
   }
 
   // --- 2. Nothing withheld may leak --------------------------------------
