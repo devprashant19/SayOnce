@@ -30,7 +30,7 @@ export function Placeholder({
       </ul>
       <Link
         href="/app"
-        className="mt-6 inline-block min-h-11 content-center rounded bg-[var(--color-accent)] px-4 text-sm font-semibold text-white"
+        className="mt-6 inline-block min-h-11 content-center rounded bg-[var(--color-accent)] px-4 text-sm font-semibold text-[var(--color-on-accent)]"
       >
         Go to Speak
       </Link>

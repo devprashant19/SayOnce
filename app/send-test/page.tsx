@@ -287,7 +287,7 @@ export default function SendTestPage() {
                   href={item.waLink}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="rounded bg-[var(--color-accent)] px-3 py-1.5 font-medium text-white text-xs hover:opacity-90"
+                  className="rounded bg-[var(--color-accent)] px-3 py-1.5 font-medium text-[var(--color-on-accent)] text-xs hover:opacity-90"
                 >
                   Test wa.me link ↗
                 </a>

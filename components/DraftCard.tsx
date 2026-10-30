@@ -206,8 +206,7 @@ export function DraftCard(props: DraftCardProps) {
     >
       <header className="flex flex-wrap items-center gap-2">
         <h3
-          className="font-serif text-lg font-semibold tracking-tight text-[var(--color-ink)]"
-          style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          className="font-display text-lg font-semibold tracking-tight text-[var(--color-ink)]"
         >
           {contact.name}
         </h3>
@@ -395,7 +394,7 @@ export function DraftCard(props: DraftCardProps) {
                 className={`min-h-11 content-center rounded px-3 text-sm font-medium ${
                   isSent
                     ? "border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] text-[var(--color-ink)] hover:bg-[var(--color-paper)]"
-                    : "bg-[var(--color-accent)] text-white hover:opacity-90"
+                    : "bg-[var(--color-accent)] text-[var(--color-on-accent)] hover:opacity-90"
                 }`}
               >
                 {isSent ? `Re-send (${props.sendLabel})` : props.sendLabel}

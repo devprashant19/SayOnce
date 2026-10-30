@@ -23,8 +23,13 @@ describe("landing page figures", () => {
   });
 
   it("claims no time saving, which needs a baseline nobody has measured", () => {
-    expect(source.toLowerCase()).not.toContain("time saved");
-    expect(source.toLowerCase()).not.toContain("hours saved");
+    const text = source.toLowerCase();
+    expect(text).not.toContain("time saved");
+    expect(text).not.toContain("hours saved");
+    // Phrasings the two checks above miss. "Save your team hours every single
+    // week" sat in the closing headline after they were written.
+    expect(text).not.toMatch(/sav(e|es|ing)\b[^.<]{0,40}\b(hours?|minutes?|time)\b/);
+    expect(text).not.toMatch(/\b(hours?|minutes?)\s+(a|per|every)\s+(day|week|update)\b/);
   });
 
   it("states the test count from one shared constant", () => {

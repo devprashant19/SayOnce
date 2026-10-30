@@ -90,7 +90,7 @@ export function ContradictionBanner({
               type="button"
               disabled={actingId === alert.id}
               onClick={() => handleChoice(alert, "add-correction")}
-              className="rounded bg-[var(--color-accent)] px-3 py-1.5 font-semibold text-white shadow-sm hover:opacity-90 disabled:opacity-50"
+              className="rounded bg-[var(--color-accent)] px-3 py-1.5 font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 disabled:opacity-50"
             >
               Add correction line →
             </button>

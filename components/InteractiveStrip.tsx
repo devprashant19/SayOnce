@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { ChevronRight } from "lucide-react";
 import { Badge } from "./Badge";
 import { sendTargetFor } from "@/lib/links";
 import type { Contact, Draft, Fact } from "@/lib/types";
@@ -136,7 +137,7 @@ export function InteractiveStrip() {
               onClick={() => handleSelectPreset(preset)}
               className={`inline-flex min-h-11 items-center rounded-full px-4 text-xs font-medium transition-colors cursor-pointer active-press ${
                 isSelected
-                  ? "bg-[var(--color-accent)] text-white shadow-sm font-semibold"
+                  ? "bg-[var(--color-accent)] text-[var(--color-on-accent)] shadow-sm font-semibold"
                   : "border border-[var(--color-rule)] bg-[var(--color-paper)] text-[var(--color-ink)] hover:bg-[var(--color-paper-sunk)]"
               }`}
             >
@@ -170,9 +171,12 @@ export function InteractiveStrip() {
             type="button"
             onClick={() => void runFanout(spokenText, { id: "", label: "custom", project: "", contactSet: "india", spokenText })}
             disabled={loading || !spokenText.trim()}
-            className="inline-flex min-h-11 items-center justify-center rounded-lg bg-[var(--color-accent)] px-5 text-sm font-semibold text-white transition-opacity disabled:opacity-50 cursor-pointer active-press"
+            className="btn-pill btn-accent text-sm font-semibold cursor-pointer disabled:opacity-50"
           >
             {loading ? "Fanning out…" : "Fan out update"}
+            <span className="btn-chip" aria-hidden="true">
+              <ChevronRight size={16} strokeWidth={2.5} />
+            </span>
           </button>
         </div>
       </div>

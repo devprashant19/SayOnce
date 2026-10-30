@@ -164,8 +164,7 @@ export default function LabPage() {
             </span>
           </div>
           <h1
-            className="mt-2 font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="mt-2 font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             Deterministic Accuracy Benchmark
           </h1>
@@ -180,7 +179,7 @@ export default function LabPage() {
             type="button"
             disabled={running}
             onClick={() => triggerRun("all")}
-            className="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 text-sm font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+            className="min-h-11 inline-flex items-center justify-center gap-2 rounded-lg bg-[var(--color-accent)] px-6 text-sm font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
           >
             <span>{running ? "Evaluating Pipeline…" : `Run all ${cases.length} cases`}</span>
             <span className="font-mono text-xs">▶</span>
@@ -220,8 +219,7 @@ export default function LabPage() {
 
           <div className="flex items-baseline gap-2">
             <span
-              className="font-serif text-4xl sm:text-5xl font-semibold tracking-tight text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-4xl sm:text-5xl font-semibold tracking-tight text-[var(--color-ink)]"
             >
               {totalPass}/{totalCount}
             </span>
@@ -343,8 +341,7 @@ export default function LabPage() {
       <section className="space-y-4">
         <div className="flex items-center justify-between">
           <h2
-            className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             Benchmark Metrics Table
           </h2>
@@ -449,8 +446,7 @@ export default function LabPage() {
         <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-rule)] pb-3">
           <div>
             <h2
-              className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
             >
               Golden Test Cases Matrix ({filteredCases.length})
             </h2>
@@ -609,8 +605,7 @@ export default function LabPage() {
       {history.length > 0 && (
         <section className="space-y-3 pt-4 border-t border-[var(--color-rule)]">
           <h2
-            className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             Run History Logs ({history.length})
           </h2>

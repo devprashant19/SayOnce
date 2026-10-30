@@ -223,8 +223,7 @@ export default function PeoplePage() {
       {/* Page Header */}
       <div>
         <h1
-          className="font-serif text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
-          style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          className="font-display text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
         >
           People Roster
         </h1>
@@ -262,7 +261,7 @@ export default function PeoplePage() {
             type="button"
             onClick={handleVoiceParse}
             disabled={parsing || !dictatedText.trim()}
-            className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+            className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
           >
             {parsing ? "Parsing speech…" : "Fill profile from speech"}
           </button>
@@ -319,8 +318,7 @@ export default function PeoplePage() {
         ) : contacts.length === 0 ? (
           <div className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-rule)] bg-[var(--color-surface-raised)]/40 p-12 text-center space-y-3">
             <p
-              className="font-serif text-lg font-semibold tracking-tight text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-lg font-semibold tracking-tight text-[var(--color-ink)]"
             >
               No contacts in this roster yet.
             </p>
@@ -346,8 +344,7 @@ export default function PeoplePage() {
                         </div>
                         <div className="min-w-0">
                           <h3
-                            className="font-serif text-base font-semibold tracking-tight text-[var(--color-ink)] truncate"
-                            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                            className="font-display text-base font-semibold tracking-tight text-[var(--color-ink)] truncate"
                           >
                             {contact.name}
                           </h3>
@@ -405,8 +402,7 @@ export default function PeoplePage() {
                   <div>
                     <h2
                       id="drawer-title"
-                      className="font-serif text-2xl font-semibold tracking-tight text-[var(--color-ink)]"
-                      style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                      className="font-display text-2xl font-semibold tracking-tight text-[var(--color-ink)]"
                     >
                       {isEditing
                         ? formData.id
@@ -657,7 +653,7 @@ export default function PeoplePage() {
                   <button
                     type="button"
                     onClick={() => handleStartEdit(selectedContact)}
-                    className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition"
+                    className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition"
                   >
                     Edit profile
                   </button>
@@ -677,7 +673,7 @@ export default function PeoplePage() {
                     type="submit"
                     form="contact-form"
                     disabled={saving}
-                    className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+                    className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
                   >
                     {saving ? "Saving…" : "Save Contact"}
                   </button>

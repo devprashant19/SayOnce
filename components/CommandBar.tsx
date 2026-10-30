@@ -154,7 +154,7 @@ export function CommandBar({ isOpen, onClose, onExecute }: CommandBarProps) {
               type="button"
               onClick={handleRun}
               disabled={!parsed || parsed.action === "unknown"}
-              className="min-h-11 rounded bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold text-white disabled:opacity-50"
+              className="min-h-11 rounded bg-[var(--color-accent)] px-4 py-2 text-xs font-semibold text-[var(--color-on-accent)] disabled:opacity-50"
             >
               {awaitingConfirm ? "Confirm Action" : "Execute"}
             </button>

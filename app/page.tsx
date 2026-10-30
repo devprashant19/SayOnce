@@ -1,5 +1,7 @@
 import Link from "next/link";
+import { ChevronRight, Mic, Sparkles } from "lucide-react";
 import { InteractiveStrip } from "@/components/InteractiveStrip";
+import { SayOnceLogo } from "@/components/SayOnceLogo";
 import { landingSample } from "@/lib/landing-stats";
 import { AUTOMATED_TEST_COUNT } from "@/lib/evidence";
 
@@ -29,57 +31,70 @@ export default function LandingPage() {
           HERO & SCENE 1: SPEAK
           Visible without scrolling on desktop and mobile.
          ========================================================================= */}
-      <section aria-labelledby="hero-heading" className="max-w-4xl space-y-6">
-        <div className="flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-[var(--color-accent-wash)] px-3 py-1 text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
-            Ek Baar Bolo · Wispr Flow Voice Input
-          </span>
-          <span className="rounded-full border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] px-2.5 py-1 text-xs text-[var(--color-ink-soft)]">
-            {AUTOMATED_TEST_COUNT} automated tests · 0 invented facts
-          </span>
-        </div>
+      <section
+        aria-labelledby="hero-heading"
+        className="flex flex-col items-center pt-2 text-center sm:pt-6"
+      >
+        {/* Parity's eyebrow: a white pill carrying the mark. */}
+        <span className="eyebrow-pill">
+          <SayOnceLogo size={15} tone="brand" decorative />
+          Built for the Wispr Flow voice challenge
+        </span>
 
+        {/* Parity's headline: Inter at 500, with exactly one italic serif word. */}
         <h1
           id="hero-heading"
-          className="font-serif-display text-4xl font-semibold tracking-[-0.02em] sm:text-6xl sm:leading-[1.05]"
+          className="font-display mt-5 max-w-4xl font-medium leading-[1.06] text-[var(--color-ink)]"
+          style={{ fontSize: "clamp(36px, 7vw, 68px)" }}
         >
-          Say it once.
+          Say it <em className="font-accent">once.</em>
           <br />
-          <span className="text-[var(--color-accent)]">Everyone gets their version.</span>
+          Everyone gets their version.
         </h1>
 
-        <p className="max-w-2xl text-lg text-[var(--color-ink-soft)] sm:text-xl sm:leading-relaxed">
+        <p
+          className="mt-4 max-w-2xl text-balance text-[var(--color-ink-soft)]"
+          style={{ fontSize: "clamp(15px, 2.4vw, 18px)" }}
+        >
           Speak one work update in whatever mix of languages you actually think in.
-          SayOnce extracts the facts, shields recipient secrets, and writes separate
-          tailored messages in each person’s language, tone and channel. Fact-checked
-          deterministically. Sent in one tap.
+          SayOnce pulls out the facts, keeps each secret from the people it is kept
+          from, and writes every person their own message — in their language, tone
+          and channel. Checked by code, not by the model. Sent in one tap.
         </p>
 
-        {/* Primary CTA visible above the fold */}
-        <div className="flex flex-wrap items-center gap-4 pt-2">
+        <div className="mt-7 flex flex-wrap items-center justify-center gap-3">
           <Link
             href="/app"
-            className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--color-accent)] px-6 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
+            className="btn-pill btn-ink"
             style={{ viewTransitionName: "speak-box" }}
           >
-            Try it with your voice →
+            <Mic size={15} aria-hidden="true" />
+            Try it with your voice
+            <span className="btn-chip" aria-hidden="true">
+              <ChevronRight size={16} strokeWidth={2.5} />
+            </span>
           </Link>
-          <Link
-            href="/app?demo=1"
-            className="inline-flex min-h-12 items-center justify-center rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper)] px-6 text-sm font-semibold transition hover:bg-[var(--color-paper-sunk)]"
-          >
+          <Link href="/app?demo=1" className="btn-pill btn-accent">
+            <Sparkles size={15} aria-hidden="true" />
             Judge demo — no sign-in
-          </Link>
-          <Link
-            href="/lab"
-            className="inline-flex min-h-12 items-center justify-center px-4 text-xs font-semibold text-[var(--color-ink-soft)] hover:text-[var(--color-ink)]"
-          >
-            Quality Lab stats →
+            <span className="btn-chip" aria-hidden="true">
+              <ChevronRight size={16} strokeWidth={2.5} />
+            </span>
           </Link>
         </div>
 
-        {/* Live Audio Waveform & Spoken Transcription container */}
-        <div className="mt-8 rounded-xl border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-5 sm:p-6 shadow-xs">
+        <p className="mt-3 flex flex-wrap items-center justify-center gap-x-1 text-xs text-[var(--color-ink-soft)]">
+          <span>{AUTOMATED_TEST_COUNT} automated tests · 0 invented facts ·</span>
+          <Link
+            href="/lab"
+            className="inline-flex min-h-11 items-center font-semibold text-[var(--color-ink)] underline-offset-4 hover:text-[var(--color-accent)] hover:underline"
+          >
+            See the Quality Lab
+          </Link>
+        </p>
+
+        {/* Live Audio Waveform & Spoken Transcription, in a Parity panel */}
+        <div className="mt-10 w-full max-w-4xl rounded-[var(--radius-card)] border border-[var(--color-line)] bg-[var(--color-surface)] p-5 text-left shadow-sm sm:p-7">
           <div className="flex items-center justify-between gap-4 border-b border-[var(--color-rule)] pb-4">
             <div className="flex items-center gap-2">
               <span className="inline-block h-3 w-3 rounded-full bg-[var(--color-verified)] animate-pulse" />
@@ -142,7 +157,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 1 · Precision Decomposition
           </span>
-          <h2 id="extract-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+          <h2 id="extract-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             The sentence breaks apart. Facts lift out.
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -245,7 +260,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 2 · Knowledge Partitioning
           </span>
-          <h2 id="route-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+          <h2 id="route-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             Who needs to know — and what is shielded
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -371,7 +386,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 3 · The Signature Moment
           </span>
-          <h2 id="compose-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+          <h2 id="compose-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             What they heard: one update, four tailored versions
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -418,7 +433,7 @@ export default function LandingPage() {
             <div className="mt-4 border-t border-[var(--color-line)] pt-3">
               <a
                 href="mailto:anita@example.com?subject=Update&body=Hi%20Anita..."
-                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 text-xs font-semibold text-white hover:opacity-90 transition active-press cursor-pointer"
+                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 text-xs font-semibold text-[var(--color-on-accent)] hover:opacity-90 transition active-press cursor-pointer"
               >
                 <span>Send via Email (mailto:)</span>
                 <span>↗</span>
@@ -543,7 +558,7 @@ export default function LandingPage() {
             <div className="mt-4 border-t border-[var(--color-line)] pt-3">
               <a
                 href="mailto:priya@example.com?subject=Update&body=Dear%20Priya..."
-                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 text-xs font-semibold text-white hover:opacity-90 transition active-press cursor-pointer"
+                className="inline-flex w-full min-h-11 items-center justify-center gap-1.5 rounded-lg bg-[var(--color-accent)] px-3 text-xs font-semibold text-[var(--color-on-accent)] hover:opacity-90 transition active-press cursor-pointer"
               >
                 <span>Send via Email (mailto:)</span>
                 <span>↗</span>
@@ -567,7 +582,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 4 · Pure Deterministic Verification
           </span>
-          <h2 id="verify-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+          <h2 id="verify-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             Final authority belongs to code, not the AI
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -627,7 +642,7 @@ export default function LandingPage() {
           <span className="text-xs font-semibold uppercase tracking-wider text-[var(--color-accent)]">
             Step 5 · Cryptographic Memory & ROI
           </span>
-          <h2 id="trust-heading" className="font-serif-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
+          <h2 id="trust-heading" className="font-display mt-1 text-2xl font-semibold tracking-[-0.015em] sm:text-3xl">
             The Trust Trail & The Voice Return
           </h2>
           <p className="mt-1 text-sm text-[var(--color-ink-soft)] max-w-2xl">
@@ -735,28 +750,39 @@ export default function LandingPage() {
       {/* =========================================================================
           HONEST CLOSE & CALL TO ACTION
          ========================================================================= */}
-      <section className="rounded-2xl border border-[var(--color-rule)] bg-[var(--color-paper-sunk)] p-8 sm:p-12 text-center space-y-6">
-        <h2 className="font-serif-display text-3xl font-semibold tracking-[-0.015em] sm:text-4xl max-w-xl mx-auto">
-          Say it once. Save your team hours every single week.
+      <section
+        aria-labelledby="close-heading"
+        className="rounded-[28px] bg-[var(--color-ink-button)] px-6 py-12 text-center sm:px-12 sm:py-16"
+        style={{ color: "var(--color-ground)" }}
+      >
+        <h2
+          id="close-heading"
+          className="font-display mx-auto max-w-2xl font-medium leading-[1.08]"
+          style={{ fontSize: "clamp(28px, 5vw, 46px)" }}
+        >
+          Say it <em className="font-accent">once.</em> Everyone hears it their way.
         </h2>
-        <p className="max-w-xl mx-auto text-sm sm:text-base text-[var(--color-ink-soft)]">
-          Built for anyone who coordinates people across languages, roles, and channels.
+        <p
+          className="mx-auto mt-4 max-w-xl text-sm sm:text-base"
+          style={{ color: "color-mix(in srgb, var(--color-ground) 72%, transparent)" }}
+        >
+          Built for anyone who coordinates people across languages, roles and channels.
           India first, because that is where the problem is loudest.
         </p>
 
-        <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-          <Link
-            href="/app"
-            className="inline-flex min-h-12 items-center justify-center rounded-lg bg-[var(--color-accent)] px-8 text-sm font-semibold text-white shadow-sm transition hover:opacity-90"
-            style={{ viewTransitionName: "speak-box" }}
-          >
-            Try it with your voice →
+        <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
+          <Link href="/app" className="btn-pill btn-accent" style={{ viewTransitionName: "speak-box" }}>
+            <Mic size={15} aria-hidden="true" />
+            Try it with your voice
+            <span className="btn-chip" aria-hidden="true">
+              <ChevronRight size={16} strokeWidth={2.5} />
+            </span>
           </Link>
-          <Link
-            href="/proof"
-            className="inline-flex min-h-12 items-center justify-center rounded-lg border border-[var(--color-rule)] bg-[var(--color-paper)] px-6 text-sm font-semibold transition hover:bg-[var(--color-paper-sunk)]"
-          >
-            Read Proof & Methodology
+          <Link href="/proof" className="btn-pill btn-quiet">
+            How we check every draft
+            <span className="btn-chip" aria-hidden="true">
+              <ChevronRight size={16} strokeWidth={2.5} />
+            </span>
           </Link>
         </div>
       </section>

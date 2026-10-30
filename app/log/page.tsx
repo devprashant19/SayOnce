@@ -252,8 +252,7 @@ export default function LogPage() {
             Audit Ledger
           </span>
           <h1
-            className="mt-1 font-serif text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="mt-1 font-display text-3xl sm:text-4xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             The Record Nobody Used to Keep
           </h1>
@@ -281,8 +280,7 @@ export default function LogPage() {
               Total Updates
             </span>
             <p
-              className="font-serif text-2xl sm:text-3xl font-semibold text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-ink)]"
             >
               {metrics.totalUpdates}
             </p>
@@ -292,8 +290,7 @@ export default function LogPage() {
               Amplification
             </span>
             <p
-              className="font-serif text-2xl sm:text-3xl font-semibold text-[var(--color-accent)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-accent)]"
             >
               {metrics.amplification}×
             </p>
@@ -306,8 +303,7 @@ export default function LogPage() {
               Time Saved
             </span>
             <p
-              className="font-serif text-2xl sm:text-3xl font-semibold text-[var(--color-verified)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-verified)]"
             >
               ~{metrics.totalMinutesSaved}m
             </p>
@@ -320,8 +316,7 @@ export default function LogPage() {
               Open Commitments
             </span>
             <p
-              className="font-serif text-2xl sm:text-3xl font-semibold text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-2xl sm:text-3xl font-semibold text-[var(--color-ink)]"
             >
               {allCommitments.filter((c) => c.status === "open").length}
             </p>
@@ -598,8 +593,7 @@ export default function LogPage() {
                   </div>
                   <h2
                     id="trail-drawer-title"
-                    className="font-serif text-2xl font-semibold tracking-tight text-[var(--color-ink)] mt-1"
-                    style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                    className="font-display text-2xl font-semibold tracking-tight text-[var(--color-ink)] mt-1"
                   >
                     Cryptographic Trail
                   </h2>
@@ -635,7 +629,7 @@ export default function LogPage() {
                   type="button"
                   onClick={handleVerifyTrailClick}
                   disabled={trailLoading || trailEntries.length === 0}
-                  className="min-h-11 inline-flex items-center gap-2 rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-50"
+                  className="min-h-11 inline-flex items-center gap-2 rounded bg-[var(--color-accent)] px-5 text-xs font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition disabled:opacity-50"
                 >
                   <span>{trailLoading ? "Verifying hashes…" : "Verify trail"}</span>
                   <span className="font-mono">⛓</span>

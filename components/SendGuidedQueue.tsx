@@ -189,7 +189,7 @@ export function SendGuidedQueue({
                     setTimeout(() => setCurrentIndex((i) => i + 1), 500);
                   }
                 }}
-                className="min-h-11 content-center rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-white shadow-sm hover:opacity-95"
+                className="min-h-11 content-center rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-95"
               >
                 {isCurrentSent ? `Re-send: ${current.target.label} ↗` : `${current.target.label} ↗`}
               </a>

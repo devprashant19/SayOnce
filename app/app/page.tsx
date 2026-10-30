@@ -386,8 +386,7 @@ function SpeakContent() {
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div>
             <h1
-              className="font-serif text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
-              style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+              className="font-display text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
             >
               Speak Console
             </h1>
@@ -421,7 +420,7 @@ function SpeakContent() {
         {isDemo && (
           <div className="mt-3 rounded-xl border border-[var(--color-accent)]/40 bg-[var(--color-accent-wash)] px-4 py-3 shadow-xs flex flex-wrap items-center justify-between gap-3">
             <div className="flex items-center gap-2.5">
-              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-accent)] text-white text-[10px] font-bold">●</span>
+              <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[var(--color-accent)] text-[var(--color-on-accent)] text-[10px] font-bold">●</span>
               <div>
                 <p className="text-xs font-semibold text-[var(--color-ink)]">
                   Demo mode. Press Fan out, or replace the text with your own.
@@ -435,7 +434,7 @@ function SpeakContent() {
               <button
                 type="button"
                 onClick={() => setTourOpen(true)}
-                className="min-h-11 inline-flex items-center rounded-lg bg-[var(--color-accent)] px-3.5 text-xs font-semibold text-white hover:opacity-90 active-press transition"
+                className="min-h-11 inline-flex items-center rounded-lg bg-[var(--color-accent)] px-3.5 text-xs font-semibold text-[var(--color-on-accent)] hover:opacity-90 active-press transition"
               >
                 Guided tour (5 steps)
               </button>
@@ -549,10 +548,10 @@ function SpeakContent() {
                 type="button"
                 onClick={fanOut}
                 disabled={busy}
-                className="min-h-11 inline-flex items-center justify-center gap-1.5 rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-white shadow-sm hover:opacity-90 active-press transition disabled:opacity-60"
+                className="btn-pill btn-accent text-sm font-semibold disabled:opacity-60"
               >
                 <span>{busy ? "Fanning out…" : "Fan out"}</span>
-                <kbd className="text-[10px] ml-1 px-1.5 py-0.5 rounded bg-white/20 font-mono tracking-wider">⌘↵</kbd>
+                <kbd className="btn-chip w-auto px-2 font-mono text-[10px] tracking-wider">⌘↵</kbd>
               </button>
             </div>
 
@@ -615,7 +614,7 @@ function SpeakContent() {
                           setInstantMode(false);
                           setError(null);
                         }}
-                        className="min-h-11 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-white transition transform active:scale-95 inline-flex items-center gap-1.5"
+                        className="min-h-11 rounded-full border-2 border-[var(--color-accent)] bg-[var(--color-paper)] px-4 text-xs font-semibold text-[var(--color-ink)] shadow-sm hover:bg-[var(--color-accent)] hover:text-[var(--color-on-accent)] transition transform active:scale-95 inline-flex items-center gap-1.5"
                       >
                         <span>▶</span>
                         <span>{sample.label}</span>
@@ -748,8 +747,7 @@ function SpeakContent() {
                 <div className="flex flex-wrap items-center justify-between gap-3 border-b border-[var(--color-rule)] pb-3">
                   <div>
                     <h2
-                      className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
-                      style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                      className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
                     >
                       Drafted Messages ({result.cards.filter((c) => activeRecipients.includes(c.contact.id) && c.draft !== null).length})
                     </h2>
@@ -874,8 +872,7 @@ function SpeakContent() {
           {!result && !busy && (
             <div className="rounded-[var(--radius-card)] border border-dashed border-[var(--color-rule)] bg-[var(--color-surface-raised)]/40 p-12 text-center space-y-3">
               <p
-                className="font-serif text-xl font-semibold tracking-tight text-[var(--color-ink)]"
-                style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+                className="font-display text-xl font-semibold tracking-tight text-[var(--color-ink)]"
               >
                 &ldquo;One update. Everyone who needs to know gets their own version.&rdquo;
               </p>

@@ -211,8 +211,7 @@ export function GuidedTour({
         <div className="mt-3.5 space-y-1.5">
           <h3
             id="tour-step-title"
-            className="font-serif text-base font-semibold text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="font-display text-base font-semibold text-[var(--color-ink)]"
           >
             {step.title}
           </h3>
@@ -263,7 +262,7 @@ export function GuidedTour({
                 setCurrentStepIndex((prev) => prev + 1);
               }
             }}
-            className="min-h-11 px-4 inline-flex items-center justify-center rounded-lg bg-[var(--color-accent)] text-xs font-semibold text-white shadow-xs hover:opacity-90 active-press transition"
+            className="min-h-11 px-4 inline-flex items-center justify-center rounded-lg bg-[var(--color-accent)] text-xs font-semibold text-[var(--color-on-accent)] shadow-xs hover:opacity-90 active-press transition"
             aria-label={isLast ? "Complete tour" : "Next step"}
           >
             {isLast ? "Done ✓" : "Next →"}

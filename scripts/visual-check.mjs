@@ -270,6 +270,17 @@ for (const theme of themes) {
       deviceScaleFactor: 1,
       ...(reducedMotion ? { reducedMotion: "reduce" } : {}),
     });
+    // The app ignores the OS colour scheme and is light unless the person
+    // chose dark, so emulating prefers-color-scheme alone would screenshot the
+    // light page twice and call the second one "dark". Make the choice the way
+    // a person does: the stored preference the toggle writes.
+    await context.addInitScript((wanted) => {
+      try {
+        localStorage.setItem("sayonce-theme", wanted);
+      } catch {
+        // Storage can be blocked; the assertion below catches the result.
+      }
+    }, theme);
     const page = await context.newPage();
 
     for (const route of routes) {
@@ -307,6 +318,18 @@ for (const theme of themes) {
         shots.push({ label, file: `${label}.png`, route, width, theme });
 
         const problems = await page.evaluate(AUDIT);
+
+        // A pass that audits the wrong theme reports clean while checking
+        // nothing. Refuse to: confirm the page is in the theme we asked for.
+        const actualTheme = await page.evaluate(() =>
+          document.documentElement.classList.contains("dark") ? "dark" : "light",
+        );
+        if (actualTheme !== theme) {
+          problems.push({
+            kind: "theme-mismatch",
+            detail: `asked for ${theme}, page rendered ${actualTheme}`,
+          });
+        }
         if (problems.length > 0) findings.push({ route, width, theme, problems });
 
         console.log(

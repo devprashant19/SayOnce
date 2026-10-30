@@ -73,8 +73,7 @@ function Stat({
         </span>
         <div className="mt-2 flex items-baseline gap-1.5">
           <span
-            className={`font-serif text-3xl sm:text-4xl font-semibold tracking-tight ${colour}`}
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className={`font-display text-3xl sm:text-4xl font-semibold tracking-tight ${colour}`}
           >
             {numPart}
           </span>
@@ -118,8 +117,7 @@ export default async function ProofPage() {
         </div>
 
         <h1
-          className="font-serif text-3xl sm:text-5xl font-semibold tracking-tight text-[var(--color-ink)]"
-          style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+          className="font-display text-3xl sm:text-5xl font-semibold tracking-tight text-[var(--color-ink)]"
         >
           Proof &amp; Real Use
         </h1>
@@ -143,8 +141,7 @@ export default async function ProofPage() {
           </span>
           <h2
             id="real-use"
-            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="mt-1 font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             What it has actually produced
           </h2>
@@ -190,8 +187,7 @@ export default async function ProofPage() {
           </span>
           <h2
             id="time"
-            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="mt-1 font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             Minutes per update, before and after
           </h2>
@@ -249,8 +245,7 @@ export default async function ProofPage() {
           </span>
           <h2
             id="accuracy"
-            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="mt-1 font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             The latest Quality Lab run
           </h2>
@@ -333,8 +328,7 @@ export default async function ProofPage() {
           </span>
           <h2
             id="how"
-            className="mt-1 font-serif text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
-            style={{ fontFamily: "var(--font-newsreader), var(--font-serif)" }}
+            className="mt-1 font-display text-2xl sm:text-3xl font-semibold tracking-tight text-[var(--color-ink)]"
           >
             How these numbers are produced
           </h2>
@@ -358,7 +352,7 @@ export default async function ProofPage() {
         <div className="flex flex-wrap gap-3 pt-4">
           <Link
             href="/demo"
-            className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-white shadow-sm hover:opacity-90 active-press transition"
+            className="min-h-11 inline-flex items-center justify-center rounded bg-[var(--color-accent)] px-5 text-sm font-semibold text-[var(--color-on-accent)] shadow-sm hover:opacity-90 active-press transition"
           >
             Try the demo
           </Link>
