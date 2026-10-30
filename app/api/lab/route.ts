@@ -56,7 +56,21 @@ function getRunHistory() {
     for (const f of files.slice(0, 10)) {
       try {
         const content = JSON.parse(readFileSync(join(LAB_DIR, f), "utf8"));
-        history.push({ filename: f, ...content });
+        // npm run lab writes errored cases without scores, and older runs
+        // without aggregates; the page read both and crashed. Show what was
+        // scored, as the stored history does.
+        if (!content.aggregates) continue;
+        const results = (Array.isArray(content.results) ? content.results : [])
+          .filter((r: { scores?: unknown; error?: unknown }) => r?.scores && !r.error)
+          .map((r: Record<string, unknown>) => ({ detail: [], trailOk: false, ...r }));
+        history.push({
+          filename: f,
+          ...content,
+          model: content.model ?? env.model,
+          graderTemperature: content.graderTemperature ?? env.graderTemperature,
+          caseCount: content.caseCount ?? content.results?.length ?? results.length,
+          results,
+        });
       } catch {
         // ignore corrupted entry
       }

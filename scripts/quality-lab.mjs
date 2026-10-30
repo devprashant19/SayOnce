@@ -70,7 +70,12 @@ console.log(`Pipeline at ${BASE}\n`);
 
 const results = [];
 
+// One case makes 7-12 model calls, and the free tier allows 15 a minute: run
+// back to back, the last third of the set hit the limit and could not run.
+const PACE_MS = Number(process.env.LAB_PACE_MS ?? 45_000);
+
 for (const [index, testCase] of cases.entries()) {
+  if (index > 0 && PACE_MS > 0) await new Promise((resolve) => setTimeout(resolve, PACE_MS));
   process.stdout.write(`[${index + 1}/${cases.length}] ${testCase.id} (${testCase.group}) … `);
   try {
     const response = await fetch(`${BASE}/api/fanout`, {

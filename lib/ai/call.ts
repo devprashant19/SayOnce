@@ -94,6 +94,21 @@ export function isQuotaExhaustedError(error: unknown): boolean {
   );
 }
 
+/**
+ * How long to wait before retrying a per-minute rate limit, or null when the
+ * error is not one. The free tier allows 15 requests a minute and a fan-out
+ * makes 7-12, so a second take inside the same minute hit it; Google answers
+ * "retry in ~15s", which fits the live budget. A daily quota is not retried.
+ */
+export function perMinuteRetryMs(error: unknown, capMs = 20_000): number | null {
+  if (!isQuotaExhaustedError(error) || error instanceof AiQuotaExhaustedError) return null;
+  const msg = error instanceof Error ? error.message : String(error);
+  if (!/PerMinute/i.test(msg)) return null;
+  const seconds = Number(msg.match(/"retryDelay"\s*:\s*"(\d+(?:\.\d+)?)s"/)?.[1] ?? 15);
+  const ms = Math.ceil(seconds * 1000) + 500;
+  return ms <= capMs ? ms : null;
+}
+
 let aiCallCounter = 0;
 
 export function getAiCallCount(): number {
@@ -177,6 +192,11 @@ export async function aiCall<T extends z.ZodType>(
       // Server log only. A silent retry costs 2-8 seconds of a live budget,
       // and without this line a slow fan-out had no visible cause.
       console.warn(`[ai] ${step} attempt ${attempt + 1} failed after ${Date.now() - started}ms: ${describe(error).slice(0, 200)}`);
+      const rateWait = attempt === 0 ? perMinuteRetryMs(error) : null;
+      if (rateWait !== null) {
+        await new Promise((resolve) => setTimeout(resolve, rateWait));
+        continue;
+      }
       if (isQuotaExhaustedError(error)) {
         throw new AiQuotaExhaustedError(step, undefined, error);
       }
