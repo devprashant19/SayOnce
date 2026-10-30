@@ -6,6 +6,7 @@ import { db, schema, REAL_DATASET } from "./db";
 import { env } from "./env";
 import { appendEntry, verifyChain, type TrailEntry, type TrailVerdict } from "./trail";
 import type { Fact, TrailEntryType } from "./types";
+import type { BatchItem } from "drizzle-orm/batch";
 
 const STORE_DIR = join(process.cwd(), "data", "store");
 const UPDATES_FILE = join(STORE_DIR, "updates.json");
@@ -115,7 +116,11 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
   if (env.hasDatabase) {
     try {
       const database = db();
-      await database.insert(schema.updates).values({
+      // One batch is one transaction. As four separate inserts, a failure
+      // part-way (the facts key collision) left 92 updates with no facts,
+      // messages or trail; it is also one round trip instead of four.
+      const writes: [BatchItem<"pg">, ...BatchItem<"pg">[]] = [
+        database.insert(schema.updates).values({
         id: params.updateId,
         dataset,
         spokenOn: params.spokenOn,
@@ -125,10 +130,11 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
         summary: params.summary,
         decisions: params.decisions,
         elapsedSeconds: params.elapsedSeconds ?? null,
-      });
+        }),
+      ];
 
       if (params.facts.length > 0) {
-        await database.insert(schema.facts).values(
+        writes.push(database.insert(schema.facts).values(
           params.facts.map((f) => ({
             id: f.id,
             updateId: params.updateId,
@@ -143,11 +149,11 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
             commitmentDue: f.type === "commitment" ? (f.values.datesIso[0] ?? null) : null,
             commitmentStatus: f.type === "commitment" ? "open" : null,
           })),
-        );
+        ));
       }
 
       if (params.messages.length > 0) {
-        await database.insert(schema.messages).values(
+        writes.push(database.insert(schema.messages).values(
           params.messages.map((m) => ({
             id: m.id,
             updateId: params.updateId,
@@ -166,11 +172,11 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
             sentAt: null,
             editedByUser: false,
           })),
-        );
+        ));
       }
 
       if (params.trail.length > 0) {
-        await database.insert(schema.trailEntries).values(
+        writes.push(database.insert(schema.trailEntries).values(
           params.trail.map((t) => ({
             id: `${params.updateId}-${t.seq}`,
             updateId: params.updateId,
@@ -182,8 +188,9 @@ export async function saveFanoutRecord(params: SaveFanoutParams): Promise<void> 
             prevHash: t.prevHash,
             hash: t.hash,
           })),
-        );
+        ));
       }
+      await database.batch(writes);
       return;
     } catch (error) {
       console.warn("Database insert failed, using local store fallback:", error);

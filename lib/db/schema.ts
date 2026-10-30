@@ -4,6 +4,7 @@ import {
   integer,
   jsonb,
   pgTable,
+  primaryKey,
   real,
   text,
   timestamp,
@@ -72,7 +73,8 @@ export const updates = pgTable(
 export const facts = pgTable(
   "facts",
   {
-    id: text("id").primaryKey(),
+    /** f1, f2 … — numbered per update, so unique only within its update. */
+    id: text("id").notNull(),
     updateId: text("update_id").notNull(),
     text: text("text").notNull(),
     type: text("type").notNull(),
@@ -88,7 +90,12 @@ export const facts = pgTable(
     commitmentDue: text("commitment_due"),
     commitmentStatus: text("commitment_status"),
   },
-  (table) => [index("facts_update_idx").on(table.updateId)],
+  // Keyed on the pair. Keyed on the fact id alone, the second update ever
+  // saved collided on "f1" and every save after the first failed.
+  (table) => [
+    primaryKey({ columns: [table.updateId, table.id] }),
+    index("facts_update_idx").on(table.updateId),
+  ],
 );
 
 export const messages = pgTable(

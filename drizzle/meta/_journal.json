@@ -15,6 +15,13 @@
       "when": 1793277524887,
       "tag": "0001_trail_append_only",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1793368176243,
+      "tag": "0002_pretty_the_spike",
+      "breakpoints": true
     }
   ]
 }
