@@ -66,14 +66,28 @@ export const env = {
     return optionalNumber("SAYONCE_GRADER_TEMPERATURE", 0);
   },
   /**
-   * Reasoning budget in tokens for the 2.5 series: 0 is off, -1 is automatic.
-   * Null means send no thinking config at all, which is what a model outside
-   * the 2.5/3 series needs.
+   * Reasoning budget in tokens: 0 is off, -1 is automatic (unbounded). Null
+   * means send no thinking config at all, which is what a model outside the
+   * 2.5/3 series needs.
+   *
+   * Off by default. A fan-out is a dozen model calls; with automatic thinking
+   * one took 79.6s, past the 60s serverless limit, and production returned
+   * 504. With thinking off the same request takes about 8s, and that is the
+   * configuration every local run and Quality Lab check was made with. Raise
+   * it only with a timed run to justify it.
    */
   get thinkingBudget(): number | null {
     const raw = process.env.SAYONCE_THINKING_BUDGET;
     if (raw === "none") return null;
-    return optionalNumber("SAYONCE_THINKING_BUDGET", -1);
+    return optionalNumber("SAYONCE_THINKING_BUDGET", 0);
+  },
+  /**
+   * How long a live fan-out may take before the visitor is shown prepared
+   * output instead. Kept well under the route's 60s maxDuration, so the app
+   * always answers before the platform kills the function with a 504.
+   */
+  get liveBudgetMs(): number {
+    return optionalNumber("SAYONCE_LIVE_BUDGET_MS", 40_000);
   },
   get databaseUrl(): string {
     return required("DATABASE_URL", "Phase 2 onwards needs it; see .env.example.");

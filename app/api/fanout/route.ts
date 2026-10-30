@@ -186,6 +186,38 @@ export async function POST(request: Request) {
     );
   }
 
+  return withinLiveBudget(request, body);
+}
+
+/**
+ * Runs the fan-out, but never past the live budget. A slow model, a retry
+ * after a 503, or unbounded thinking can each push a live run past the 60s
+ * serverless limit, and then the platform kills the function and the visitor
+ * gets a raw 504 page — no catch block runs, so instant mode never gets the
+ * chance. Racing a deadline guarantees an answer: if the live run has not
+ * finished in time, the visitor gets prepared output instead.
+ */
+async function withinLiveBudget(
+  request: Request,
+  body: z.infer<typeof RequestBody>,
+): Promise<Response> {
+  let timer: ReturnType<typeof setTimeout> | undefined;
+  const deadline = new Promise<"timeout">((resolve) => {
+    timer = setTimeout(() => resolve("timeout"), env.liveBudgetMs);
+  });
+  const live = runFanout(request, body);
+
+  const winner = await Promise.race([live, deadline]);
+  clearTimeout(timer);
+  if (winner !== "timeout") return winner;
+
+  console.warn(`FANOUT: live run passed ${env.liveBudgetMs}ms; serving instant mode`);
+  // The abandoned run may still finish or fail; neither should surface.
+  live.catch(() => undefined);
+  return instantModeResponse(body);
+}
+
+async function runFanout(request: Request, body: z.infer<typeof RequestBody>): Promise<Response> {
   // Phase 6: Instant demo mode cache lookup
   // If text matches a committed sample update, serve pre-verified pipeline results instantly (<50ms)
   const cachedDemo = (body.demoId ? getCachedDemoResult(body.demoId) : null) || getCachedDemoResult(body.spokenText);

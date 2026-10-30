@@ -105,6 +105,40 @@ describe("instant mode: live AI unavailable", () => {
     expect(JSON.stringify(body)).not.toContain("no longer available");
   });
 
+  it("answers with instant mode when a live run is too slow, instead of timing out", async () => {
+    // Production returned a raw 504: with unbounded thinking one fan-out took
+    // 79.6s against a 60s function limit, and the platform killed it before
+    // any catch block ran. A live step that never answers must still produce
+    // a prepared fan-out, well inside the budget.
+    process.env.SAYONCE_LIVE_BUDGET_MS = "250";
+    try {
+      vi.spyOn(extractModule, "extract").mockImplementationOnce(
+        () => new Promise(() => undefined), // never settles
+      );
+      const started = Date.now();
+      const response = await POST(
+        new Request("http://localhost:3000/api/fanout", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            spokenText: "A slow update that matches no prepared sample at all.",
+            project: "Custom Project",
+            contactSet: "india",
+          }),
+        }),
+      );
+      const elapsed = Date.now() - started;
+
+      expect(response.status).toBe(200);
+      const body = await response.json();
+      expect(body.mode).toBe("instant");
+      expect(body.cards.length).toBeGreaterThan(0);
+      expect(elapsed).toBeLessThan(5_000);
+    } finally {
+      delete process.env.SAYONCE_LIVE_BUDGET_MS;
+    }
+  });
+
   it("never phrases instant mode as a failure", async () => {
     const response = await fanoutWithProviderLimit();
     const body = await response.json();
