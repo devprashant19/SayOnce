@@ -1,14 +1,14 @@
 #!/usr/bin/env node
 /**
- * Rehearse the recording before you record it.
+ * Walk the judge path on production before anyone else does.
  *
  *   npm run rehearse
  *   SAYONCE_BASE_URL=http://localhost:3000 npm run rehearse
  *
- * Walks the exact path the demo film and a judge take — landing, Judge demo,
+ * Walks the exact path a judge takes — landing, Judge demo,
  * every guided-tour step, the fan-out, Verify trail, the command bar, the send
  * queue, then every other page — at 1920×1080, and fails on anything that
- * would ruin a take: a console error, a failed request, a tour step pointing
+ * would undermine it: a console error, a failed request, a tour step pointing
  * at nothing, or words a viewer must never see ("quota", "undefined", "NaN").
  * Screenshots land in .visual/rehearsal/ so you can scan the run in order.
  */
@@ -142,9 +142,9 @@ await browser.close();
 
 console.log(`\n${shot} screenshot(s) in ${OUT.replace(process.cwd(), ".")}`);
 if (problems.length === 0) {
-  console.log("\nClean rehearsal: nothing on the path would spoil a take.");
+  console.log("\nClean walk: nothing on the judge path is broken.");
   process.exit(0);
 }
-console.error("\nWould spoil a take:\n");
+console.error("\nBroken on the judge path:\n");
 for (const p of problems) console.error(`  [${p.where}] ${p.detail}`);
 process.exit(1);
