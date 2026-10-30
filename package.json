@@ -13,7 +13,7 @@
     "test:watch": "vitest",
     "test:tamper": "node --import tsx scripts/tamper-trail-test.mjs",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate",
+    "db:migrate": "node --env-file=.env.local node_modules/drizzle-kit/bin.cjs migrate",
     "db:seed": "node --env-file=.env.local scripts/seed-demo.mjs",
     "lab": "node --env-file=.env.local scripts/quality-lab.mjs",
     "audit:secrets": "node scripts/audit-secrets.mjs",
