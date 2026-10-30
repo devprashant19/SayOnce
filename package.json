@@ -24,6 +24,7 @@
     "visual": "node scripts/visual-check.mjs",
     "visual:states": "node scripts/visual-states.mjs",
     "rehearse": "node scripts/rehearse.mjs",
+    "capture:film": "node scripts/capture-film.mjs",
     "verify:cached": "vitest run tests/cached-path-zero-ai.test.ts --reporter=verbose",
     "smoke:prod": "node scripts/smoke-playwright.mjs"
   },
