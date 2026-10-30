@@ -252,8 +252,11 @@ export function checkDraft({ draft, contact, allowedFacts, allFacts }: CheckInpu
     });
   }
 
+  // Any word of the facts, in any case: "Phase two starts" capitalises the
+  // "phase" that was said, and was blocked as a person called Phase.
+  const factWords = new Set(factText.toLowerCase().match(/[\p{L}\p{N}']+/gu) ?? []);
   for (const name of namesIn(body)) {
-    if (grantedNames.has(name)) continue;
+    if (grantedNames.has(name) || factWords.has(name)) continue;
     failures.push({
       code: "invented-name",
       message: `The draft names "${name}", who is not in your update.`,

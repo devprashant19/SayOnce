@@ -380,3 +380,29 @@ describe("the draft greets the person it is written to", () => {
     }
   });
 });
+
+describe("a capitalised word you actually said is not an invented name", () => {
+  // Lab, 30 Oct: "Phase two starts Monday" was blocked as inventing a person
+  // called "phase", though the fact said "phase two starts Monday".
+  const PHASE = fact({ id: "f1", text: "phase two starts Monday 2 November", values: { numbers: ["2"], datesIso: ["2026-11-02"], names: [] } });
+
+  it("passes a sentence that capitalises a word from the facts", () => {
+    const outcome = checkDraft({
+      draft: draft({ contactId: "c_client", channel: "email", subject: "Next phase", body: "Hi Ramesh,\n\nThe next step is set, and Phase two starts Monday 2 November." }),
+      contact: contact({ id: "c_client", channel: "email", email: "r@example.com" }),
+      allowedFacts: [PHASE],
+      allFacts: [PHASE],
+    });
+    expect(outcome.failures.map((f) => f.code)).not.toContain("invented-name");
+  });
+
+  it("still blocks a name nobody said", () => {
+    const outcome = checkDraft({
+      draft: draft({ body: "Ramesh bhai, phase two Monday se, aur Suresh bhi aayega." }),
+      contact: contact(),
+      allowedFacts: [PHASE],
+      allFacts: [PHASE],
+    });
+    expect(outcome.failures.map((f) => f.evidence)).toContain("suresh");
+  });
+});
