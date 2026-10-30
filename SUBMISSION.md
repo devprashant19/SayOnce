@@ -71,7 +71,7 @@ box. SayOnce then:
    The guarantee is what the model is *handed*, not what it is asked to
    remember.
 5. **Verifies** every draft with a deterministic checker — `lib/checker.ts`,
-   **24 unit tests**, no model in it — which has final authority over the AI. A
+   **30 unit tests**, no model in it — which has final authority over the AI. A
    draft it fails has its send button disabled until I edit or explicitly
    override, and the override is logged.
 6. **Logs** every step to a hash-chained, tamper-evident audit trail
@@ -108,7 +108,7 @@ reproduced:
 | Claim | How to verify |
 | --- | --- |
 | **256 automated tests passing** across 22 suites | `npm run test` |
-| **24 tests** on the deterministic checker | `npx vitest run tests/checker.test.ts` |
+| **30 tests** on the deterministic checker | `npx vitest run tests/checker.test.ts` |
 | **5 / 5 cryptographic tamper tests passing** — a payload edit, a deleted row, an inserted row and a re-signed predecessor, each caught at the exact row | `npm run test:tamper` |
 | **0 keys, 0 phone numbers, 0 email addresses** in the client bundle | `npm run audit:secrets` |
 | Typecheck, lint and production build clean | `npm run verify:all` |
