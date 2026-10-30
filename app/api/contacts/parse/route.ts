@@ -16,8 +16,11 @@ export async function POST(request: Request) {
     const result = await parseVoiceContact(body.text);
     return NextResponse.json({ parsed: result.value });
   } catch (error) {
+    // This route calls the model: a raw error here can carry provider text,
+    // quota messages and URLs, which must never reach the page.
+    console.error("Contact dictation parse failed:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to parse contact dictation" },
+      { error: "That dictation could not be turned into a contact. Try saying it again, or add the contact by hand." },
       { status: 400 },
     );
   }

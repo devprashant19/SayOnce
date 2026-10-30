@@ -80,7 +80,11 @@ const SCENARIOS = {
   },
   "people-drawer": async (page) => {
     await page.goto(`${BASE}/people`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: /Meera|Kabir|Devendra|Anjali|Rohan/ }).first().click();
+    // Any roster: saved contacts, the starter roster, or a demo team.
+    await page
+      .getByRole("button", { name: /Meera|Kabir|Devendra|Anjali|Rohan|Anita|Ramesh|Suresh|Priya|Imran/ })
+      .first()
+      .click();
     await settle(page);
   },
   "lab-inspector": async (page) => {

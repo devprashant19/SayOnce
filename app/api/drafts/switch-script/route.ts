@@ -54,8 +54,10 @@ export async function POST(req: Request) {
       script: body.targetScript,
     });
   } catch (error) {
+    // Calls the model: never pass provider text through to the page.
+    console.error("Script switch failed:", error);
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Script switch failed" },
+      { error: "The draft could not be rewritten in that script. Try again." },
       { status: 500 },
     );
   }

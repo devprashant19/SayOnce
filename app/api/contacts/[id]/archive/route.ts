@@ -12,10 +12,8 @@ export async function POST(
     await archiveContact(id);
     return NextResponse.json({ ok: true, id });
   } catch (error) {
-    return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to archive contact" },
-      { status: 500 },
-    );
+    console.error("Archive contact failed:", error);
+    return NextResponse.json({ error: "The contact could not be archived." }, { status: 500 });
   }
 }
 

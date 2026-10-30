@@ -107,7 +107,7 @@ reproduced:
 
 | Claim | How to verify |
 | --- | --- |
-| **230 automated tests passing** across 18 suites | `npm run test` |
+| **234 automated tests passing** across 19 suites | `npm run test` |
 | **24 tests** on the deterministic checker | `npx vitest run tests/checker.test.ts` |
 | **5 / 5 cryptographic tamper tests passing** — a payload edit, a deleted row, an inserted row and a re-signed predecessor, each caught at the exact row | `npm run test:tamper` |
 | **0 keys, 0 phone numbers, 0 email addresses** in the client bundle | `npm run audit:secrets` |

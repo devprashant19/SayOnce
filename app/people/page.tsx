@@ -44,6 +44,8 @@ export default function PeoplePage() {
 
   const drawerRef = useRef<HTMLDivElement>(null);
   const triggerRef = useRef<HTMLElement | null>(null);
+  // Whether the roster came from saved contacts or the bundled starter set.
+  const [source, setSource] = useState<"stored" | "bundled">("stored");
 
   const fetchContacts = useCallback(async () => {
     setLoading(true);
@@ -53,6 +55,7 @@ export default function PeoplePage() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Failed to load contacts");
       setContacts(data.contacts ?? []);
+      setSource(data.source === "bundled" ? "bundled" : "stored");
     } catch (err) {
       setError(err instanceof Error ? err.message : "Failed to load contacts");
     } finally {
@@ -317,6 +320,13 @@ export default function PeoplePage() {
             {contacts.length} {contacts.length === 1 ? "contact" : "contacts"}
           </span>
         </div>
+
+        {!loading && dataset === "real" && source === "bundled" && contacts.length > 0 && (
+          <p className="text-xs text-[var(--color-ink-soft)]">
+            Starter roster: these are the people a fan-out writes to until you save contacts of
+            your own.
+          </p>
+        )}
 
         {loading ? (
           <div className="py-12 text-center text-sm font-mono text-[var(--color-ink-soft)]">

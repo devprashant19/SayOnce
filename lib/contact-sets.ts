@@ -42,3 +42,14 @@ export function loadContactSet(name: string): Contact[] {
 export function contactSetNames(): string[] {
   return Object.keys(SETS);
 }
+
+/**
+ * The bundled roster behind a stored dataset, or null if there is none. The
+ * same mapping the fan-out uses: the "real" dataset falls back to the
+ * freelance roster, and each demo dataset to its own file. /people and the
+ * fan-out must agree on who is on a team.
+ */
+export function bundledSetFor(dataset: string): string | null {
+  if (dataset === "real") return "freelance";
+  return dataset in SETS ? dataset : null;
+}

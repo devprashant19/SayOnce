@@ -105,6 +105,9 @@ export async function listContacts(dataset = REAL_DATASET): Promise<Contact[]> {
         }),
       );
     } catch (err) {
+      // On a serverless host the local store is a read-only, throwaway disk;
+      // falling back there crashed on mkdir and sent that error to the page.
+      if (process.env.VERCEL) throw err;
       console.warn("DB query failed, falling back to local store:", err);
     }
   }
