@@ -280,6 +280,12 @@ Spanish, Portuguese and Taglish messages from the global one.
 
 ---
 
+## Licence
+
+MIT — see [LICENSE](LICENSE). Use it, fork it, ship it.
+
+---
+
 ## Stack
 
 Next.js 15 (App Router) · React 19 · TypeScript · Google Gemini (`@google/genai`) ·
