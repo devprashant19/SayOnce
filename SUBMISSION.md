@@ -2,9 +2,10 @@
 
 **By WeMakeDevs and Wispr Flow**
 
-> **Status: partially submittable.** The app is deployed and live. Real-use
-> numbers have not yet been measured. Nothing in this file states a figure that
-> has not been verified — §6 lists exactly what is missing.
+> **Status: submittable.** The app is live, the demo video is published, and the
+> write-up is below. Real-use numbers have not yet been measured — they are shown
+> as "Not yet measured" rather than filled in. Nothing in this file states a
+> figure that has not been verified; §6 lists exactly what is missing.
 
 ---
 
@@ -18,6 +19,7 @@
 
 | What | URL |
 | --- | --- |
+| **Demo video** (1:58) | https://www.youtube.com/watch?v=1qGo5FnkDfI |
 | Judge demo | https://say-once-kappa.vercel.app/demo |
 | Landing story | https://say-once-kappa.vercel.app/ |
 | Speak app | https://say-once-kappa.vercel.app/app |
@@ -124,29 +126,28 @@ for each, which is deliberate — see §6.
 
 ---
 
-## 4. Two-minute video script
+## 4. The demo video
 
-Record with the **Wispr Flow Bar visible throughout** (Settings → System; it is
-hidden by default on new installs).
+**https://www.youtube.com/watch?v=1qGo5FnkDfI** — 1:58, public, no sign-in needed.
 
-| Time | On screen | You say |
+It runs under the two-minute cap with two seconds to spare. In order, it shows:
+
+| # | What is on screen | What is said |
 | --- | --- | --- |
-| 0:00–0:12 | Your real WhatsApp and email, the same update written out four times | "Every day I send the same update four times, in three languages." |
-| 0:12–0:18 | Two-second cuts of you dictating to the build agent | "I built this by talking to it." |
-| 0:18–0:40 | The Speak screen. Hold the Wispr key, speak a real Hinglish update | *(the update itself — let it land, don't narrate over it)* |
-| 0:40–0:55 | Fan out. Cards unfold: formal English email, Devanagari WhatsApp, short Hinglish note | "Each person gets only what they need, in their language." |
-| 0:55–1:05 | Knowledge Matrix, then hover a sentence so the spoken words light up | "I can see who was told what, and where every sentence came from." |
-| 1:05–1:18 | The blocked draft — Privacy Shield, leaking phrase struck through | "I said don't tell the client it was the contractor. It won't let me." |
-| 1:18–1:28 | Command bar (⌘K), then tap Open in WhatsApp — it opens with Devanagari prefilled | "I edit by voice and send in one tap." |
-| 1:28–1:40 | Verify trail turning green; the Update Log filling itself | "Every step is logged, and the record nobody kept now writes itself." |
-| 1:40–1:52 | `/proof` — the Quality Lab table | "A plain function, not the AI, checks every draft against what I said." |
-| 1:52–1:57 | Switch to the Global team — Spanish, Portuguese, Taglish | "Built for how India works. Ready for anywhere people work in more than one language." |
-| 1:57–2:00 | The app link | Name and link |
+| 1 | The same update being written out again and again | "Every day I say the same thing five times. Different language, different tone, different half of the truth." |
+| 2 | A real Hinglish update landing in the textarea — payment screen done, Razorpay test keys wrong, and *don't tell her the Razorpay keys thing* | *(the update itself, not narrated over)* |
+| 3 | Routing, with the one-line reason beside each contact | "It works out who needs to know, and gives me a reason I can check in two seconds." |
+| 4 | Fan-out: a different message per person, each in their own language and script | "Then it writes each of them a different message — not a translation, a different set of facts." |
+| 5 | The Privacy Shield refusing the leak | "I wrote: don't tell the client the keys were wrong. It won't let me. And this isn't the model being careful — the model is never handed that fact at all." |
+| 6 | Editing the tone, then the `wa.me` hand-off | "I fix the tone in the app. I send it in one tap." |
+| 7 | The trust trail, every sentence traced to its source fact | "Every sentence traces back to something in the update. A plain function checks it, and the function has the final say — not the model." |
+| 8 | The Quality Lab figures | "Twenty recorded cases, live pipeline, zero invented facts, zero leaks. Every number here is reproducible." |
+| 9 | The close | "Say it once. Everyone gets their own version." |
 
-**Only show `/proof` figures that are actually measured by then.** If the
-real-use numbers are still empty at recording time, show the Quality Lab table
-instead — it is the stronger shot anyway, because every number in it is
-reproducible on camera.
+Every figure shown in frame 8 comes from `npm run lab` and is reproducible on
+camera. The run's weakest number — must-know coverage at 42.7% against a 95%
+target — is on screen with the other three rather than cropped out, for the same
+reason §6 exists.
 
 ---
 
@@ -166,6 +167,8 @@ reproducible on camera.
 > 🔗 Hash-chained audit trail you can verify
 >
 > Say it once. Everyone gets their version.
+>
+> 🎥 https://www.youtube.com/watch?v=1qGo5FnkDfI
 >
 > @WeMakeDevs @WisprFlow #NoHandsChallenge #WisprFlow
 

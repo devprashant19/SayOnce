@@ -36,6 +36,8 @@ send button on anything it cannot ground.**
 SayOnce prepares messages. It does not send them. Every send is a `wa.me` or
 `mailto:` link you tap yourself.
 
+**Watch the two-minute demo:** https://www.youtube.com/watch?v=1qGo5FnkDfI — 1:58
+
 **Live:** https://say-once-kappa.vercel.app · **Judge demo:** [`/demo`](https://say-once-kappa.vercel.app/demo) — no sign-in, click Fan out
 
 ---

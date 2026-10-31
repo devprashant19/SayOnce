@@ -1,5 +1,9 @@
 # The demo video and the submission
 
+> **The video is made and published: https://www.youtube.com/watch?v=1qGo5FnkDfI (1:58).**
+> The shooting script below is the plan it was cut from and is kept for the
+> record; `SUBMISSION.md` §4 describes what the finished cut actually shows.
+
 ## The two-minute video
 
 Up to two minutes. Keep the **Wispr Flow Bar visible the whole time** — it is
